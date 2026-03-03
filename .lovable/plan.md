@@ -1,128 +1,45 @@
 
 
-# KMP | Kasilam Media Productions — Implementation Plan
+# Audio Production Landing Page — Implementation Plan
 
-## Brand Identity
-- **Color Palette**: Black, White, and Red — cinematic, bold, premium
-- **Dark mode default**, with light mode toggle
-- **Logo**: Styled "KMP" text placeholder
-- **Typography**: Clean, confident, modern sans-serif hierarchy
+## Overview
+Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
 
----
+## Files to Create
 
-## 1. Global Layout & Navigation
+### `src/pages/AudioProduction.tsx`
+A standalone page component with 6 sections:
 
-### Desktop Navigation
-- Logo ("KMP") on the left
-- Centered links: Home, About, Services (dropdown), Contact
-- Dark/Light mode toggle on the right
-- Services dropdown: Audio Production, Visual Production, Digital Media Solutions
-- Smooth hover animations, red accent on active/hover states
+1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
 
-### Mobile Navigation
-- Logo left, hamburger icon right
-- Slide-in menu from right (80% width, 300ms animation)
-- Sequential fade-in menu items
-- Services expands as accordion submenu
-- Dark/Light toggle inside menu
-- Background overlay when open
+2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
 
-### Theme System
-- Dark mode default
-- Preference persisted in localStorage
-- Smooth color transitions
+3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
 
-### Footer
-- Consistent across all pages
-- Social links (WhatsApp, Facebook, Instagram)
-- Copyright & brand tagline
+4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
 
----
+5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
 
-## 2. Home Page
+6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
 
-- **Hero Section** — Bold cinematic headline, tagline, CTA button (red accent)
-- **About Preview** — Short brand intro with "Learn More" link
-- **3 Media Pillars** — Cards for Audio, Visual, Digital with icons
-- **Why Choose Us** — 4 key differentiators
-- **4-Step Process** — Visual step flow
-- **CTA Section** — Strong call to action
-- **Footer**
+## Files to Modify
 
----
+### `src/App.tsx`
+- Import `AudioProduction` component
+- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
 
-## 3. About Page
+### `src/pages/Services.tsx`
+- Convert from detailed service sections into a **navigation hub**
+- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
+- Keep brief intro text per service but remove detailed item lists
 
-- **Who We Are** — Brand story section
-- **Founder Journey Timeline** — Visual vertical timeline
-- **Mission & Vision** — Side-by-side or stacked blocks
-- **Core Values** — Icon-based value cards
-- **CTA** — Contact or booking prompt
+### `src/components/Navbar.tsx`
+- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
 
----
-
-## 4. Services Page
-
-Three structured sections, each with:
-- Section heading & short description
-- Service list with clean formatting
-- Individual CTA button
-
-Sections:
-- **Audio Production**
-- **Visual Production**
-- **Digital Media Solutions**
-
----
-
-## 5. Contact Page
-
-- **Contact Form** — Name, email, message fields
-- **WhatsApp Button** — Click-to-chat link
-- **Social Links** — Facebook & Instagram
-- **Minimal, premium layout**
-
----
-
-## 6. Booking System Page
-
-A multi-step front-end booking flow (no backend):
-
-### Step 1: Service Selection
-- Choose from Audio / Visual / Digital categories
-
-### Step 2: Package Selection
-- Packages with predefined pricing per service
-
-### Step 3: Add-ons
-- Optional extras with fixed prices
-
-### Step 4: Travel Cost
-- Distance input — if >30km, per-km surcharge applied
-
-### Step 5: Date & Time
-- Date picker and time selection
-
-### Step 6: Client Details
-- Name, email, phone fields
-
-### Live Price Summary Panel
-- Desktop: sticky right sidebar showing running total
-- Mobile: collapsible summary at top/bottom
-- South African Rand (ZAR) formatting
-
-### Confirmation
-- Auto-generated reference number
-- Downloadable PDF quotation (generated client-side)
-- Auto-opens WhatsApp with pre-filled booking summary
-
----
-
-## Design Principles Throughout
-- Black/white/red palette with red as accent color
-- 1280px max-width container
-- Premium spacing and typography
-- Smooth animations and transitions
-- Fully responsive — balanced desktop and mobile
-- Placeholder content aligned with premium media positioning
+## Design Approach
+- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
+- Soft gray cards: `bg-muted` (maps to the theme's muted color)
+- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
+- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
+- All content strictly audio-focused, no cross-service contamination
 
