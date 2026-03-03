@@ -12,6 +12,7 @@ import Contact from "./pages/Contact";
 import Booking from "./pages/Booking";
 import AudioProduction from "./pages/AudioProduction";
 import VisualProduction from "./pages/VisualProduction";
+import DigitalMarketing from "./pages/DigitalMarketing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +33,7 @@ const App = () => (
               <Route path="/booking" element={<Booking />} />
               <Route path="/services/audio-production" element={<AudioProduction />} />
               <Route path="/services/visual-production" element={<VisualProduction />} />
+              <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
