@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, Sun, Moon } from "lucide-react";
 import { useTheme } from "./ThemeProvider";
 import { cn } from "@/lib/utils";
+import logo from "@/images/kmp.svg";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -32,9 +33,8 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-black tracking-wider">
-          <span className="text-primary">K</span>
-          <span className="text-foreground">MP</span>
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logo} alt="KMP Logo" className="h-8 w-auto" />
         </Link>
 
         {/* Desktop Nav */}
@@ -122,9 +122,9 @@ const Navbar = () => {
         )}
       >
         <div className="flex items-center justify-between border-b border-border px-4 py-4">
-          <span className="text-xl font-black">
-            <span className="text-primary">K</span>MP
-          </span>
+          <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
+            <img src={logo} alt="KMP Logo" className="h-7 w-auto" />
+          </Link>
           <button onClick={() => setMobileOpen(false)} aria-label="Close menu">
             <X className="h-6 w-6" />
           </button>

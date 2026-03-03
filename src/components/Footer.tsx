@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { MessageCircle } from "lucide-react";
+import logo from "@/images/kmp.svg";
 
 const Footer = () => {
   return (
@@ -8,9 +9,8 @@ const Footer = () => {
         <div className="grid gap-8 md:grid-cols-3">
           {/* Brand */}
           <div>
-            <Link to="/" className="text-2xl font-black tracking-wider">
-              <span className="text-primary">K</span>
-              <span className="text-foreground">MP</span>
+            <Link to="/" className="inline-block mb-4">
+              <img src={logo} alt="KMP Logo" className="h-10 w-auto" />
             </Link>
             <p className="mt-3 text-sm text-muted-foreground">
               Kasilam Media Productions — Premium audio, visual, and digital media solutions.

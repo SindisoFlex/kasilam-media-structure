@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight, CheckCircle } from "lucide-react";
+import logo from "@/images/kmp.svg";
 
 const pillars = [
   { icon: Mic, title: "Audio Production", desc: "Professional recording, mixing, mastering, and sound design for any project." },
@@ -30,6 +31,9 @@ const Index = () => {
       <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-background">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container relative z-10 mx-auto px-4 text-center">
+          <div className="flex justify-center mb-8 animate-fade-in">
+            <img src={logo} alt="KMP Logo" className="h-24 w-auto md:h-32" />
+          </div>
           <h1 className="animate-fade-in text-5xl font-black leading-tight tracking-tight md:text-7xl">
             We Create
             <span className="block text-primary">Media That Moves</span>
