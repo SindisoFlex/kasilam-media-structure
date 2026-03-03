@@ -11,9 +11,9 @@ const navLinks = [
     label: "Services",
     path: "/services",
     children: [
-      { label: "Audio Production", path: "/services#audio" },
-      { label: "Visual Production", path: "/services#visual" },
-      { label: "Digital Media Solutions", path: "/services#digital" },
+      { label: "Audio Production", path: "/services/audio-production" },
+      { label: "Visual Production", path: "/services/visual-production" },
+      { label: "Digital Media Solutions", path: "/services/digital-marketing" },
     ],
   },
   { label: "Contact", path: "/contact" },
