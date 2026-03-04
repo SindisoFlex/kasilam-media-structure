@@ -6,32 +6,30 @@ import logo from "@/images/kmp.svg";
 import heroBg from "@/images/hero-bg.png";
 
 const pillars = [
-  // ... (omitted parts for brevity in this tool call, but I will provide full relevant block)
-  { icon: Mic, title: "Audio Production", desc: "Professional recording, mixing, mastering, and sound design for any project." },
-  { icon: Camera, title: "Visual Production", desc: "Cinematic photography and videography that tells your story with impact." },
-  { icon: Globe, title: "Digital Media", desc: "Web development, digital marketing, and AI-powered solutions for growth." },
+  { icon: Camera, title: "Photography", desc: "Professional event and corporate photography tailored to represent you properly." },
+  { icon: Mic, title: "Audio Production", desc: "Voiceovers, podcast production, music recording, and professional audio editing." },
+  { icon: Globe, title: "Web Development", desc: "Modern business websites designed to build visibility and credibility." },
 ];
 
 const reasons = [
-  { icon: Award, title: "Premium Quality", desc: "Industry-standard equipment and techniques." },
-  { icon: Users, title: "Client-Focused", desc: "Your vision drives every decision we make." },
-  { icon: Zap, title: "Fast Turnaround", desc: "Professional results delivered on time." },
-  { icon: Clock, title: "End-to-End", desc: "From concept to final delivery, we handle it all." },
+  { icon: Award, title: "Strategic Thinking", desc: "We approach every project with long-term visibility and growth in mind." },
+  { icon: Users, title: "Professional Execution", desc: "Every detail matters. Quality and presentation are priorities." },
+  { icon: Zap, title: "Reliable Delivery", desc: "Clear communication and dependable turnaround times." },
+  { icon: Clock, title: "Community Rooted", desc: "Built from local experience, working with individuals and businesses from all backgrounds." },
 ];
 
 const steps = [
-  { num: "01", title: "Consult", desc: "We discuss your vision and goals." },
-  { num: "02", title: "Plan", desc: "We craft a tailored production strategy." },
-  { num: "03", title: "Create", desc: "We bring your project to life." },
-  { num: "04", title: "Deliver", desc: "Polished, professional final product." },
+  { num: "01", title: "Consult", desc: "We understand your goals, vision, and expectations." },
+  { num: "02", title: "Plan", desc: "We design a structured creative and digital strategy." },
+  { num: "03", title: "Create", desc: "We execute with precision and professionalism." },
+  { num: "04", title: "Deliver", desc: "We present work that reflects quality and intention." },
 ];
 
 const Index = () => {
   return (
     <div>
-      {/* Hero */}
+      {/* 1. Hero Section */}
       <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background">
-        {/* Background Image Layer */}
         <div
           className="absolute inset-0 z-0 scale-105 animate-subtle-zoom"
           style={{
@@ -40,11 +38,7 @@ const Index = () => {
             backgroundPosition: 'center',
           }}
         />
-
-        {/* Cinematic Blending Layer - Adapts to Light/Dark Mode */}
         <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px] transition-colors duration-500" />
-
-        {/* Gradient Overlay for smooth transition to next section */}
         <div className="absolute inset-0 z-11 bg-gradient-to-t from-background via-background/20 to-transparent" />
 
         <div className="container relative z-20 mx-auto px-4 text-center">
@@ -52,116 +46,194 @@ const Index = () => {
             <img src={logo} alt="KMP Logo" className="h-24 w-auto md:h-32 drop-shadow-2xl" />
           </div>
           <h1 className="animate-fade-in text-5xl font-black leading-tight tracking-tight md:text-7xl text-foreground">
-            We Create
-            <span className="block text-primary drop-shadow-sm">Media That Moves</span>
+            Professional Media for
+            <span className="block text-primary drop-shadow-sm">Growing Businesses.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground font-medium" style={{ animationDelay: "150ms" }}>
-            Kasilam Media Productions — where sound, vision, and digital innovation converge to tell stories that resonate.
+            We help brands and communities build professional visibility through photography, digital production, and modern digital solutions.
           </p>
-          <div className="mt-8 flex animate-fade-in flex-wrap justify-center gap-4" style={{ animationDelay: "300ms" }}>
+          <div className="mt-10 flex animate-fade-in flex-wrap justify-center gap-4" style={{ animationDelay: "300ms" }}>
             <Button asChild size="lg" className="gap-2 text-base shadow-xl">
               <Link to="/booking">
-                Book Now <ArrowRight className="h-4 w-4" />
+                Request a Consultation <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="text-base bg-background/50 backdrop-blur-sm shadow-lg">
-              <Link to="/services">Our Services</Link>
+              <Link to="/services">View Our Work</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* About Preview */}
-      <section className="bg-card py-20">
+      {/* 2. Who We Help */}
+      <section className="bg-card py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mb-16">Who We Work With</h2>
+          <div className="grid md:grid-cols-2 gap-12">
+            <div className="bg-background p-8 rounded-2xl border border-border shadow-sm">
+              <h3 className="text-2xl font-bold text-primary mb-4">Growing Businesses</h3>
+              <p className="text-muted-foreground mb-6">For startups, entrepreneurs, and established businesses looking to present themselves professionally.</p>
+              <ul className="space-y-3 mb-8">
+                {["Business websites", "Corporate photography", "Promotional videos", "Digital brand support"].map(item => (
+                  <li key={item} className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="font-semibold italic">We help you build trust, visibility, and credibility.</p>
+            </div>
+            <div className="bg-background p-8 rounded-2xl border border-border shadow-sm">
+              <h3 className="text-2xl font-bold text-primary mb-4">Life’s Important Moments</h3>
+              <p className="text-muted-foreground mb-6">For families and individuals preserving meaningful milestones.</p>
+              <ul className="space-y-3 mb-8">
+                {["Weddings", "Funerals & memorials", "Graduations", "Celebrations & private events"].map(item => (
+                  <li key={item} className="flex items-center gap-3">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="font-semibold italic">Every important moment deserves to be documented professionally.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Our Services */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mb-4">Our Services</h2>
+          <div className="mt-16 grid gap-12 md:grid-cols-2">
+            <div>
+              <h3 className="text-2xl font-bold mb-8 border-l-4 border-primary pl-4">Creative Production</h3>
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><Camera className="h-5 w-5 text-primary" /> Photography</h4>
+                  <p className="text-muted-foreground mt-1">Professional event and corporate photography tailored to represent you properly.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><ArrowRight className="h-5 w-5 text-primary" /> Videography</h4>
+                  <p className="text-muted-foreground mt-1">Event coverage, promotional visuals, and storytelling content for businesses and individuals.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><Mic className="h-5 w-5 text-primary" /> Audio Production</h4>
+                  <p className="text-muted-foreground mt-1">Voiceovers, podcast production, music recording, and professional audio editing.</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold mb-8 border-l-4 border-primary pl-4">Digital Growth Solutions</h3>
+              <div className="space-y-8">
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><Globe className="h-5 w-5 text-primary" /> Web Development</h4>
+                  <p className="text-muted-foreground mt-1">Modern business websites designed to build visibility and credibility.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><Zap className="h-5 w-5 text-primary" /> Digital Strategy</h4>
+                  <p className="text-muted-foreground mt-1">Support with improving online presence and brand positioning.</p>
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold flex items-center gap-2"><Award className="h-5 w-5 text-primary" /> AI & Automation Solutions</h4>
+                  <p className="text-muted-foreground mt-1">Smart workflow systems that improve efficiency and productivity.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. Our Process */}
+      <section className="bg-card py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mb-16">Our Process</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {steps.map((s) => (
+              <div key={s.num} className="relative rounded-2xl border border-border bg-background p-8 transition-all hover:border-primary/50">
+                <span className="text-4xl font-black text-primary/10 mb-4 block">{s.num}</span>
+                <h3 className="text-xl font-bold mb-2">{s.title}</h3>
+                <p className="text-muted-foreground text-sm">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-center mt-12 text-xl font-bold text-primary">Clear. Efficient. Professional.</p>
+        </div>
+      </section>
+
+      {/* 5. Why Work With Us */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mb-16">Why Work With Us</h2>
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {reasons.map((r) => (
+              <div key={r.title} className="flex flex-col items-center text-center p-6">
+                <div className="mb-4 rounded-full bg-primary/10 p-5">
+                  <r.icon className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="font-bold text-lg mb-2">{r.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Portfolio Preview */}
+      <section className="bg-card py-24">
+        <div className="container mx-auto px-4">
+          <h2 className="text-center text-3xl font-bold md:text-5xl mb-4">Selected Work</h2>
+          <p className="text-center text-muted-foreground mb-16">A preview of recent photography, media production, and digital projects.</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="aspect-video bg-muted rounded-xl animate-pulse overflow-hidden">
+                <div className="w-full h-full bg-gradient-to-br from-muted to-border flex items-center justify-center">
+                  <Camera className="h-8 w-8 text-muted-foreground/50" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 7. About Preview Section */}
+      <section className="py-24 bg-background">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">
-            Who Is <span className="text-primary">KMP</span>?
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-            We are a community-rooted media house delivering premium audio, visual, and digital media solutions. From studio sessions to full-scale digital campaigns — we bring your story to life.
-          </p>
-          <Button asChild variant="link" className="mt-6 gap-1">
-            <Link to="/about">
-              Learn More <ArrowRight className="h-4 w-4" />
+          <h2 className="text-3xl font-bold md:text-5xl mb-8">Built to Bridge Creativity and Opportunity</h2>
+          <div className="max-w-3xl mx-auto space-y-6 text-lg text-muted-foreground">
+            <p>
+              Kasilam Media Production was created from a desire to close the gap between talent and professional access.
+            </p>
+            <p>
+              What started as a passion for music and storytelling evolved into a multidisciplinary creative studio serving businesses, entrepreneurs, and communities.
+            </p>
+            <div className="pt-4">
+              <p className="font-bold text-foreground text-xl mb-4 text-primary">Our mission is simple:</p>
+              <p className="text-foreground font-medium italic">
+                To make professional creative and digital services accessible to growing brands and meaningful moments alike.
+              </p>
+            </div>
+          </div>
+          <Button asChild variant="outline" size="lg" className="mt-12 group">
+            <Link to="/about" className="flex items-center gap-2">
+              Learn More About Our Story <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
           </Button>
         </div>
       </section>
 
-      {/* 3 Media Pillars */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">Our Core Pillars</h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-muted-foreground">
-            Three disciplines. One unified creative vision.
+      {/* 8. Final CTA Section */}
+      <section className="bg-primary py-24 text-primary-foreground relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10" />
+        <div className="container relative z-10 mx-auto px-4 text-center">
+          <h2 className="text-4xl font-black md:text-6xl mb-6">Let’s Build Something That Represents You Properly.</h2>
+          <p className="mx-auto max-w-2xl text-xl opacity-90 mb-10">
+            Whether you're launching a business or preserving an important moment, we’re ready to work with you.
           </p>
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {pillars.map((p) => (
-              <Card key={p.title} className="group border-border transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5">
-                <CardContent className="flex flex-col items-center p-8 text-center">
-                  <div className="mb-4 rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
-                    <p.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{p.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{p.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">Why Choose Us</h2>
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {reasons.map((r) => (
-              <div key={r.title} className="flex flex-col items-center text-center">
-                <div className="mb-3 rounded-full bg-primary/10 p-3">
-                  <r.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="font-semibold">{r.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{r.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 4-Step Process */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">Our Process</h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {steps.map((s) => (
-              <div key={s.num} className="relative rounded-lg border border-border bg-card p-6">
-                <span className="text-4xl font-black text-primary/20">{s.num}</span>
-                <h3 className="mt-2 text-lg font-semibold">{s.title}</h3>
-                <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-primary py-20 text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">Ready to Create Something Amazing?</h2>
-          <p className="mx-auto mt-4 max-w-xl text-primary-foreground/80">
-            Let's bring your vision to life. Get in touch or book your session today.
-          </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Button asChild size="lg" variant="secondary" className="gap-2 text-base">
-              <Link to="/booking">
-                <CheckCircle className="h-4 w-4" /> Book a Session
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base">
-              <Link to="/contact">Contact Us</Link>
-            </Button>
-          </div>
+          <Button asChild size="lg" variant="secondary" className="gap-2 text-lg h-14 px-8 shadow-2xl">
+            <Link to="/booking">
+              Request a Consultation
+            </Link>
+          </Button>
         </div>
       </section>
     </div>
