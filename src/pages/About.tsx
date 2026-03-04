@@ -2,21 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
 const timeline = [
-  { year: "2014", title: "A Turning Point", desc: "Becoming a father reshaped my path, requiring stability but never silencing the creative drive." },
-  { year: "2015", title: "Filmmaking Studies", desc: "Formally studied filmmaking via a short film course to master visual storytelling." },
-  { year: "2016", title: "First Studio", desc: "Bought my first microphone and began recording and collaborating with local artists." },
-  { year: "2020", title: "Reflection & Rebuilding", desc: "Navigated pandemic setbacks, using the time to reflect and rebuild the vision for KMP." },
-  { year: "2023", title: "Creative Tech", desc: "Studied front-end development to merge creative arts with modern technology/AI solutions." },
-  { year: "2026", title: "Launch of KMP", desc: "Officially registered and launched Kasilam Media Production as a full-scale creative studio." },
+  { year: "2015", title: "Filmmaking Studies", desc: "Formal study in filmmaking to master visual storytelling and technical discipline." },
+  { year: "2016", title: "First Studio", desc: "Investment in professional recording equipment and collaboration with local artists." },
+  { year: "2020", title: "Recalibration", desc: "Business setbacks during the pandemic led to a deep reflection and recalibration of the vision." },
+  { year: "2023", title: "Creative Tech", desc: "Studied front-end development to merge creative artistry with modern technology and AI solutions." },
+  { year: "2025", title: "Strategic Restructuring", desc: "A long-held vision underwent a strategic restructuring to better serve the community." },
+  { year: "2026", title: "Launch of KMP", desc: "Official company registration and studio launch — built from experience, structured for growth." },
 ];
 
-const values = [
-  { icon: Users, title: "Community First", desc: "We serve people from all walks of life, ensuring professional services are accessible to everyone." },
-  { icon: Palette, title: "Creativity with Purpose", desc: "Every project tells a story. We use creativity intentionally to create meaningful impact." },
-  { icon: Handshake, title: "Collaboration", desc: "We grow together by working alongside artists, entrepreneurs, and local businesses." },
-  { icon: Lightbulb, title: "Innovation", desc: "We combine traditional creative arts with modern digital solutions and AI technology." },
-  { icon: Shield, title: "Professionalism", desc: "Every client receives quality and dedication, regardless of project size or scope." },
-  { icon: TrendingUp, title: "Growth & Empowerment", desc: "We aim to uplift young creatives and support small businesses in becoming visible." },
+const principles = [
+  { icon: Lightbulb, title: "Strategic Creativity", desc: "Creativity applied with intention and measurable purpose to solve brand challenges." },
+  { icon: Shield, title: "Professional Execution", desc: "Disciplined delivery, clear communication, and consistent quality across every project." },
+  { icon: Handshake, title: "Community Commitment", desc: "Rooted in local culture while operating at high-level international professional standards." },
+  { icon: TrendingUp, title: "Growth & Innovation", desc: "Merging storytelling with digital technology and AI to create modern, scalable solutions." },
 ];
 
 const About = () => {
@@ -26,34 +24,35 @@ const About = () => {
       <section className="relative py-24 md:py-32 flex items-center justify-center overflow-hidden bg-background">
         <div className="content-width relative z-20 text-center">
           <h1 className="animate-fade-in text-balance mb-10 relative inline-block">
-            Our Story
+            Built From Experience.<br />
+            <span className="text-primary">Structured for Growth.</span>
             <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-primary rounded-full opacity-80" />
           </h1>
           <div className="max-w-4xl mx-auto space-y-10">
             <p className="animate-fade-in text-xl md:text-2xl font-semibold text-balance leading-relaxed" style={{ animationDelay: "150ms" }}>
-              Kasilam Media Production was created from a deep understanding of what it means to be an artist without access — without equipment, visibility, or opportunity.
+              Kasilam Media Production is a multidisciplinary creative studio operating at the intersection of media, technology, and strategic brand visibility.
             </p>
             <p className="animate-fade-in text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto" style={{ animationDelay: "300ms" }}>
-              Born from the creative culture of Port Elizabeth, we exist to bridge the gap between creativity and opportunity, helping individuals, artists, and businesses tell their stories through sound, visuals, and digital technology.
+              Built from lived experience — from understanding what it means to have talent and ambition, but limited access to professional tools and visibility. Today, that gap is the problem we solve.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 2. Brand Identity - The Intersection */}
+      {/* 2. Why We Exist */}
       <section className="section-padding bg-muted/20 border-y border-border/40">
         <div className="content-width">
           <div className="grid md:grid-cols-2 gap-16 items-center">
             <div className="space-y-8">
-              <h2 className="border-l-4 border-primary pl-6">More Than a Service Provider</h2>
+              <h2 className="border-l-4 border-primary pl-6">Why We Exist</h2>
               <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  We are a creative partner helpings people look professional, sound professional, and exist confidently in the digital world.
+                  Too many entrepreneurs, creatives, and growing businesses struggle not because they lack ability — but because they lack professional presentation and digital presence.
                 </p>
                 <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
                   {["Creativity", "Technology", "Community"].map((item) => (
                     <div key={item} className="flex flex-col items-center p-6 premium-card bg-background text-center group hover:border-primary/40 transition-all">
-                      <span className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2">Focused on</span>
+                      <span className="text-xs font-black uppercase tracking-[0.2em] text-primary mb-2">Pillar</span>
                       <span className="text-foreground font-bold">{item}</span>
                     </div>
                   ))}
@@ -61,9 +60,10 @@ const About = () => {
               </div>
             </div>
             <div className="premium-card bg-primary text-primary-foreground border-0 shadow-2xl p-10 md:p-14">
-              <h3 className="text-3xl font-black mb-8 text-primary-foreground">Our Purpose</h3>
+              <p className="text-xs font-black uppercase tracking-[0.3em] mb-6 opacity-80">Our Core Belief</p>
+              <h3 className="text-4xl font-black mb-8 text-primary-foreground leading-tight">Professional visibility creates opportunity.</h3>
               <p className="text-xl opacity-90 leading-relaxed font-bold italic">
-                "Make professional creative services accessible to everyone — from township entrepreneurs to corporate clients."
+                “Creative solutions for real people, real stories, and growing businesses.”
               </p>
             </div>
           </div>
@@ -74,16 +74,16 @@ const About = () => {
       <section className="section-padding">
         <div className="content-width">
           <div className="grid md:grid-cols-2 gap-12">
-            <div className="space-y-6 p-8 rounded-3xl border border-border/40 hover:border-primary/20 transition-colors">
+            <div className="space-y-6 p-10 rounded-3xl border border-border/40 hover:border-primary/20 transition-colors bg-card/50">
               <h3 className="text-2xl font-black text-primary uppercase tracking-wider">Mission</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                To provide accessible, high-quality creative and digital services that empower individuals, artists, and businesses to express themselves, grow their brands, and preserve meaningful moments through photography, audio production, and digital innovation.
+                To provide high-quality, accessible creative and digital services that empower businesses and individuals to express themselves professionally, grow their brands, and preserve meaningful moments.
               </p>
             </div>
-            <div className="space-y-6 p-8 rounded-3xl border border-border/40 hover:border-primary/20 transition-colors">
+            <div className="space-y-6 p-10 rounded-3xl border border-border/40 hover:border-primary/20 transition-colors bg-card/50">
               <h3 className="text-2xl font-black text-primary uppercase tracking-wider">Vision</h3>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                To build a sustainable creative company that nurtures talent, creates opportunities for young creatives, and becomes a trusted creative partner locally and internationally — connecting communities through storytelling, technology, and innovation.
+                To build a sustainable creative company that develops talent, creates opportunity, and becomes a trusted creative partner locally and internationally.
               </p>
             </div>
           </div>
@@ -112,40 +112,56 @@ const About = () => {
         </div>
       </section>
 
-      {/* 5. Core Values - The Commitment */}
+      {/* 5. Our Principles */}
       <section className="section-padding overflow-hidden">
         <div className="content-width">
           <div className="max-w-3xl mx-auto text-center mb-20">
-            <h2 className="mb-4">Brand Values</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">The principles that guide every frame, every recording, and every line of code.</p>
+            <h2 className="mb-4">Our Principles</h2>
+            <p className="text-lg text-muted-foreground leading-relaxed">Merging storytelling with technology to deliver professional results.</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {values.map((v) => (
-              <div key={v.title} className="premium-card flex flex-col group hover:bg-muted/20">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {principles.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="premium-card flex flex-col group hover:bg-muted/20">
                 <div className="mb-6 rounded-2xl bg-primary/5 p-4 w-fit group-hover:bg-primary/10 transition-colors border border-primary/10">
-                  <v.icon className="h-6 w-6 text-primary" />
+                  <Icon className="h-6 w-6 text-primary" />
                 </div>
-                <h4 className="text-xl font-bold mb-4">{v.title}</h4>
-                <p className="text-sm leading-relaxed text-muted-foreground">{v.desc}</p>
+                <h4 className="text-xl font-bold mb-4">{title}</h4>
+                <p className="text-sm leading-relaxed text-muted-foreground">{desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 6. Final CTA */}
-      <section className="section-padding bg-muted/30 border-t border-border/40">
+      {/* 5.5 Our Position - New Section */}
+      <section className="section-padding bg-muted/20 border-t border-border/40">
         <div className="content-width text-center">
-          <h2 className="mb-8">Ready to Tell Your Story?</h2>
+          <h2 className="mb-14">Our Position</h2>
+          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
+            {["Growing businesses", "Emerging entrepreneurs", "Artists and creators", "Community professionals", "Corporate clients"].map((p) => (
+              <span key={p} className="px-6 py-3 rounded-full bg-background border border-border/60 text-sm font-bold shadow-sm">{p}</span>
+            ))}
+          </div>
+          <p className="mt-12 text-lg text-muted-foreground italic mx-auto max-w-2xl">
+            “We serve township entrepreneurs and corporate teams with the same standard of professionalism.”
+          </p>
+        </div>
+      </section>
+
+      {/* 6. Final CTA */}
+      <section className="section-padding bg-card border-t border-border/40 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(234,51,35,0.05)_0%,transparent_50%)]" />
+        <div className="content-width text-center relative z-10">
+          <h2 className="mb-8">Build Your Presence Properly.</h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground mb-12">
-            “We help people and businesses tell their stories through powerful visuals, sound, and digital innovation.”
+            “Kasilam Media Production was built with a long-term mindset. The goal is not only to create content — but to build presence.”
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <Button asChild size="lg" className="h-14 px-12 text-base font-bold shadow-2xl hover:translate-y-[-2px] transition-transform">
-              <Link to="/booking">Request a Consultation</Link>
+              <Link to="/booking">Start Your Project</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="h-14 px-12 text-base font-bold border-primary/20">
-              <Link to="/services">View Our Services</Link>
+              <Link to="/services">View Our Work</Link>
             </Button>
           </div>
         </div>
