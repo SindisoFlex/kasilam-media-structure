@@ -12,8 +12,8 @@ const Footer = () => {
             <Link to="/" className="inline-block transition-opacity hover:opacity-80 mb-6">
               <img src={logo} alt="KMP Logo" className="h-10 w-auto" />
             </Link>
-            <p className="max-w-xs text-sm leading-relaxed font-medium">
-              Kasilam Media Productions — where sound, vision, and digital innovation converge to tell stories that resonate.
+            <p className="max-w-xs text-sm leading-relaxed font-medium text-muted-foreground">
+              Creative solutions for real people, real stories, and growing businesses.
             </p>
           </div>
 
