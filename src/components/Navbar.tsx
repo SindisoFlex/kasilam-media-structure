@@ -30,15 +30,15 @@ const Navbar = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/70 backdrop-blur-xl">
+      <div className="container mx-auto flex h-20 items-center justify-between px-6 md:px-12">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logo} alt="KMP Logo" className="h-8 w-auto" />
+        <Link to="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
+          <img src={logo} alt="KMP Logo" className="h-10 w-auto" />
         </Link>
 
         {/* Desktop Nav */}
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-10 md:flex">
           {navLinks.map((link) =>
             link.children ? (
               <div
@@ -49,21 +49,21 @@ const Navbar = () => {
               >
                 <button
                   className={cn(
-                    "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
+                    "flex items-center gap-1.5 text-sm font-semibold tracking-wide transition-colors hover:text-primary",
                     isActive(link.path) && "text-primary"
                   )}
                 >
                   {link.label}
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", desktopDropdown && "rotate-180")} />
+                  <ChevronDown className={cn("h-3.5 w-3.5 opacity-50 transition-transform", desktopDropdown && "rotate-180")} />
                 </button>
                 {desktopDropdown && (
-                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-2">
-                    <div className="animate-scale-in rounded-md border border-border bg-popover p-2 shadow-lg min-w-[220px]">
+                  <div className="absolute left-1/2 top-full -translate-x-1/2 pt-4">
+                    <div className="animate-scale-in rounded-xl border border-border/50 bg-popover p-2 shadow-2xl min-w-[240px] ring-1 ring-black/5">
                       {link.children.map((child) => (
                         <Link
                           key={child.label}
                           to={child.path}
-                          className="block rounded-sm px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-primary"
+                          className="block rounded-lg px-4 py-3 text-sm font-medium transition-colors hover:bg-accent hover:text-primary"
                         >
                           {child.label}
                         </Link>
@@ -77,7 +77,7 @@ const Navbar = () => {
                 key={link.label}
                 to={link.path}
                 className={cn(
-                  "text-sm font-medium transition-colors hover:text-primary",
+                  "text-sm font-semibold tracking-wide transition-colors hover:text-primary",
                   isActive(link.path) && "text-primary"
                 )}
               >
@@ -85,21 +85,21 @@ const Navbar = () => {
               </Link>
             )
           )}
-        </div>
 
-        {/* Desktop Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="hidden rounded-full p-2 transition-colors hover:bg-accent md:block"
-          aria-label="Toggle theme"
-        >
-          {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </button>
+          {/* Desktop Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="rounded-full p-2.5 transition-all hover:bg-accent hover:scale-110 active:scale-90"
+            aria-label="Toggle theme"
+          >
+            {theme === "dark" ? <Sun className="h-5 w-5 text-primary" /> : <Moon className="h-5 w-5 text-primary" />}
+          </button>
+        </div>
 
         {/* Mobile Hamburger */}
         <button
           onClick={() => setMobileOpen(true)}
-          className="rounded-md p-2 md:hidden"
+          className="rounded-full p-2.5 transition-colors hover:bg-accent md:hidden"
           aria-label="Open menu"
         >
           <Menu className="h-6 w-6" />
@@ -117,41 +117,41 @@ const Navbar = () => {
       {/* Mobile Slide-in Menu */}
       <div
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-full w-4/5 max-w-sm flex-col bg-background border-l border-border shadow-2xl transition-transform duration-300 md:hidden",
+          "fixed right-0 top-0 z-50 flex h-full w-4/5 max-w-sm flex-col bg-background/95 backdrop-blur-2xl border-l border-border/50 shadow-2xl transition-transform duration-500 ease-in-out md:hidden",
           mobileOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-4">
+        <div className="flex items-center justify-between border-b border-border/50 px-6 py-6">
           <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-            <img src={logo} alt="KMP Logo" className="h-7 w-auto" />
+            <img src={logo} alt="KMP Logo" className="h-8 w-auto" />
           </Link>
-          <button onClick={() => setMobileOpen(false)} aria-label="Close menu">
+          <button onClick={() => setMobileOpen(false)} className="rounded-full p-2 hover:bg-accent transition-colors" aria-label="Close menu">
             <X className="h-6 w-6" />
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col gap-1 px-4 py-6">
+        <div className="flex flex-1 flex-col gap-2 px-6 py-10 overflow-y-auto">
           {navLinks.map((link, i) =>
             link.children ? (
-              <div key={link.label} className="animate-fade-in" style={{ animationDelay: `${i * 80}ms` }}>
+              <div key={link.label} className="animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
                 <button
                   onClick={() => setServicesOpen(!servicesOpen)}
                   className={cn(
-                    "flex w-full items-center justify-between rounded-md px-3 py-3 text-base font-medium transition-colors hover:text-primary",
+                    "flex w-full items-center justify-between rounded-xl px-4 py-4 text-lg font-bold transition-colors hover:bg-accent/50 hover:text-primary",
                     isActive(link.path) && "text-primary"
                   )}
                 >
                   {link.label}
-                  <ChevronDown className={cn("h-4 w-4 transition-transform", servicesOpen && "rotate-180")} />
+                  <ChevronDown className={cn("h-4 w-4 opacity-50 transition-transform", servicesOpen && "rotate-180")} />
                 </button>
                 {servicesOpen && (
-                  <div className="ml-4 flex flex-col gap-1 border-l border-border pl-4">
+                  <div className="mt-2 ml-4 flex flex-col gap-1 border-l border-primary/20 pl-4">
                     {link.children.map((child) => (
                       <Link
                         key={child.label}
                         to={child.path}
                         onClick={() => setMobileOpen(false)}
-                        className="rounded-md px-3 py-2 text-sm transition-colors hover:text-primary"
+                        className="rounded-lg px-4 py-3 text-sm font-semibold text-muted-foreground transition-colors hover:text-primary hover:bg-accent/30"
                       >
                         {child.label}
                       </Link>
@@ -165,10 +165,10 @@ const Navbar = () => {
                 to={link.path}
                 onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "animate-fade-in rounded-md px-3 py-3 text-base font-medium transition-colors hover:text-primary",
+                  "animate-fade-in rounded-xl px-4 py-4 text-lg font-bold transition-colors hover:bg-accent/50 hover:text-primary",
                   isActive(link.path) && "text-primary"
                 )}
-                style={{ animationDelay: `${i * 80}ms` }}
+                style={{ animationDelay: `${i * 50}ms` }}
               >
                 {link.label}
               </Link>
@@ -176,13 +176,15 @@ const Navbar = () => {
           )}
         </div>
 
-        <div className="border-t border-border px-4 py-4">
+        <div className="border-t border-border/50 px-6 py-8">
           <button
             onClick={toggleTheme}
-            className="flex w-full items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors hover:bg-accent"
+            className="flex w-full items-center gap-4 rounded-xl px-4 py-4 text-sm font-bold transition-all hover:bg-accent active:scale-[0.98]"
           >
-            {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+            <div className="rounded-full bg-primary/10 p-2">
+              {theme === "dark" ? <Sun className="h-5 w-5 text-primary" /> : <Moon className="h-5 w-5 text-primary" />}
+            </div>
+            {theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
           </button>
         </div>
       </div>
