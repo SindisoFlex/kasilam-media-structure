@@ -2,12 +2,12 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
 const timeline = [
-  { year: "2015", title: "Filmmaking Studies", desc: "Formal study in filmmaking to master visual storytelling and technical discipline." },
-  { year: "2016", title: "First Studio", desc: "Investment in professional recording equipment and collaboration with local artists." },
-  { year: "2020", title: "Recalibration", desc: "Business setbacks during the pandemic led to a deep reflection and recalibration of the vision." },
-  { year: "2023", title: "Creative Tech", desc: "Studied front-end development to merge creative artistry with modern technology and AI solutions." },
-  { year: "2025", title: "Strategic Restructuring", desc: "A long-held vision underwent a strategic restructuring to better serve the community." },
-  { year: "2026", title: "Launch of KMP", desc: "Official company registration and studio launch — built from experience, structured for growth." },
+  { year: "2015", title: "Formal Filmmaking Studies", desc: "Establishing a technical foundation in visual storytelling and disciplined production." },
+  { year: "2016", title: "Infrastructure Investment", desc: "Direct investment in recording infrastructure and strategic collaboration with emerging artists." },
+  { year: "2020", title: "Industry Recalibration", desc: "Identifying and navigating structural shifts during global disruption to refine the business model." },
+  { year: "2023", title: "Technological Integration", desc: "Front-end development studies to integrate modern technology and AI with media production." },
+  { year: "2025", title: "Strategic Restructuring", desc: "Complete vision restructuring and business alignment for long-term positioning." },
+  { year: "2026", title: "Official Launch", desc: "Company registration and studio launch — delivering structured creative solutions for growth." },
 ];
 
 const principles = [
@@ -90,24 +90,39 @@ const About = () => {
         </div>
       </section>
 
-      {/* 4. Founder Journey - The Background */}
+      {/* 4. Founder Journey - The Strategic Narrative */}
       <section className="section-padding bg-card border-t border-border/40">
         <div className="content-width">
-          <div className="max-w-3xl mx-auto mb-20 text-center">
-            <h2 className="mb-6">The Journey Behind the Vision</h2>
-            <p className="text-lg text-muted-foreground">Evolving Hip-Hop roots into a multidisciplinary creative business model.</p>
+          <div className="max-w-4xl mx-auto mb-24 text-center">
+            <h2 className="mb-8">The Journey Behind the Vision</h2>
+            <div className="space-y-8 text-lg text-muted-foreground leading-relaxed italic mx-auto max-w-3xl">
+              <p>
+                Kasilam Media Production was shaped through Sindiso Sophazi’s direct experience with structural limitations within the creative industry in Port Elizabeth.
+              </p>
+              <p>
+                Access to professional studios, technical infrastructure, and meaningful visibility was limited. That reality exposed a deeper issue — talent exists everywhere, but opportunity does not.
+              </p>
+            </div>
           </div>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3 mb-24">
             {timeline.map((t, i) => (
-              <div key={t.year} className="relative group p-8 premium-card hover:bg-muted/30 transition-all">
-                <div className="mb-6 flex items-center justify-between">
-                  <span className="text-sm font-black uppercase tracking-[0.3em] text-primary">{t.year}</span>
-                  <div className="h-px flex-grow ml-4 bg-border/60 group-hover:bg-primary/20" />
+              <div key={t.year} className="relative group p-10 premium-card hover:bg-muted/30 transition-all border-border/40">
+                <div className="mb-8 flex items-center justify-between">
+                  <span className="text-sm font-black uppercase tracking-[0.4em] text-primary">{t.year}</span>
+                  <div className="h-px flex-grow ml-6 bg-border/40 group-hover:bg-primary/30 transition-colors" />
                 </div>
                 <h3 className="text-xl font-bold mb-4">{t.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{t.desc}</p>
+                <p className="text-sm leading-relaxed text-muted-foreground/90">{t.desc}</p>
               </div>
             ))}
+          </div>
+          <div className="max-w-3xl mx-auto text-center space-y-10 border-t border-border/40 pt-24">
+            <p className="text-lg text-muted-foreground italic">
+              “Each stage was intentional. The company was built not on momentum, but on discipline, systems thinking, and long-term positioning.”
+            </p>
+            <p className="text-xl md:text-2xl font-black text-foreground leading-[1.4]">
+              Today, Kasilam Media Production exists to eliminate barriers of access, visibility, and professional infrastructure — delivering structured creative solutions for brands and individuals ready to operate at a higher level.
+            </p>
           </div>
         </div>
       </section>
