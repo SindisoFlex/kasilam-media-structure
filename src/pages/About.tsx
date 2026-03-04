@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
-{ year: "2014", title: "A Turning Point", desc: "Becoming a father reshaped my path, requiring stability but never silencing the creative drive." },
-{ year: "2015", title: "Filmmaking Studies", desc: "Formally studied filmmaking via a short film course to master visual storytelling." },
-{ year: "2016", title: "First Studio", desc: "Bought my first microphone and began recording and collaborating with local artists." },
-{ year: "2020", title: "Reflection & Rebuilding", desc: "Navigated pandemic setbacks, using the time to reflect and rebuild the vision for KMP." },
-{ year: "2023", title: "Creative Tech", desc: "Studied front-end development to merge creative arts with modern technology/AI solutions." },
-{ year: "2026", title: "Launch of KMP", desc: "Officially registered and launched Kasilam Media Production as a full-scale creative studio." },
+const timeline = [
+  { year: "2014", title: "A Turning Point", desc: "Becoming a father reshaped my path, requiring stability but never silencing the creative drive." },
+  { year: "2015", title: "Filmmaking Studies", desc: "Formally studied filmmaking via a short film course to master visual storytelling." },
+  { year: "2016", title: "First Studio", desc: "Bought my first microphone and began recording and collaborating with local artists." },
+  { year: "2020", title: "Reflection & Rebuilding", desc: "Navigated pandemic setbacks, using the time to reflect and rebuild the vision for KMP." },
+  { year: "2023", title: "Creative Tech", desc: "Studied front-end development to merge creative arts with modern technology/AI solutions." },
+  { year: "2026", title: "Launch of KMP", desc: "Officially registered and launched Kasilam Media Production as a full-scale creative studio." },
 ];
 
 const values = [
