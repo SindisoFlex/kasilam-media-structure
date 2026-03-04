@@ -42,7 +42,7 @@ const Index = () => {
         />
 
         {/* Cinematic Blending Layer - Adapts to Light/Dark Mode */}
-        <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[1px] transition-colors duration-500" />
+        <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px] transition-colors duration-500" />
 
         {/* Gradient Overlay for smooth transition to next section */}
         <div className="absolute inset-0 z-11 bg-gradient-to-t from-background via-background/20 to-transparent" />
