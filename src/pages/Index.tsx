@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight, CheckCircle } from "lucide-react";
 import logo from "@/images/kmp.svg";
+import heroBg from "@/images/hero-bg.png";
 
 const pillars = [
+  // ... (omitted parts for brevity in this tool call, but I will provide full relevant block)
   { icon: Mic, title: "Audio Production", desc: "Professional recording, mixing, mastering, and sound design for any project." },
   { icon: Camera, title: "Visual Production", desc: "Cinematic photography and videography that tells your story with impact." },
   { icon: Globe, title: "Digital Media", desc: "Web development, digital marketing, and AI-powered solutions for growth." },
@@ -28,26 +30,41 @@ const Index = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="relative flex min-h-[85vh] items-center justify-center overflow-hidden bg-background">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
-        <div className="container relative z-10 mx-auto px-4 text-center">
+      <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background">
+        {/* Background Image Layer */}
+        <div
+          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom"
+          style={{
+            backgroundImage: `url(${heroBg})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        />
+
+        {/* Cinematic Blending Layer - Adapts to Light/Dark Mode */}
+        <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[1px] transition-colors duration-500" />
+
+        {/* Gradient Overlay for smooth transition to next section */}
+        <div className="absolute inset-0 z-11 bg-gradient-to-t from-background via-background/20 to-transparent" />
+
+        <div className="container relative z-20 mx-auto px-4 text-center">
           <div className="flex justify-center mb-8 animate-fade-in">
-            <img src={logo} alt="KMP Logo" className="h-24 w-auto md:h-32" />
+            <img src={logo} alt="KMP Logo" className="h-24 w-auto md:h-32 drop-shadow-2xl" />
           </div>
-          <h1 className="animate-fade-in text-5xl font-black leading-tight tracking-tight md:text-7xl">
+          <h1 className="animate-fade-in text-5xl font-black leading-tight tracking-tight md:text-7xl text-foreground">
             We Create
-            <span className="block text-primary">Media That Moves</span>
+            <span className="block text-primary drop-shadow-sm">Media That Moves</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground" style={{ animationDelay: "150ms" }}>
+          <p className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground font-medium" style={{ animationDelay: "150ms" }}>
             Kasilam Media Productions — where sound, vision, and digital innovation converge to tell stories that resonate.
           </p>
           <div className="mt-8 flex animate-fade-in flex-wrap justify-center gap-4" style={{ animationDelay: "300ms" }}>
-            <Button asChild size="lg" className="gap-2 text-base">
+            <Button asChild size="lg" className="gap-2 text-base shadow-xl">
               <Link to="/booking">
                 Book Now <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="text-base">
+            <Button asChild variant="outline" size="lg" className="text-base bg-background/50 backdrop-blur-sm shadow-lg">
               <Link to="/services">Our Services</Link>
             </Button>
           </div>
