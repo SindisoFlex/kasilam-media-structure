@@ -39,6 +39,11 @@ const App = () => (
               <Route path="/services/audio-production" element={<AudioProduction />} />
               <Route path="/services/visual-production" element={<VisualProduction />} />
               <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
+              <Route path="/services/audio-production/studio-recording" element={<StudioRecording />} />
+              <Route path="/services/audio-production/podcast-recording" element={<PodcastRecording />} />
+              <Route path="/services/audio-production/voiceover-production" element={<VoiceoverProduction />} />
+              <Route path="/services/audio-production/mixing-coordination" element={<MixingCoordination />} />
+              <Route path="/services/audio-production/production-management" element={<ProductionManagement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
