@@ -6,75 +6,84 @@ const FuneralCoverage = () => {
   const packages = [
     {
       name: "Basic Memorial Coverage",
+      hours: 3,
       description: "Essential ceremony documentation",
-      duration: "Up to 4 hours",
       includes: [
-        "Single format selection (Photography OR Videography)",
-        "Essential ceremony coverage",
-        "Key moments captured",
-        "Professionally edited media",
+        "Ceremony coverage",
+        "Photography OR Videography option",
+        "Edited final media",
         "USB delivery",
       ],
       pricing: {
-        photography: 2500,
-        videography: 3000,
+        photography: 1500,
+        videography: 2000,
+        combo: 3500,
       },
     },
     {
       name: "Standard Memorial Coverage",
-      description: "Comprehensive event documentation",
-      duration: "Up to 6 hours",
+      hours: 5,
+      description: "Comprehensive memorial documentation",
       includes: [
-        "Single format selection (Photography OR Videography)",
-        "Extended ceremony coverage",
-        "Family moments",
-        "Tribute moments",
-        "Professionally edited media",
+        "Ceremony coverage",
+        "Selected family moments",
+        "Photography OR Videography option",
+        "Edited final media",
         "USB delivery",
       ],
       pricing: {
-        photography: 4000,
-        videography: 5000,
+        photography: 2200,
+        videography: 2800,
+        combo: 4200,
       },
       recommended: true,
     },
     {
       name: "Complete Memorial Coverage",
-      description: "Full event with both photo and video",
-      duration: "Full event duration",
+      hours: 7,
+      description: "Full memorial service coverage",
       includes: [
-        "Photography + Videography combo",
-        "Full event coverage",
-        "Pre-service moments",
-        "Complete ceremony documentation",
-        "Family & tribute moments",
-        "High-quality edited media",
+        "Full memorial coverage",
+        "Family moments and gathering highlights",
+        "Photography OR Videography option",
+        "Edited final media",
         "USB delivery",
       ],
       pricing: {
-        combo: 8000,
+        photography: 3000,
+        videography: 3500,
+        combo: 5200,
       },
     },
   ];
 
-  const whyChooseUs = [
+  const mediaTypes = [
     {
-      title: "Respectful & Professional",
-      desc: "We approach every service with the utmost respect and sensitivity to your family's needs",
+      id: "photography",
+      label: "Photography",
+      icon: "📸",
+      desc: "Professional still photography",
     },
     {
-      title: "Preserve Memories",
-      desc: "Capture moments to honor your loved one and share with family members who couldn't attend",
+      id: "videography",
+      label: "Videography",
+      icon: "🎥",
+      desc: "Complete video coverage",
     },
     {
-      title: "Compassionate Team",
-      desc: "Our experienced team understands the emotional significance of memorial services",
-    },
-    {
-      title: "Lasting Legacy",
-      desc: "Create a visual record that celebrates the life and impact of your loved one",
+      id: "combo",
+      label: "Photo + Video Combo",
+      icon: "✨",
+      desc: "Comprehensive visual record",
+      recommended: true,
     },
   ];
+
+  const handleBooking = (packageName: string, packageIndex: number) => {
+    // Navigate to booking with pre-filled service details
+    const packageData = packages[packageIndex];
+    window.location.href = `/booking?service=visual&category=funeral&package=${packageName}`;
+  };
 
   return (
     <div className="bg-background text-white min-h-screen">
@@ -91,10 +100,10 @@ const FuneralCoverage = () => {
               </div>
             </div>
             <h1 className="text-5xl md:text-6xl font-black mb-8 text-gradient">
-              Honoring Your Loved One
+              Funeral Coverage
             </h1>
             <p className="text-xl text-white/70 font-medium leading-relaxed">
-              Respectful and professional coverage to preserve the memory of loved ones and honor their life with dignity and compassion.
+              Respectful photography and videography to preserve memories and honor loved ones.
             </p>
           </div>
         </div>
@@ -109,13 +118,7 @@ const FuneralCoverage = () => {
             </div>
             <h2 className="text-4xl font-black mb-8 text-gradient">Preserving Precious Memories</h2>
             <p className="text-lg text-white/70 leading-relaxed mb-8 font-medium">
-              During times of loss, every moment shared with loved ones becomes precious. Not everyone can attend a memorial service, and distance, circumstance, or health can keep family members away during these important gatherings.
-            </p>
-            <p className="text-lg text-white/70 leading-relaxed mb-8 font-medium">
-              Professional funeral coverage ensures that family members near and far can share in honoring your loved one. It captures the strength of family bonds, the love that remains, and the collective tribute to a life well-lived.
-            </p>
-            <p className="text-lg text-white/60 leading-relaxed font-medium">
-              We provide this service with the utmost respect and sensitivity, understanding that these are meaningful moments that deserve to be preserved with dignity and care. Your memories of this day will become treasured for years to come.
+              Funerals are deeply emotional moments where families gather to celebrate the life of someone they love. Our role is to respectfully capture these memories so they can be shared with family members and future generations. We work discreetly and professionally to ensure every important moment is preserved with dignity.
             </p>
           </div>
         </div>
@@ -125,13 +128,13 @@ const FuneralCoverage = () => {
       <section className="section-padding">
         <div className="content-width">
           <div className="mb-16 text-center">
-            <h2 className="text-4xl font-black mb-6 text-gradient">Memorial Coverage Packages</h2>
+            <h2 className="text-4xl font-black mb-6 text-gradient">Funeral Coverage Packages</h2>
             <p className="text-lg text-white/60 font-medium">
-              Choose the coverage option that best honors your loved one. All packages include professionally edited media delivered on USB.
+              Choose the coverage duration that honors your loved one. All packages include professionally edited media delivered on USB.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid md:grid-cols-3 gap-8 mb-20">
             {packages.map((pkg, index) => (
               <div
                 key={index}
@@ -141,14 +144,14 @@ const FuneralCoverage = () => {
               >
                 {pkg.recommended && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.2em] text-white">
-                    Most Selected
+                    Recommended
                   </div>
                 )}
 
                 <div className="mb-8">
                   <h3 className="text-2xl font-black text-red-600 mb-2 uppercase tracking-tight">{pkg.name}</h3>
-                  <p className="text-sm text-white/60 mb-4 font-medium">{pkg.description}</p>
-                  <p className="text-xs text-white/50 font-medium">{pkg.duration}</p>
+                  <p className="text-4xl font-black text-white mb-3">Up to {pkg.hours} Hours</p>
+                  <p className="text-sm text-white/60 font-medium">{pkg.description}</p>
                 </div>
 
                 <div className="space-y-3 mb-10 flex-grow pb-10 border-b border-white/10">
@@ -161,104 +164,87 @@ const FuneralCoverage = () => {
                   ))}
                 </div>
 
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Pricing:</p>
-                  {pkg.pricing.photography && (
+                <div className="space-y-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Pricing by Format:</p>
+                  <div className="space-y-2">
                     <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                      <span className="text-sm font-medium">Photography</span>
+                      <span className="text-sm font-medium flex items-center gap-2">
+                        <span className="text-lg">📸</span> Photography
+                      </span>
                       <span className="text-red-600 font-black">R {pkg.pricing.photography}</span>
                     </div>
-                  )}
-                  {pkg.pricing.videography && (
                     <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                      <span className="text-sm font-medium">Videography</span>
+                      <span className="text-sm font-medium flex items-center gap-2">
+                        <span className="text-lg">🎥</span> Videography
+                      </span>
                       <span className="text-red-600 font-black">R {pkg.pricing.videography}</span>
                     </div>
-                  )}
-                  {pkg.pricing.combo && (
                     <div className="flex justify-between items-center p-2 rounded bg-white/5 border border-red-600/30">
-                      <span className="text-sm font-medium">Photo + Video</span>
+                      <span className="text-sm font-medium flex items-center gap-2">
+                        <span className="text-lg">✨</span> Combo
+                      </span>
                       <span className="text-red-600 font-black">R {pkg.pricing.combo}</span>
                     </div>
-                  )}
+                  </div>
                 </div>
+
+                <Button
+                  onClick={() => handleBooking(pkg.name, index)}
+                  className="mt-8 w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px] transition-all"
+                >
+                  Book This Package <ArrowRight className="h-3 w-3 ml-2" />
+                </Button>
               </div>
             ))}
           </div>
 
           {/* Format Info */}
-          <div className="max-w-3xl mx-auto bg-white/[0.02] border border-white/5 rounded-2xl p-8">
-            <h3 className="text-xl font-black mb-6 text-white uppercase tracking-tight">Choosing Your Format</h3>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">📸</div>
-                <div>
-                  <h4 className="font-black text-white mb-1">Photography</h4>
-                  <p className="text-sm text-white/60 font-medium">Still photographs capture moments with clarity and detail, perfect for printed memories and sharing with family.</p>
+          <div className="max-w-4xl mx-auto bg-white/[0.02] border border-white/5 rounded-2xl p-10">
+            <h3 className="text-2xl font-black mb-8 text-center text-gradient">Choose Your Format</h3>
+            <div className="grid md:grid-cols-3 gap-6">
+              {mediaTypes.map((media) => (
+                <div
+                  key={media.id}
+                  className={`premium-card group border-white/5 hover:border-red-600/50 relative p-6 text-center ${
+                    media.recommended ? "border-red-600/50" : ""
+                  }`}
+                >
+                  {media.recommended && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.2em]">
+                      Include with All
+                    </div>
+                  )}
+                  <div className="text-5xl mb-4">{media.icon}</div>
+                  <h4 className="text-lg font-black text-white mb-2 uppercase tracking-tight">{media.label}</h4>
+                  <p className="text-xs text-white/60 font-medium">{media.desc}</p>
                 </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">🎥</div>
-                <div>
-                  <h4 className="font-black text-white mb-1">Videography</h4>
-                  <p className="text-sm text-white/60 font-medium">Video captures the complete experience—speeches, music, and the flow of the service—allowing relatives to feel fully present.</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="text-3xl">✨</div>
-                <div>
-                  <h4 className="font-black text-white mb-1">Photo + Video Combo</h4>
-                  <p className="text-sm text-white/60 font-medium">The complete package combines both formats to create a comprehensive record and multiple ways to remember and share.</p>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Why Choose Us */}
-      <section className="section-padding bg-zinc-950">
-        <div className="content-width">
-          <h2 className="text-center mb-16 text-4xl font-black text-gradient">Why Choose Us?</h2>
-          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-            {whyChooseUs.map((item, index) => (
-              <div key={index} className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="flex items-center justify-center h-10 w-10 rounded-lg bg-red-600/20 border border-red-600/30">
-                    <Heart className="h-6 w-6 text-red-600" />
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-white mb-2 uppercase tracking-tight">{item.title}</h3>
-                  <p className="text-white/60 text-sm leading-relaxed font-medium">{item.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Information Section */}
-      <section className="section-padding">
+      <section className="section-padding bg-zinc-950">
         <div className="content-width max-w-3xl mx-auto">
           <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-10">
-            <h3 className="text-2xl font-black mb-6 text-white">How It Works</h3>
+            <h3 className="text-2xl font-black mb-6 text-white">Our Approach</h3>
             <div className="space-y-6">
               <div>
-                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">1. Contact Us</h4>
-                <p className="text-white/60 text-sm font-medium">Reach out to us with information about the service date, time, and location. We'll discuss your needs and answer any questions.</p>
+                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">Respectful Documentation</h4>
+                <p className="text-white/60 text-sm font-medium">We work discreetly during the service, ensuring our presence does not intrude on this important time.</p>
               </div>
               <div>
-                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">2. Select Your Package</h4>
-                <p className="text-white/60 text-sm font-medium">Choose the coverage duration and format (Photography, Videography, or Combo) that best suits your family's needs.</p>
+                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">Professional Quality</h4>
+                <p className="text-white/60 text-sm font-medium">All media is professionally edited and color-corrected to create lasting, beautiful memories.</p>
               </div>
               <div>
-                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">3. Professional Documentation</h4>
-                <p className="text-white/60 text-sm font-medium">Our respectful and experienced team will capture the service with sensitivity and professionalism.</p>
+                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">Secure Delivery</h4>
+                <p className="text-white/60 text-sm font-medium">Your memories are delivered on USB drive with backup copies to ensure nothing is ever lost.</p>
               </div>
               <div>
-                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">4. Edited & Delivered</h4>
-                <p className="text-white/60 text-sm font-medium">Your professionally edited media is delivered on USB, ready to share with family and preserve as a lasting memory.</p>
+                <h4 className="text-sm font-black text-red-600 uppercase tracking-[0.3em] mb-2">Family-Focused</h4>
+                <p className="text-white/60 text-sm font-medium">We understand this is a sensitive time and tailor our service to your family's specific needs and wishes.</p>
               </div>
             </div>
           </div>
@@ -266,18 +252,18 @@ const FuneralCoverage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="section-padding bg-zinc-950">
+      <section className="section-padding">
         <div className="content-width text-center max-w-4xl mx-auto">
           <h2 className="text-4xl md:text-5xl font-black mb-8 text-gradient">Let Us Help Preserve These Memories</h2>
           <p className="text-xl text-white/60 mb-12 font-medium">
-            Our compassionate team is here to support your family during this important time.
+            Contact us to discuss your needs and learn how we can respectfully document your loved one's memorial service.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <Button asChild className="h-14 px-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-full uppercase tracking-widest text-[10px]">
               <Link to="/contact">Contact Us</Link>
             </Button>
             <Button asChild variant="outline" className="h-14 px-12 border-white/10 text-white hover:bg-white/5 font-black rounded-full uppercase tracking-widest text-[10px]">
-              <Link to="/services/visual-production/community-events">Back to Events</Link>
+              <Link to="/services/visual-production/community-events">Back to Community Events</Link>
             </Button>
           </div>
         </div>
