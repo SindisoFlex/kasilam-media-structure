@@ -114,7 +114,8 @@
   }
 
   .premium-card {
-    @apply relative overflow-hidden bg-card border border-white/5 rounded-[2rem] p-10 transition-all duration-700 ease-[cubic-bezier(0.23, 1, 0.32, 1)] hover:border-primary/30 hover:shadow-[0_40px_80px_-20px_rgba(0, 0, 0, 0.4)] hover:-translate-y-2 active:scale-[0.98];
+    @apply relative overflow-hidden bg-card border border-white/5 rounded-[2rem] p-10 transition-all duration-700 hover:border-primary/30 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] hover:-translate-y-2 active:scale-[0.98];
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .dark .premium-card {
@@ -130,7 +131,7 @@
   }
 
   .red-glow {
-    @apply shadow-[0_0_50px_-12px_rgba(220, 38, 38, 0.3)];
+    @apply shadow-[0_0_50px_-12px_rgba(220,38,38,0.3)];
   }
 
   .tech-border {
@@ -158,3 +159,4 @@
 .animate-subtle-zoom {
   animation: subtle-zoom 20s infinite alternate ease-in-out;
 }
+

@@ -31,6 +31,7 @@ const CommunityEvents = () => {
         "Family portraits",
         "Guest moments",
       ],
+      link: "/services/visual-production/wedding-production",
     },
     {
       id: "funeral",
@@ -44,6 +45,7 @@ const CommunityEvents = () => {
         "Professional presence",
         "Sensitive approach",
       ],
+      link: "/services/visual-production/funeral-coverage",
     },
     {
       id: "family",
@@ -143,10 +145,13 @@ const CommunityEvents = () => {
     },
   ];
 
-  const handleServiceSelect = (serviceId: string) => {
+  const handleServiceSelect = (serviceId: string, link?: string) => {
     if (serviceId === "family") {
       setSelectedService(serviceId);
       setShowPackages(true);
+    } else if (link) {
+      // Navigate to detailed service page
+      window.location.href = link;
     } else {
       // Navigate to booking for other services
       window.location.href = `/booking?service=visual&category=${serviceId}`;
@@ -342,7 +347,7 @@ const CommunityEvents = () => {
                   ))}
                 </div>
                 <Button
-                  onClick={() => handleServiceSelect(service.id)}
+                  onClick={() => handleServiceSelect(service.id, service.link)}
                   className="w-full h-14 bg-white/5 hover:bg-red-600 text-white font-black border border-white/10 hover:border-red-600 transition-all uppercase tracking-widest text-[10px] rounded-full"
                 >
                   {service.id === "family" ? "View Packages" : "View Options"} <ArrowRight className="h-4 w-4 ml-2" />

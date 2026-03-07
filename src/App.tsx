@@ -35,6 +35,8 @@ import AnalyticsReporting from "./pages/digital/AnalyticsReporting";
 import CommunityEvents from "./pages/visual/CommunityEvents";
 import CreatorsArtists from "./pages/visual/CreatorsArtists";
 import BusinessCorporate from "./pages/visual/BusinessCorporate";
+import WeddingProduction from "./pages/visual/WeddingProduction";
+import FuneralCoverage from "./pages/visual/FuneralCoverage";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +77,8 @@ const App = () => (
               <Route path="/services/visual-production/community-events" element={<CommunityEvents />} />
               <Route path="/services/visual-production/creators-artists" element={<CreatorsArtists />} />
               <Route path="/services/visual-production/business-corporate" element={<BusinessCorporate />} />
+              <Route path="/services/visual-production/wedding-production" element={<WeddingProduction />} />
+              <Route path="/services/visual-production/funeral-coverage" element={<FuneralCoverage />} />
 
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="*" element={<NotFound />} />
