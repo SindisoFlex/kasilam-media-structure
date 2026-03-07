@@ -56,7 +56,7 @@ const productionTypes = [
       "Family Gatherings",
     ],
     buttonText: "View Event Packages",
-    link: "#packages",
+    link: "/services/visual-production/community-events",
   },
   {
     title: "Creators & Artists",
@@ -70,7 +70,7 @@ const productionTypes = [
       "Artist Visual Campaigns",
     ],
     buttonText: "Start a Creative Project",
-    link: "/contact",
+    link: "/services/visual-production/creators-artists",
   },
   {
     title: "Business & Corporate",
@@ -84,7 +84,7 @@ const productionTypes = [
       "Marketing Content",
     ],
     buttonText: "Request Business Production",
-    link: "/contact",
+    link: "/services/visual-production/business-corporate",
   },
 ];
 

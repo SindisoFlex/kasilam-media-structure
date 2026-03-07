@@ -30,6 +30,11 @@ import ContentCreation from "./pages/digital/ContentCreation";
 import WebDevelopment from "./pages/digital/WebDevelopment";
 import AnalyticsReporting from "./pages/digital/AnalyticsReporting";
 
+// Visual Sub-pages
+import CommunityEvents from "./pages/visual/CommunityEvents";
+import CreatorsArtists from "./pages/visual/CreatorsArtists";
+import BusinessCorporate from "./pages/visual/BusinessCorporate";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -63,6 +68,11 @@ const App = () => (
               <Route path="/services/content-creation" element={<ContentCreation />} />
               <Route path="/services/web-app-development" element={<WebDevelopment />} />
               <Route path="/services/analytics-reporting" element={<AnalyticsReporting />} />
+
+              {/* Visual Sub-routes */}
+              <Route path="/services/visual-production/community-events" element={<CommunityEvents />} />
+              <Route path="/services/visual-production/creators-artists" element={<CreatorsArtists />} />
+              <Route path="/services/visual-production/business-corporate" element={<BusinessCorporate />} />
 
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="*" element={<NotFound />} />
