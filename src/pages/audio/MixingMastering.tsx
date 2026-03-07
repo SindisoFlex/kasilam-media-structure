@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { AudioWaveform, CheckCircle, ArrowRight } from "lucide-react";
+import { Headphones, CheckCircle, ArrowRight } from "lucide-react";
 
-const VoiceOverProduction = () => {
+const MixingMastering = () => {
     return (
         <div className="min-h-screen bg-background">
             {/* Hero */}
@@ -10,17 +10,17 @@ const VoiceOverProduction = () => {
                 <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
                 <div className="container relative mx-auto px-4 text-center">
                     <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                        <AudioWaveform className="h-4 w-4" />
-                        Voice-Over Production
+                        <Headphones className="h-4 w-4" />
+                        Mixing & Mastering Coordination
                     </div>
                     <h1 className="text-4xl md:text-6xl font-black mb-6">
-                        Professional <span className="text-primary">Voice-Over Production</span>
+                        Professional <span className="text-primary">Mixing & Mastering</span>
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto mb-10">
-                        Clear, professional voice recordings for brands, media, and storytelling.
+                        Refine and balance your audio to achieve a polished, professional sound.
                     </p>
                     <Button asChild size="lg" className="px-8">
-                        <Link to="/booking">Record Voice-Over</Link>
+                        <Link to="/booking">Start Mixing Process</Link>
                     </Button>
                 </div>
             </section>
@@ -32,10 +32,10 @@ const VoiceOverProduction = () => {
                         <h2 className="text-3xl font-bold mb-8 text-center">About This Service</h2>
                         <div className="space-y-6 text-lg text-muted-foreground leading-relaxed text-center">
                             <p>
-                                Voice-over audio is used in commercials, corporate videos, social media ads, and digital media.
+                                Mixing and mastering are essential steps in professional audio production.
                             </p>
                             <p>
-                                Our voice-over production service ensures your voice recordings sound clear, polished, and ready for professional use. We provide a focused recording environment and technical setup designed to capture voice audio with clarity and consistency.
+                                Instead of limiting you to one engineer, we collaborate with trusted mixing and mastering specialists to ensure your project receives the right treatment. Our role is to coordinate the process, communicate your creative vision, and ensure the final sound meets professional standards.
                             </p>
                         </div>
                     </div>
@@ -45,27 +45,25 @@ const VoiceOverProduction = () => {
             {/* Pricing */}
             <section className="py-20 bg-card/50">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl font-bold mb-12">Voice-Over <span className="text-primary">Packages</span></h2>
-                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto text-left">
+                    <h2 className="text-3xl font-bold mb-12">Post-Production <span className="text-primary">Pricing</span></h2>
+                    <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {[
                             {
-                                name: "Voiceover Recording",
-                                price: "R400 / hour",
-                                desc: "Ads, Radio promos, YouTube & Documentary narration.",
-                                features: ["Recording session", "Clean audio export"]
+                                name: "Mixing",
+                                price: "R900 per song",
+                                features: ["Full mix balancing", "EQ & compression", "Vocal & instrument effects", "Stereo imaging", "2 revisions"]
                             },
                             {
-                                name: "Full Voiceover Production",
-                                price: "R1200 / project",
+                                name: "Mastering",
+                                price: "R450 per song",
                                 highlighted: true,
-                                features: ["Recording", "Audio cleaning", "Compression & EQ", "Final mastered audio"]
+                                features: ["Loudness optimization", "Final polish and clarity", "Streaming-ready format", "Multiple output formats"]
                             }
                         ].map((tier, i) => (
                             <div key={i} className={`p-8 rounded-2xl border flex flex-col ${tier.highlighted ? 'border-primary bg-primary/5 shadow-xl' : 'border-border bg-background'}`}>
                                 <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                                <p className="text-2xl font-black text-primary mb-4">{tier.price}</p>
-                                {tier.desc && <p className="text-sm text-muted-foreground mb-6">{tier.desc}</p>}
-                                <ul className="space-y-3 mb-8 flex-1">
+                                <p className="text-2xl font-black text-primary mb-6">{tier.price}</p>
+                                <ul className="text-left space-y-3 mb-8 flex-1">
                                     {tier.features.map(f => (
                                         <li key={f} className="flex items-center gap-2 text-sm">
                                             <CheckCircle className="h-4 w-4 text-primary" />
@@ -74,7 +72,7 @@ const VoiceOverProduction = () => {
                                     ))}
                                 </ul>
                                 <Button variant={tier.highlighted ? "default" : "outline"} asChild className="w-full">
-                                    <Link to="/booking">Book Now</Link>
+                                    <Link to="/booking">Get Started</Link>
                                 </Button>
                             </div>
                         ))}
@@ -86,13 +84,13 @@ const VoiceOverProduction = () => {
             {/* CTA */}
             <section className="py-24 border-t border-border">
                 <div className="container mx-auto px-4 text-center">
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Give Your Project a Voice?</h2>
+                    <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Polish Your Sound?</h2>
                     <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
-                        Capture professional narration or commercial voice-overs with ease.
+                        Give your music the professional finish it deserves.
                     </p>
                     <Button asChild size="lg" className="gap-2">
                         <Link to="/booking">
-                            Record Your Voice-Over <ArrowRight className="h-4 w-4" />
+                            Start Your Mixing Process <ArrowRight className="h-4 w-4" />
                         </Link>
                     </Button>
                 </div>
@@ -101,4 +99,4 @@ const VoiceOverProduction = () => {
     );
 };
 
-export default VoiceOverProduction;
+export default MixingMastering;

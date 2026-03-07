@@ -39,50 +39,43 @@ const processSteps = [
 ];
 
 const services = [
-  { icon: Share2, title: "Social Media Management", desc: "Consistent, on-brand content planning and publishing across all major platforms." },
-  { icon: Megaphone, title: "Paid Advertising", desc: "Strategic ad campaigns on Meta, Google, and TikTok to reach the right audience." },
-  { icon: PenTool, title: "Content Creation", desc: "Copywriting, graphic design, and short-form video tailored to your brand voice." },
-  { icon: Globe, title: "Website Design & Management", desc: "Modern, responsive websites built for conversions and maintained for performance." },
-  { icon: BarChart3, title: "Analytics & Reporting", desc: "Clear monthly insights so you always know what's working and what to improve." },
+  {
+    icon: Share2,
+    title: "Social Media Management",
+    desc: "Grow your audience with strategic content and consistent engagement.",
+    link: "/services/social-media-management"
+  },
+  {
+    icon: Megaphone,
+    title: "Paid Advertising",
+    desc: "Target the right audience and drive measurable results with smart campaigns.",
+    link: "/services/paid-advertising"
+  },
+  {
+    icon: PenTool,
+    title: "Content Creation",
+    desc: "Professional graphics, copywriting, and video content designed for engagement.",
+    link: "/services/content-creation"
+  },
+  {
+    icon: Globe,
+    title: "Website & Web App Design",
+    desc: "Modern websites and web applications built for performance and scalability.",
+    link: "/services/web-app-development"
+  },
+  {
+    icon: BarChart3,
+    title: "Analytics & Reporting",
+    desc: "Clear insights and data tracking to guide smarter marketing decisions.",
+    link: "/services/analytics-reporting"
+  },
 ];
 
-const pricingTiers = [
-  {
-    name: "Starter Plan",
-    price: "R____/mo",
-    features: [
-      "Social media management (2 platforms)",
-      "8 posts per month",
-      "Basic graphic design",
-      "Monthly performance summary",
-    ],
-    highlighted: false,
-  },
-  {
-    name: "Growth Plan",
-    price: "R____/mo",
-    features: [
-      "Social media management (3 platforms)",
-      "16 posts per month",
-      "Paid ad campaign management",
-      "Content calendar & strategy",
-      "Bi-weekly performance reports",
-    ],
-    highlighted: true,
-  },
-  {
-    name: "Premium Plan",
-    price: "R____/mo",
-    features: [
-      "Full digital marketing suite",
-      "Unlimited platforms",
-      "Ad spend management & optimization",
-      "Website updates & SEO",
-      "Dedicated account manager",
-      "Weekly reporting & strategy calls",
-    ],
-    highlighted: false,
-  },
+const authorityPoints = [
+  "Strategy-driven marketing",
+  "Creative content production",
+  "Data-driven campaigns",
+  "Full digital ecosystem support",
 ];
 
 const DigitalMarketing = () => {
@@ -125,11 +118,33 @@ const DigitalMarketing = () => {
         </div>
       </section>
 
+      {/* Authority Section */}
+      <section className="bg-muted/30 py-16">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
+            <div className="max-w-md">
+              <h2 className="text-3xl font-bold md:text-4xl text-white">Why Businesses Work With <span className="text-primary">KMP</span></h2>
+              <p className="mt-4 text-muted-foreground">
+                We are more than just a service provider; we are your strategic digital partner.
+              </p>
+            </div>
+            <div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
+              {authorityPoints.map((point) => (
+                <div key={point} className="flex items-center gap-3 rounded-lg border border-primary/10 bg-background/50 p-4">
+                  <CheckCircle className="h-5 w-5 shrink-0 text-primary" />
+                  <span className="font-medium text-white">{point}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Who We Are */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">
+            <h2 className="text-3xl font-bold md:text-4xl text-white">
               Your Digital <span className="text-primary">Growth Partner</span>
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -169,25 +184,34 @@ const DigitalMarketing = () => {
         </div>
       </section>
 
-      {/* Services Included */}
+      {/* Our Services */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            What's <span className="text-primary">Included</span>
-          </h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mb-12 text-center">
+            <h2 className="text-3xl font-bold md:text-4xl text-white">
+              Our Digital <span className="text-primary">Services</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              Explore our specialized digital solutions designed to scale your brand.
+            </p>
+          </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s, i) => (
               <Card
                 key={s.title}
-                className="animate-fade-in border-border bg-muted"
+                className="group relative animate-fade-in overflow-hidden border-border bg-muted transition-all hover:border-primary/50 hover:shadow-2xl"
                 style={{ animationDelay: `${i * 80}ms` }}
               >
-                <CardContent className="p-6">
-                  <div className="mb-4 inline-flex rounded-full bg-primary/10 p-3">
-                    <s.icon className="h-6 w-6 text-primary" />
+                <Link to={s.link} className="absolute inset-0 z-10" />
+                <CardContent className="p-8">
+                  <div className="mb-6 inline-flex rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
+                    <s.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold">{s.title}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
+                  <h3 className="text-xl font-bold text-white transition-colors group-hover:text-primary">{s.title}</h3>
+                  <p className="mt-3 text-muted-foreground">{s.desc}</p>
+                  <div className="mt-6 flex items-center gap-2 font-bold text-primary opacity-0 transition-all group-hover:opacity-100">
+                    View Service <ArrowRight className="h-4 w-4" />
+                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -195,57 +219,7 @@ const DigitalMarketing = () => {
         </div>
       </section>
 
-      {/* Pricing Tiers */}
-      <section id="packages" className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            Digital Marketing <span className="text-primary">Plans</span>
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {pricingTiers.map((tier, i) => (
-              <Card
-                key={tier.name}
-                className={`animate-fade-in shadow-lg ${
-                  tier.highlighted
-                    ? "border-2 border-primary"
-                    : "border-primary/20"
-                }`}
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <CardHeader className="text-center">
-                  {tier.highlighted && (
-                    <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">
-                      Most Popular
-                    </span>
-                  )}
-                  <CardTitle className="text-xl">{tier.name}</CardTitle>
-                  <p className="mt-2 text-3xl font-black text-primary">
-                    {tier.price}
-                  </p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-center gap-3 text-sm">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="mt-6 w-full"
-                    variant={tier.highlighted ? "default" : "outline"}
-                  >
-                    <Link to="/booking">Get Started</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* Final CTA */}
       <section className="bg-card py-20">

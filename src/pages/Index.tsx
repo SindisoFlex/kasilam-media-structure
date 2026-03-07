@@ -27,153 +27,165 @@ const steps = [
 
 const Index = () => {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* 1. Hero Section - Corporate & Confident */}
-      <section className="relative flex min-h-[90vh] items-center justify-center overflow-hidden bg-background">
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* 1. Hero Section - Cinematic & Professional */}
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom opacity-40 dark:opacity-30"
+          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom opacity-20"
           style={{
             backgroundImage: `url(${heroBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         />
-        <div className="absolute inset-0 z-10 bg-background/30 backdrop-blur-[1px] transition-colors duration-500" />
-        <div className="absolute inset-0 z-11 bg-gradient-to-t from-background via-background/10 to-transparent" />
+        <div className="absolute inset-0 z-10 bg-background/40 backdrop-blur-[2px]" />
+        <div className="absolute inset-0 z-11 mesh-bg opacity-50" />
 
         <div className="content-width relative z-20 text-center">
-          <div className="flex justify-center mb-10 animate-fade-in">
-            <img src={logo} alt="KMP Logo" className="h-20 w-auto md:h-24 drop-shadow-2xl" />
+          <div className="flex justify-center mb-12 animate-fade-in">
+            <div className="p-4 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 red-glow">
+              <img src={logo} alt="KMP Logo" className="h-20 w-auto md:h-28" />
+            </div>
           </div>
-          <h1 className="animate-fade-in text-balance mb-6">
+          <h1 className="animate-fade-in mb-8 text-gradient">
             Professional Media for<br />
-            <span className="text-primary">Growing Businesses.</span>
+            <span className="text-primary italic">Growing Businesses.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg font-medium text-balance md:text-xl text-muted-foreground" style={{ animationDelay: "150ms" }}>
-            “We help people and businesses tell their stories through powerful visuals, sound, and digital innovation.”
+          <p className="mx-auto mt-8 max-w-3xl animate-fade-in text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-white/60" style={{ animationDelay: "150ms" }}>
+            Powerful visuals, high-end sound, and digital innovation.
           </p>
-          <div className="mt-12 flex animate-fade-in flex-wrap justify-center gap-5" style={{ animationDelay: "300ms" }}>
-            <Button asChild size="lg" className="h-14 px-10 text-base font-bold shadow-2xl hover:translate-y-[-2px] transition-transform">
+          <div className="mt-16 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
+            <Button asChild size="lg" className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] bg-red-600 hover:bg-red-700 text-white rounded-full transition-all hover:scale-105 active:scale-95 red-glow">
               <Link to="/booking">
-                Request a Consultation <ArrowRight className="h-4 w-4 ml-2" />
+                Request a Consultation <ArrowRight className="h-4 w-4 ml-3" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg" className="h-14 px-10 text-base font-bold bg-background/20 backdrop-blur-md shadow-lg border-primary/20 hover:bg-background/40">
+            <Button asChild variant="outline" size="lg" className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full hover:bg-white/10 hover:border-red-600/50">
               <Link to="/services">View Our Work</Link>
             </Button>
           </div>
         </div>
       </section>
 
-      {/* 2. Who We Help - Refined Grid (3 Columns) */}
-      <section className="section-padding bg-muted/30">
+      {/* 2. Who We Help - Futuristic Grid */}
+      <section className="section-padding relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
         <div className="content-width">
-          <div className="max-w-3xl mx-auto text-center mb-20">
-            <h2 className="mb-4">Who We Work With</h2>
-            <p className="text-lg text-muted-foreground">Strategic creative services for the community, artists, and growing businesses.</p>
+          <div className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Who We Work With</h2>
+            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Strategic creative services for leaders and innovators.</p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-10">
             {/* Column 1: Small & Startup Businesses */}
-            <div className="premium-card flex flex-col h-full bg-background/50 hover:border-primary/30 transition-all group">
-              <h3 className="text-xl font-bold text-primary mb-6">Businesses & Entrepreneurs</h3>
-              <p className="text-sm mb-8 text-muted-foreground">For startups and township entrepreneurs looking to present themselves professionally and build credibility.</p>
-              <div className="space-y-4 mb-10 flex-grow">
+            <div className="premium-card group">
+              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Globe className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-6">Businesses</h3>
+              <p className="text-base mb-10 text-white/50 font-medium leading-relaxed">For township entrepreneurs and startups looking to build global credibility and visibility.</p>
+              <div className="space-y-5 mb-12 flex-grow">
                 {["Business websites", "Corporate photography", "Promotional videos", "Digital brand support"].map(item => (
-                  <div key={item} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0 text-sm font-medium">
-                    <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-white/80">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
-              <p className="font-bold text-xs uppercase tracking-widest text-primary/80">Visibility & Trust</p>
+              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Visibility & Trust</p>
             </div>
 
             {/* Column 2: Local Artists & Creatives */}
-            <div className="premium-card flex flex-col h-full bg-background/50 border-primary/20 shadow-xl scale-105 group">
-              <h3 className="text-xl font-bold text-primary mb-6">Artists & Creatives</h3>
-              <p className="text-sm mb-8 text-muted-foreground">Helping musicians, content creators, and independent artists look and sound professional in a competitive world.</p>
-              <div className="space-y-4 mb-10 flex-grow">
+            <div className="premium-card group border-primary/20 bg-white/[0.03] scale-105 shadow-[0_0_100px_-20px_rgba(220,38,38,0.1)]">
+              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 red-glow">
+                <Mic className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-6">Artists</h3>
+              <p className="text-base mb-10 text-white/50 font-medium leading-relaxed">Helping musicians and content creators look and sound professional in a global marketplace.</p>
+              <div className="space-y-5 mb-12 flex-grow">
                 {["Music recording", "Voiceovers", "Music videos", "Audio editing & mixing"].map(item => (
-                  <div key={item} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0 text-sm font-medium">
-                    <CheckCircle className="h-4 w-4 text-primary shrink-0 group-hover:scale-110 transition-transform" />
+                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-white/80">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
-              <p className="font-bold text-xs uppercase tracking-widest text-primary/80">Creativity & Impact</p>
+              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Creativity & Impact</p>
             </div>
 
             {/* Column 3: Community Individuals & Families */}
-            <div className="premium-card flex flex-col h-full bg-background/50 hover:border-primary/30 transition-all group">
-              <h3 className="text-xl font-bold text-primary mb-6">Community & Life Milestones</h3>
-              <p className="text-sm mb-8 text-muted-foreground">For families and individuals preserving meaningful moments — from weddings to graduations — with professional care.</p>
-              <div className="space-y-4 mb-10 flex-grow">
+            <div className="premium-card group">
+              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
+                <Camera className="h-6 w-6 text-primary" />
+              </div>
+              <h3 className="text-3xl font-bold text-white mb-6">Community</h3>
+              <p className="text-base mb-10 text-white/50 font-medium leading-relaxed">For families and individuals preserving life’s most important milestones with professional care.</p>
+              <div className="space-y-5 mb-12 flex-grow">
                 {["Weddings", "Graduations", "Funerals & memorials", "Celebrations & events"].map(item => (
-                  <div key={item} className="flex items-center gap-3 py-2 border-b border-border/50 last:border-0 text-sm font-medium">
-                    <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-white/80">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
                     <span>{item}</span>
                   </div>
                 ))}
               </div>
-              <p className="font-bold text-xs uppercase tracking-widest text-primary/80">Preservation & Care</p>
+              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Preservation & Care</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3. Our Services - Primary & Secondary Structure */}
-      <section className="section-padding">
+      {/* 3. Services Architecture */}
+      <section className="section-padding bg-zinc-950 relative">
         <div className="content-width">
-          <div className="max-w-3xl mx-auto text-center mb-24">
-            <h2 className="mb-4">Services Architecture</h2>
-            <p className="text-lg text-muted-foreground">Bridging the gap between traditional media production and modern digital growth.</p>
+          <div className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Services Architecture</h2>
+            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Bridging the gap between media and technology.</p>
           </div>
-          <div className="grid gap-16 md:grid-cols-2">
+          <div className="grid gap-20 lg:grid-cols-2">
             {/* Primary Creative Services */}
-            <div className="space-y-12">
-              <div className="flex items-center gap-6 mb-12">
-                <div className="h-12 w-1.5 bg-primary rounded-full" />
-                <h3 className="text-2xl font-black uppercase tracking-widest text-primary">Core Identity</h3>
+            <div className="space-y-16">
+              <div className="flex items-center gap-6 mb-16">
+                <div className="h-14 w-1 bg-red-600 rounded-full red-glow" />
+                <h3 className="text-3xl font-black uppercase tracking-[0.3em] text-white">Core Identity</h3>
               </div>
-              <div className="space-y-12 pl-6 border-l border-border/60">
+              <div className="space-y-16 pl-8 border-l border-white/5">
                 {[
                   { icon: Camera, title: "Photography", desc: "Events, Weddings, Graduations, and Corporate Lifestyle shoots." },
                   { icon: Mic, title: "Audio Production", desc: "Professional music recording, voiceovers, podcasting, and audio mixing." },
                   { icon: ArrowRight, title: "Videography", desc: "Event coverage, promo videos, music videos, and cinematic storytelling." }
                 ].map((s) => (
-                  <div key={s.title} className="group">
-                    <h4 className="text-xl font-bold flex items-center gap-4 mb-3 group-hover:text-primary transition-colors">
-                      <div className="rounded-lg bg-primary/5 p-2 group-hover:bg-primary/10 transition-colors">
-                        <s.icon className="h-5 w-5 text-primary" />
+                  <div key={s.title} className="group transition-all">
+                    <h4 className="text-2xl font-bold flex items-center gap-6 mb-4 group-hover:text-red-500 transition-colors">
+                      <div className="rounded-2xl bg-white/5 p-4 border border-white/5 group-hover:border-red-600/30 transition-all">
+                        <s.icon className="h-6 w-6 text-red-600" />
                       </div>
                       {s.title}
                     </h4>
-                    <p className="text-base text-muted-foreground leading-relaxed">{s.desc}</p>
+                    <p className="text-lg text-white/50 leading-relaxed font-medium">{s.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Secondary Digital Solutions */}
-            <div className="space-y-12">
-              <div className="flex items-center gap-6 mb-12">
-                <div className="h-12 w-1.5 bg-primary rounded-full opacity-60" />
-                <h3 className="text-2xl font-black uppercase tracking-widest text-primary/70">Growth Services</h3>
+            <div className="space-y-16">
+              <div className="flex items-center gap-6 mb-16">
+                <div className="h-14 w-1 bg-white/20 rounded-full" />
+                <h3 className="text-3xl font-black uppercase tracking-[0.3em] text-white/60">Growth Services</h3>
               </div>
-              <div className="space-y-12 pl-6 border-l border-border/60">
+              <div className="space-y-16 pl-8 border-l border-white/5">
                 {[
                   { icon: Globe, title: "Web Development", desc: "Modern business, portfolio, and startup websites with full maintenance support." },
                   { icon: Zap, title: "Digital Marketing", desc: "Brand visibility strategies, social media content, and presence optimization." },
-                  { icon: Award, title: "AI & Automation Solutions", desc: "AI-assisted content creation and automated digital workflows for business efficiency." }
+                  { icon: Award, title: "AI & Automation", desc: "AI-assisted content creation and automated digital workflows for business efficiency." }
                 ].map((s) => (
-                  <div key={s.title} className="group">
-                    <h4 className="text-xl font-bold flex items-center gap-4 mb-3 group-hover:text-primary transition-colors">
-                      <div className="rounded-lg bg-primary/5 p-2 group-hover:bg-primary/10 transition-colors">
-                        <s.icon className="h-5 w-5 text-primary" />
+                  <div key={s.title} className="group transition-all">
+                    <h4 className="text-2xl font-bold flex items-center gap-6 mb-4 group-hover:text-red-500 transition-colors">
+                      <div className="rounded-2xl bg-white/5 p-4 border border-white/5 group-hover:border-red-600/30 transition-all">
+                        <s.icon className="h-6 w-6 text-red-600" />
                       </div>
                       {s.title}
                     </h4>
-                    <p className="text-base text-muted-foreground leading-relaxed">{s.desc}</p>
+                    <p className="text-lg text-white/50 leading-relaxed font-medium">{s.desc}</p>
                   </div>
                 ))}
               </div>
@@ -183,122 +195,99 @@ const Index = () => {
       </section>
 
       {/* 4. Our Process - Methodical Layout */}
-      <section className="section-padding bg-muted/20">
+      <section className="section-padding bg-background relative overflow-hidden">
         <div className="content-width">
-          <div className="max-w-3xl mx-auto text-center mb-24">
-            <h2 className="mb-4">The KMP Methodology</h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">Structured planning for reliable creative results.</p>
+          <div className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">The KMP Methodology</h2>
+            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Structured planning for elite results.</p>
           </div>
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((s, idx) => (
-              <div key={s.num} className="premium-card group hover:bg-background h-full transition-all border border-border/30">
-                <div className="flex items-center justify-between mb-10">
-                  <span className="text-6xl font-black text-primary/5 group-hover:text-primary/10 transition-colors leading-none">{s.num}</span>
-                  {idx < steps.length - 1 && <ArrowRight className="hidden lg:block h-6 w-6 text-border opacity-50" />}
+              <div key={s.num} className="premium-card group h-full">
+                <div className="flex items-center justify-between mb-12">
+                  <span className="text-7xl font-black text-white/5 group-hover:text-red-600/10 transition-colors leading-none">{s.num}</span>
                 </div>
-                <h3 className="text-xl font-bold mb-4">{s.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
+                <h3 className="text-2xl font-bold mb-5 uppercase tracking-tight">{s.title}</h3>
+                <p className="text-base leading-relaxed text-white/50 font-medium">{s.desc}</p>
               </div>
             ))}
           </div>
-          <div className="mt-20 text-center">
-            <span className="px-8 py-3 rounded-xl bg-primary/5 text-primary text-xs font-black uppercase tracking-[0.3em] border border-primary/20">Clear. Efficient. Professional.</span>
+          <div className="mt-24 text-center">
+            <div className="inline-block px-10 py-5 rounded-full bg-white/5 border border-white/10 tech-border">
+              <span className="text-[10px] font-black uppercase tracking-[0.5em] text-red-600">Clear. Efficient. Professional.</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 5. Why Work With Us - Trust & Reliability */}
-      <section className="section-padding">
+      {/* 5. Why Work With Us */}
+      <section className="section-padding bg-zinc-950">
         <div className="content-width text-center">
-          <h2 className="mb-24">Why Choose Our Studio?</h2>
-          <div className="grid gap-16 sm:grid-cols-2 lg:grid-cols-4">
+          <h2 className="mb-32 text-gradient">Why Choose Our Studio?</h2>
+          <div className="grid gap-20 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Award, title: "Strategic Thinking", desc: "Every project is built with long-term brand visibility and positioning in mind." },
-              { icon: Users, title: "Inclusive Access", desc: "Premium media production for everyone, from township startups to corporate firms." },
-              { icon: Zap, title: "Modern Tech", desc: "Integrating AI and digital innovations into traditional creative workflows." },
+              { icon: Award, title: "Strategic Thinking", desc: "Every project is built with long-term brand positioning in mind." },
+              { icon: Users, title: "Inclusive Access", desc: "Premium media production for everyone, from startups to corporate firms." },
+              { icon: Zap, title: "Modern Tech", desc: "Integrating AI and digital innovations into elite workflows." },
               { icon: Clock, title: "Proven Delivery", desc: "Dependable timelines and professional execution you can count on." }
             ].map((r) => (
               <div key={r.title} className="flex flex-col items-center group">
-                <div className="mb-8 rounded-[2rem] bg-primary/5 p-7 group-hover:bg-primary/10 transition-all border border-primary/10 group-hover:border-primary/30 group-hover:rotate-6">
-                  <r.icon className="h-8 w-8 text-primary" />
+                <div className="mb-10 rounded-[2.5rem] bg-white/5 p-8 border border-white/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700">
+                  <r.icon className="h-8 w-8 text-red-600" />
                 </div>
-                <h4 className="font-bold text-xl mb-4">{r.title}</h4>
-                <p className="text-base text-muted-foreground leading-relaxed max-w-[240px]">{r.desc}</p>
+                <h4 className="font-bold text-2xl mb-6 uppercase tracking-tight tracking-[-0.03em]">{r.title}</h4>
+                <p className="text-base text-white/40 leading-relaxed max-w-[260px] font-medium">{r.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 6. Portfolio Preview - Clean Grid */}
-      <section className="section-padding bg-muted/30 border-t border-border/40">
+      {/* 6. Portfolio Preview */}
+      <section className="section-padding bg-background border-t border-white/5">
         <div className="content-width">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
-            <div className="max-w-xl">
-              <h2 className="mb-6">Selected Projects</h2>
-              <p className="text-lg text-muted-foreground">“We help people and businesses tell their stories through powerful visuals and sound.”</p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-10">
+            <div className="max-w-2xl">
+              <h2 className="mb-8 text-gradient">Selected Projects</h2>
+              <p className="text-xl text-white/50 font-medium">Stories told through powerful visuals and cinematic sound.</p>
             </div>
-            <Button asChild variant="link" className="text-primary font-black uppercase tracking-widest text-xs group">
-              <Link to="/services" className="flex items-center gap-3">
-                Browse Full Portfolio <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
+            <Button asChild variant="link" className="h-auto p-0 text-red-600 font-black uppercase tracking-[0.3em] text-[10px] group transition-all">
+              <Link to="/portfolio" className="flex items-center gap-4">
+                Full Portfolio <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-3" />
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 lg:gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-12">
             {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="aspect-square bg-muted rounded-2xl bg-gradient-to-br from-card to-border/20 border border-border/40 flex items-center justify-center group overflow-hidden relative shadow-sm hover:shadow-xl transition-all hover:translate-y-[-4px]">
-                <Camera className="h-10 w-10 text-muted-foreground/20 group-hover:text-primary/40 transition-all duration-500 z-10 scale-90 group-hover:scale-110" />
-                <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div key={i} className="premium-card p-0 aspect-video flex items-center justify-center group overflow-hidden relative border-white/5 hover:border-red-600/50">
+                <Camera className="h-10 w-10 text-white/10 group-hover:text-red-600/30 transition-all duration-700 z-10 scale-90 group-hover:scale-125" />
+                <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 7. About Preview Section - Authority */}
-      <section className="section-padding border-t border-border/40">
-        <div className="content-width max-w-4xl mx-auto text-center">
-          <h2 className="mb-14 text-balance leading-tight">Bridging the Gap Between Creativity and Opportunity.</h2>
-          <div className="space-y-12 text-lg font-medium text-balance opacity-90 mx-auto max-w-3xl">
-            <p className="leading-relaxed">
-              We stand at the intersection of <span className="text-foreground font-bold">Creativity</span>, <span className="text-foreground font-bold">Technology</span>, and <span className="text-foreground font-bold">Community Empowerment</span>.
-            </p>
-            <div className="pt-16 border-t border-border/60 mt-20 relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-background px-6">
-                <span className="uppercase tracking-[0.4em] font-black text-primary text-[10px]">Mission</span>
-              </div>
-              <p className="text-2xl md:text-4xl font-black text-foreground leading-[1.3] tracking-tight">
-                To provide high-quality services that help individuals and businesses grow their brands and preserve meaningful moments.
-              </p>
-            </div>
-          </div>
-          <div className="mt-20">
-            <Button asChild variant="outline" size="lg" className="h-14 px-12 group border-primary/20 hover:border-primary/50 hover:bg-primary/5 font-bold">
-              <Link to="/about" className="flex items-center gap-3">
-                Learn More About Our Roots <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* 8. Final CTA Section - High Impact */}
-      <section className="py-32 bg-primary text-primary-foreground relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.06)_0%,transparent_60%)]" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-white/5 blur-3xl rounded-full translate-x-1/ format-1/2" />
-
+      {/* 8. Final CTA Section - Cinematic & Minimal */}
+      <section className="section-padding relative overflow-hidden bg-zinc-950">
+        <div className="absolute inset-0 mesh-bg opacity-30" />
         <div className="content-width relative z-10 text-center">
-          <h2 className="text-4xl md:text-7xl font-black mb-10 text-balance text-primary-foreground leading-[1.1] tracking-tighter">
+          <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
             Let’s Capture<br />Your Real Story.
           </h2>
-          <p className="mx-auto max-w-3xl text-xl md:text-2xl opacity-90 mb-16 font-semibold text-balance leading-relaxed">
-            “Creative solutions for real people, real stories, and growing businesses.”
+          <p className="mx-auto max-w-4xl text-xl md:text-2xl text-white/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">
+            Creative solutions for bold people and growing brands.
           </p>
-          <Button asChild size="lg" variant="secondary" className="h-16 px-16 text-lg font-black shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:scale-105 active:scale-95 transition-all text-primary bg-white border-0 uppercase tracking-widest">
-            <Link to="/booking">
-              Start Your Project
-            </Link>
-          </Button>
+          <div className="flex justify-center flex-wrap gap-8">
+            <Button asChild size="lg" className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow">
+              <Link to="/booking">
+                Start Your Project
+              </Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
+              <Link to="/contact">Request Consultation</Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

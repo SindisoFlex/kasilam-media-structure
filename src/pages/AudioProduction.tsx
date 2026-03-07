@@ -12,75 +12,37 @@ import {
   MessageSquare,
   Sliders,
   Send,
-  Shield,
-  Users,
-  Sparkles,
-  HandshakeIcon,
-  FileAudio,
 } from "lucide-react";
 
 const processSteps = [
   {
     icon: MessageSquare,
-    title: "Consultation & Project Planning",
-    desc: "We start by understanding your project goals, creative direction, and technical requirements.",
+    title: "Consultation & Planning",
+    desc: "We understand your project goals and plan the session.",
   },
   {
     icon: Mic,
     title: "Recording Session",
-    desc: "Your audio is captured in a focused recording environment using professional equipment.",
+    desc: "Professional recording setup in a focused creative environment.",
   },
   {
     icon: Sliders,
-    title: "Production & Collaboration",
-    desc: "We coordinate with experienced sound engineers and producers to refine and enhance your audio.",
+    title: "Collaboration & Enhancement",
+    desc: "We work with trusted sound engineers and producers to refine your sound.",
   },
   {
     icon: Send,
     title: "Final Mix & Delivery",
-    desc: "You receive clean, balanced, professional audio files ready for release or distribution.",
+    desc: "You receive a clean, balanced, professional final output ready for release.",
   },
 ];
 
 const services = [
-  {
-    icon: Mic,
-    title: "Studio Recording",
-    desc: "Professional vocal and instrument recording in a controlled studio environment designed for high-quality sound capture.",
-    link: "/services/audio-production/studio-recording",
-  },
-  {
-    icon: Radio,
-    title: "Podcast Recording",
-    desc: "Professional podcast recording setup that ensures clear, broadcast-quality sound for interviews and conversations.",
-    link: "/services/audio-production/podcast-recording",
-  },
-  {
-    icon: AudioWaveform,
-    title: "Voice-over Production",
-    desc: "Clean voice-over recording for commercials, narration, corporate videos, and digital media.",
-    link: "/services/audio-production/voiceover-production",
-  },
-  {
-    icon: Headphones,
-    title: "Mixing & Mastering Coordination",
-    desc: "We collaborate with trusted audio engineers to refine, balance, and finalize your audio.",
-    link: "/services/audio-production/mixing-coordination",
-  },
-  {
-    icon: Music,
-    title: "Music Production Management",
-    desc: "We source beats, connect with producers, and manage the production workflow to help you find the right sound for your project.",
-    link: "/services/audio-production/production-management",
-  },
-];
-
-const whyWorkWithUs = [
-  { icon: Shield, text: "Professional recording environment" },
-  { icon: Users, text: "Network of trusted producers and engineers" },
-  { icon: Sparkles, text: "Flexible production packages" },
-  { icon: HandshakeIcon, text: "Creative collaboration" },
-  { icon: FileAudio, text: "Clean, high-quality audio delivery" },
+  { icon: Mic, title: "Studio Recording", desc: "Professional vocal and instrument recording in a controlled studio environment." },
+  { icon: Radio, title: "Podcast Recording", desc: "Crisp, broadcast-quality podcast recording and editing." },
+  { icon: AudioWaveform, title: "Voice-over Production", desc: "Clean voice-over recording for commercials, narration, and more." },
+  { icon: Headphones, title: "Mixing & Mastering Coordination", desc: "We coordinate with experienced engineers to mix and master your tracks." },
+  { icon: Music, title: "Beat Sourcing & Production Management", desc: "We source beats and manage the production pipeline for your project." },
 ];
 
 const pricingTiers = [
@@ -89,7 +51,7 @@ const pricingTiers = [
     price: "R____",
     features: [
       "2-hour recording session",
-      "Basic mix coordination",
+      "Basic mix",
       "1 revision",
       "Final MP3 delivery",
     ],
@@ -99,7 +61,7 @@ const pricingTiers = [
     name: "Professional Package",
     price: "R____",
     features: [
-      "Up to 4-hour recording session",
+      "Up to 4-hour session",
       "Multi-track mix coordination",
       "3 revisions",
       "WAV + MP3 delivery",
@@ -110,9 +72,9 @@ const pricingTiers = [
     name: "Full Production",
     price: "R____",
     features: [
-      "Full-day recording session",
-      "Beat sourcing & production coordination",
-      "Mixing & mastering coordination",
+      "Full-day session",
+      "Beat sourcing & coordination",
+      "Mixing & mastering",
       "Unlimited revisions",
       "Priority booking",
     ],
@@ -133,16 +95,14 @@ const AudioProduction = () => {
               Audio Production
             </div>
             <h1 className="animate-fade-in text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-              Professional Audio Production for Music, Podcasts{" "}
-              <span className="text-primary">& Voice</span>
+              Professional Audio Production for{" "}
+              <span className="text-primary">Music, Podcasts & Voice</span>
             </h1>
             <p
               className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground"
               style={{ animationDelay: "100ms" }}
             >
-              From studio recording to final delivery, we coordinate every step
-              of your audio production to ensure your project sounds clean,
-              polished, and ready for release.
+              From studio recording to final delivery, we coordinate every step of your audio production to ensure your project sounds clean, polished, and ready for release.
             </p>
             <div
               className="mt-8 flex animate-fade-in flex-col items-center gap-4 sm:flex-row sm:justify-center"
@@ -164,26 +124,21 @@ const AudioProduction = () => {
       {/* Your Creative Production Partner */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl">
+          <div className="mx-auto max-w-4xl text-center">
+            <h2 className="text-3xl font-bold md:text-4xl mb-6">
               Your Creative <span className="text-primary">Production Partner</span>
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
-              At Kasilam Media Production, we help artists, businesses, and
-              content creators produce high-quality audio projects from start to
-              finish.
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              Whether you're recording a song, launching a podcast, or producing
-              a voice-over, we coordinate the right recording environment,
-              technical expertise, and creative collaboration to deliver a
-              professional result.
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
-              Instead of limiting you to one production style, we work with a
-              network of trusted sound engineers, producers, and creatives to
-              bring your project to life.
-            </p>
+            <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
+              <p>
+                At Kasilam Media Production, we help artists, businesses, and content creators produce high-quality audio projects from start to finish.
+              </p>
+              <p>
+                Whether you're recording a song, launching a podcast, or producing a voice-over, we coordinate the right recording environment, technical expertise, and creative collaboration to deliver a professional result.
+              </p>
+              <p>
+                Instead of limiting you to one production style, we work with a network of trusted sound engineers, producers, and creatives to bring your project to life.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -195,7 +150,28 @@ const AudioProduction = () => {
             How It <span className="text-primary">Works</span>
           </h2>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {processSteps.map((step, i) => (
+            {[
+              {
+                icon: MessageSquare,
+                title: "Consultation & Project Planning",
+                desc: "We start by understanding your project goals, creative direction, and technical requirements.",
+              },
+              {
+                icon: Mic,
+                title: "Recording Session",
+                desc: "Your audio is captured in a focused recording environment using professional equipment.",
+              },
+              {
+                icon: Sliders,
+                title: "Production & Collaboration",
+                desc: "We coordinate with experienced sound engineers and producers to refine and enhance your audio.",
+              },
+              {
+                icon: CheckCircle,
+                title: "Final Mix & Delivery",
+                desc: "You receive clean, balanced, professional audio files ready for release or distribution.",
+              },
+            ].map((step, i) => (
               <div
                 key={step.title}
                 className="animate-fade-in text-center"
@@ -222,21 +198,27 @@ const AudioProduction = () => {
             Services <span className="text-primary">Included</span>
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s, i) => (
-              <Link to={s.link} key={s.title} className="group">
+            {[
+              { icon: Mic, title: "Studio Recording", desc: "Professional vocal and instrument recording in a controlled studio environment designed for high-quality sound capture.", link: "/services/audio-production/studio-recording" },
+              { icon: Radio, title: "Podcast Recording", desc: "Professional podcast recording setup that ensures clear, broadcast-quality sound for interviews and conversations.", link: "/services/audio-production/podcast-recording" },
+              { icon: AudioWaveform, title: "Voice-over Production", desc: "Clean voice-over recording for commercials, narration, corporate videos, and digital media.", link: "/services/audio-production/voiceover-production" },
+              { icon: Headphones, title: "Mixing", desc: "Professional mix balancing, EQ, compression, and effects to bring your sound to life.", link: "/services/audio-production/mixing-coordination" },
+              { icon: AudioWaveform, title: "Mastering", desc: "Loudness optimization and final polish to ensure your tracks are streaming-ready.", link: "/services/audio-production/mixing-coordination" },
+              { icon: Music, title: "Beat Sourcing & Production Management", desc: "We source beats, connect with producers, and manage the production workflow specifically for your project.", link: "/services/audio-production/production-management" },
+            ].map((s, i) => (
+              <Link to={s.link} key={s.title}>
                 <Card
-                  className="animate-fade-in border-border bg-muted transition-all hover:border-primary/30 hover:shadow-lg"
+                  className="animate-fade-in border-border bg-muted hover:border-primary/50 transition-colors h-full"
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <CardContent className="p-6">
                     <div className="mb-4 inline-flex rounded-full bg-primary/10 p-3">
                       <s.icon className="h-6 w-6 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold">{s.title}</h3>
+                    <h3 className="text-lg font-semibold flex items-center gap-2">
+                      {s.title} <ArrowRight className="h-4 w-4 text-primary" />
+                    </h3>
                     <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
-                      Learn more <ArrowRight className="h-3 w-3" />
-                    </span>
                   </CardContent>
                 </Card>
               </Link>
@@ -245,44 +227,91 @@ const AudioProduction = () => {
         </div>
       </section>
 
-      {/* Why Work With Us */}
-      <section className="bg-card py-20">
+      {/* Extra Services (Upsells) */}
+      <section className="bg-muted/30 py-20 border-y border-border">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            Why Work <span className="text-primary">With Us</span>
+          <h2 className="text-center text-3xl font-bold md:text-4xl mb-12">
+            Extra <span className="text-primary">Services</span>
           </h2>
-          <div className="mx-auto mt-12 grid max-w-3xl gap-4 sm:grid-cols-2">
-            {whyWorkWithUs.map((item, i) => (
-              <div
-                key={item.text}
-                className="animate-fade-in flex items-center gap-4 rounded-lg border border-border bg-muted p-4"
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                  <item.icon className="h-5 w-5 text-primary" />
-                </div>
-                <span className="font-medium text-foreground">{item.text}</span>
-              </div>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
+            {[
+              { title: "Extra studio hour", price: "R300" },
+              { title: "Vocal tuning", price: "R250" },
+              { title: "Express delivery (48h)", price: "R500" },
+              { title: "Extra revisions", price: "R150" },
+            ].map((item, i) => (
+              <Card key={i} className="bg-card/50 border-primary/10">
+                <CardContent className="p-6 text-center">
+                  <h3 className="font-semibold text-lg">{item.title}</h3>
+                  <p className="text-2xl font-black text-primary mt-2">{item.price}</p>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Pricing Tiers */}
+      {/* Audio Production Packages */}
       <section id="packages" className="py-20">
         <div className="container mx-auto px-4">
           <h2 className="text-center text-3xl font-bold md:text-4xl">
-            Audio Production <span className="text-primary">Packages</span>
+            Production <span className="text-primary">Packages</span>
           </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-3">
-            {pricingTiers.map((tier, i) => (
+          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                name: "Starter Recording",
+                price: "R350 / hour",
+                features: [
+                  "Studio recording session",
+                  "Professional mic setup",
+                  "Basic vocal guidance",
+                  "Raw audio files",
+                ],
+                highlighted: false,
+              },
+              {
+                name: "Professional Package",
+                price: "R900",
+                features: [
+                  "3-hour recording session",
+                  "Vocal direction",
+                  "Basic editing & cleanup",
+                  "Rough mix preview",
+                ],
+                highlighted: true,
+              },
+              {
+                name: "Full Song Production",
+                price: "R2500 / song",
+                features: [
+                  "Full vocal recording",
+                  "Vocal editing & tuning",
+                  "Professional Mixing",
+                  "Mastering Coordination",
+                  "Ready-to-release track",
+                ],
+                highlighted: false,
+              },
+              {
+                name: "Artist Development",
+                price: "R5000 - R8000",
+                features: [
+                  "3 songs (Recording+Mix+Master)",
+                  "Creative production direction",
+                  "Cover art guidance",
+                  "Distribution guidance",
+                  "Priority scheduling",
+                ],
+                highlighted: false,
+              },
+            ].map((tier, i) => (
               <Card
                 key={tier.name}
-                className={`animate-fade-in shadow-lg ${
-                  tier.highlighted
-                    ? "border-2 border-primary"
-                    : "border-primary/20"
-                }`}
+                className={`flex flex-col animate-fade-in shadow-lg ${tier.highlighted
+                  ? "border-2 border-primary"
+                  : "border-primary/20"
+                  }`}
                 style={{ animationDelay: `${i * 100}ms` }}
               >
                 <CardHeader className="text-center">
@@ -296,8 +325,8 @@ const AudioProduction = () => {
                     {tier.price}
                   </p>
                 </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
+                <CardContent className="flex-1 flex flex-col">
+                  <ul className="space-y-3 mb-8">
                     {tier.features.map((f) => (
                       <li key={f} className="flex items-center gap-3 text-sm">
                         <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
@@ -308,10 +337,10 @@ const AudioProduction = () => {
                   <Button
                     asChild
                     size="lg"
-                    className="mt-6 w-full"
+                    className="mt-auto w-full"
                     variant={tier.highlighted ? "default" : "outline"}
                   >
-                    <Link to="/booking">Get Started</Link>
+                    <Link to="/booking">Book Your Session</Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -320,16 +349,16 @@ const AudioProduction = () => {
         </div>
       </section>
 
+
       {/* Final CTA */}
       <section className="bg-card py-20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold md:text-4xl">
-            Ready to Create{" "}
-            <span className="text-primary">Professional Audio?</span>
+            Ready to Create Professional{" "}
+            <span className="text-primary">Audio?</span>
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Book your session and let us manage the recording and production
-            process from start to finish.
+            Book your session and let us manage the recording and production process from start to finish.
           </p>
           <Button asChild size="lg" className="mt-8 gap-2">
             <Link to="/booking">
@@ -338,6 +367,7 @@ const AudioProduction = () => {
           </Button>
         </div>
       </section>
+
     </div>
   );
 };
