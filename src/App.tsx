@@ -13,6 +13,11 @@ import Booking from "./pages/Booking";
 import AudioProduction from "./pages/AudioProduction";
 import VisualProduction from "./pages/VisualProduction";
 import DigitalMarketing from "./pages/DigitalMarketing";
+import StudioRecording from "./pages/audio/StudioRecording";
+import PodcastRecording from "./pages/audio/PodcastRecording";
+import VoiceoverProduction from "./pages/audio/VoiceoverProduction";
+import MixingCoordination from "./pages/audio/MixingCoordination";
+import ProductionManagement from "./pages/audio/ProductionManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
