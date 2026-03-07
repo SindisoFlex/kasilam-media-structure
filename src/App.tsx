@@ -13,6 +13,11 @@ import Booking from "./pages/Booking";
 import AudioProduction from "./pages/AudioProduction";
 import VisualProduction from "./pages/VisualProduction";
 import DigitalMarketing from "./pages/DigitalMarketing";
+import StudioRecording from "./pages/audio/StudioRecording";
+import PodcastRecording from "./pages/audio/PodcastRecording";
+import VoiceoverProduction from "./pages/audio/VoiceoverProduction";
+import MixingCoordination from "./pages/audio/MixingCoordination";
+import ProductionManagement from "./pages/audio/ProductionManagement";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +39,11 @@ const App = () => (
               <Route path="/services/audio-production" element={<AudioProduction />} />
               <Route path="/services/visual-production" element={<VisualProduction />} />
               <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
+              <Route path="/services/audio-production/studio-recording" element={<StudioRecording />} />
+              <Route path="/services/audio-production/podcast-recording" element={<PodcastRecording />} />
+              <Route path="/services/audio-production/voiceover-production" element={<VoiceoverProduction />} />
+              <Route path="/services/audio-production/mixing-coordination" element={<MixingCoordination />} />
+              <Route path="/services/audio-production/production-management" element={<ProductionManagement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Layout>
