@@ -114,16 +114,16 @@
   }
 
   .premium-card {
-    @apply relative overflow-hidden bg-card border border-white/5 rounded-[2rem] p-10 transition-all duration-700 hover:border-primary/30 hover:-translate-y-2 active:scale-[0.98];
+    @apply relative overflow-hidden bg-card border border-border rounded-[2rem] p-10 transition-all duration-700 hover:border-primary/30 hover:-translate-y-2 active:scale-[0.98];
     transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .premium-card:hover {
-    box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 60px -15px rgba(220, 38, 38, 0.08);
   }
 
   .dark .premium-card {
-    @apply hover:bg-card/80;
+    @apply border-white/5 hover:bg-card/80;
     box-shadow: none;
   }
 
