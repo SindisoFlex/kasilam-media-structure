@@ -119,7 +119,12 @@
   }
 
   .dark .premium-card {
-    @apply hover:shadow-primary/5 hover:bg-card/80;
+    @apply border-white/5 hover:bg-card/80;
+    box-shadow: none;
+  }
+
+  .dark .premium-card:hover {
+    box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.05);
   }
 
   .glass {

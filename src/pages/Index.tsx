@@ -42,11 +42,6 @@ const Index = () => {
         <div className="absolute inset-0 z-11 mesh-bg opacity-50" />
 
         <div className="content-width relative z-20 text-center">
-          <div className="flex justify-center mb-12 animate-fade-in">
-            <div className="p-4 rounded-[2rem] bg-white/5 backdrop-blur-xl border border-white/10 red-glow">
-              <img src={logo} alt="KMP Logo" className="h-20 w-auto md:h-28" />
-            </div>
-          </div>
           <h1 className="animate-fade-in mb-8 text-gradient">
             Professional Media for<br />
             <span className="text-primary italic">Growing Businesses.</span>
