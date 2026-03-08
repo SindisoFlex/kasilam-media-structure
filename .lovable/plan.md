@@ -1,43 +1,45 @@
 
 
-# Scroll-Triggered Animations with Framer Motion
+# Audio Production Landing Page — Implementation Plan
 
-## Approach
-Create reusable animation wrapper components, then apply them across all service pages. This avoids editing 20+ files with repetitive motion code.
+## Overview
+Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
 
-## 1. Install framer-motion
-Add `framer-motion` as a dependency.
+## Files to Create
 
-## 2. Create Animation Components (`src/components/animations.tsx`)
-Build 3-4 reusable wrappers:
-- **`FadeInSection`** — fades up on scroll (for text blocks, about sections)
-- **`StaggerContainer` + `StaggerItem`** — staggers children on scroll (for grids, feature lists, process steps)
-- **`ScaleIn`** — scales up on scroll (for pricing cards, CTAs)
+### `src/pages/AudioProduction.tsx`
+A standalone page component with 6 sections:
 
-All use `framer-motion`'s `motion` + `useInView` with `once: true` and `viewport={{ amount: 0.2 }}`.
+1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
 
-## 3. Apply to All Service Pages (20 files)
-Wrap sections consistently:
-- **Hero**: `FadeInSection` with no delay
-- **Process/How It Works grids**: `StaggerContainer` + `StaggerItem`
-- **Service cards**: `StaggerContainer` + `StaggerItem`
-- **Pricing tiers**: `StaggerContainer` + `ScaleIn`
-- **About sections**: `FadeInSection`
-- **CTA sections**: `FadeInSection`
+2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
 
-### Files to edit:
-**Main pages (3):** `AudioProduction.tsx`, `VisualProduction.tsx`, `DigitalMarketing.tsx`
+3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
 
-**Audio sub-pages (7):** `StudioRecording.tsx`, `PodcastRecording.tsx`, `VoiceoverProduction.tsx`, `MixingCoordination.tsx`, `MixingMastering.tsx`, `MusicProduction.tsx`, `ProductionManagement.tsx`
+4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
 
-**Visual sub-pages (5):** `BusinessCorporate.tsx`, `CommunityEvents.tsx`, `CreatorsArtists.tsx`, `FuneralCoverage.tsx`, `WeddingProduction.tsx`
+5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
 
-**Digital sub-pages (5):** `AnalyticsReporting.tsx`, `ContentCreation.tsx`, `PaidAdvertising.tsx`, `SocialMediaManagement.tsx`, `WebDevelopment.tsx`
+6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
 
-## 4. Animation Specifications
-- Fade-up: `y: 30 → 0`, `opacity: 0 → 1`, duration `0.6s`
-- Stagger: `0.1s` delay between children
-- Scale: `scale: 0.95 → 1` with `opacity`
-- Viewport trigger: `amount: 0.2`, `once: true`
-- Hero gets slightly more dramatic motion (`y: 40`)
+## Files to Modify
+
+### `src/App.tsx`
+- Import `AudioProduction` component
+- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
+
+### `src/pages/Services.tsx`
+- Convert from detailed service sections into a **navigation hub**
+- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
+- Keep brief intro text per service but remove detailed item lists
+
+### `src/components/Navbar.tsx`
+- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
+
+## Design Approach
+- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
+- Soft gray cards: `bg-muted` (maps to the theme's muted color)
+- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
+- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
+- All content strictly audio-focused, no cross-service contamination
 
