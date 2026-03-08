@@ -19,7 +19,7 @@ import NotFound from "./pages/NotFound";
 // Audio Sub-pages
 import StudioRecording from "./pages/audio/StudioRecording";
 import PodcastRecording from "./pages/audio/PodcastRecording";
-import VoiceOverProduction from "./pages/audio/VoiceOverProduction";
+import VoiceOverProduction from "./pages/audio/VoiceoverProduction";
 import MixingMastering from "./pages/audio/MixingMastering";
 import MusicProduction from "./pages/audio/MusicProduction";
 
