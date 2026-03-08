@@ -1,45 +1,44 @@
 
 
-# Audio Production Landing Page — Implementation Plan
+# Plan: Fix Build Error + UI Refinements
 
-## Overview
-Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
+## 1. Fix Build Error (Critical)
+Two duplicate files exist with different casing: `VoiceOverProduction.tsx` and `VoiceoverProduction.tsx`. Fix by updating `App.tsx` import to use `VoiceoverProduction` (matching the original file) and delete the duplicate `VoiceOverProduction.tsx`.
 
-## Files to Create
+## 2. Remove Logo from Hero Section
+In `src/pages/Index.tsx`, remove lines 45-49 (the logo container in the hero section).
 
-### `src/pages/AudioProduction.tsx`
-A standalone page component with 6 sections:
+## 3. Light Mode Card Styling
+Update `src/index.css` to ensure light mode uses:
+- Black text on foreground elements
+- Light gray card/box backgrounds (`bg-muted`)
+- Subtle reddish shadow on cards: `shadow-[0_4px_20px_-4px_rgba(220,38,38,0.08)]`
 
-1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
+Update the `.premium-card` utility in light mode to have a soft red-tinted shadow instead of no shadow.
 
-2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
+## 4. Mobile Hamburger Menu Improvements
+In `src/components/Navbar.tsx`, update the mobile menu so:
+- All nav links (including Services sub-items) are shown **flat** — no accordion/dropdown for Services. Instead, show all links directly: Home, About, Services (links to /services), Audio Production, Visual Production, Digital Media Solutions, Portfolio, Contact.
+- Cleaner spacing and professional typography
+- Each link gets consistent styling with proper padding and alignment
 
-3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
+## 5. Desktop Nav — Ensure Correct Layout
+The current layout already has logo left, nav center-ish, toggle right. Refine by using a proper 3-column flex layout:
+- Left: Logo
+- Center: Nav links (absolute centered or flex-1 centered)
+- Right: Theme toggle
 
-4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
-
-5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
-
-6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
+This ensures true centering of nav links regardless of logo/toggle widths.
 
 ## Files to Modify
+- `src/App.tsx` — Fix import casing to `./pages/audio/VoiceoverProduction`
+- `src/pages/Index.tsx` — Remove hero logo block
+- `src/components/Navbar.tsx` — Flatten mobile menu, true-center desktop nav
+- `src/index.css` — Add light mode card shadows with reddish tint
 
-### `src/App.tsx`
-- Import `AudioProduction` component
-- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
+## File to Delete
+- `src/pages/audio/VoiceOverProduction.tsx` (duplicate)
 
-### `src/pages/Services.tsx`
-- Convert from detailed service sections into a **navigation hub**
-- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
-- Keep brief intro text per service but remove detailed item lists
-
-### `src/components/Navbar.tsx`
-- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
-
-## Design Approach
-- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
-- Soft gray cards: `bg-muted` (maps to the theme's muted color)
-- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
-- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
-- All content strictly audio-focused, no cross-service contamination
+## Note for Memory
+No backend. Everything syncs to Facebook (social links point to Facebook).
 
