@@ -13,6 +13,7 @@ import {
   Sliders,
   Send,
 } from "lucide-react";
+import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const processSteps = [
   {
@@ -90,33 +91,35 @@ const AudioProduction = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-              <Mic className="h-4 w-4" />
-              Audio Production
-            </div>
-            <h1 className="animate-fade-in text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-              Professional Audio Production for{" "}
-              <span className="text-primary">Music, Podcasts & Voice</span>
-            </h1>
-            <p
-              className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground"
-              style={{ animationDelay: "100ms" }}
-            >
-              From studio recording to final delivery, we coordinate every step of your audio production to ensure your project sounds clean, polished, and ready for release.
-            </p>
-            <div
-              className="mt-8 flex animate-fade-in flex-col items-center gap-4 sm:flex-row sm:justify-center"
-              style={{ animationDelay: "200ms" }}
-            >
-              <Button asChild size="lg" className="gap-2">
-                <Link to="/booking">
-                  Book a Recording Session <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="gap-2">
-                <a href="#services">Explore Services</a>
-              </Button>
-            </div>
+            <HeroSection>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                <Mic className="h-4 w-4" />
+                Audio Production
+              </div>
+            </HeroSection>
+            <HeroSection delay={0.1}>
+              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
+                Professional Audio Production for{" "}
+                <span className="text-primary">Music, Podcasts & Voice</span>
+              </h1>
+            </HeroSection>
+            <HeroSection delay={0.2}>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+                From studio recording to final delivery, we coordinate every step of your audio production to ensure your project sounds clean, polished, and ready for release.
+              </p>
+            </HeroSection>
+            <HeroSection delay={0.3}>
+              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <Button asChild size="lg" className="gap-2">
+                  <Link to="/booking">
+                    Book a Recording Session <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="gap-2">
+                  <a href="#services">Explore Services</a>
+                </Button>
+              </div>
+            </HeroSection>
           </div>
         </div>
       </section>
@@ -124,7 +127,7 @@ const AudioProduction = () => {
       {/* Your Creative Production Partner */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-4xl text-center">
+          <FadeInSection className="mx-auto max-w-4xl text-center">
             <h2 className="text-3xl font-bold md:text-4xl mb-6">
               Your Creative <span className="text-primary">Production Partner</span>
             </h2>
@@ -139,17 +142,19 @@ const AudioProduction = () => {
                 Instead of limiting you to one production style, we work with a network of trusted sound engineers, producers, and creatives to bring your project to life.
               </p>
             </div>
-          </div>
+          </FadeInSection>
         </div>
       </section>
 
       {/* How It Works */}
       <section className="bg-card py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            How It <span className="text-primary">Works</span>
-          </h2>
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl">
+              How It <span className="text-primary">Works</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: MessageSquare,
@@ -172,11 +177,7 @@ const AudioProduction = () => {
                 desc: "You receive clean, balanced, professional audio files ready for release or distribution.",
               },
             ].map((step, i) => (
-              <div
-                key={step.title}
-                className="animate-fade-in text-center"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
+              <StaggerItem key={step.title} className="text-center">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                   <step.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -185,19 +186,21 @@ const AudioProduction = () => {
                 </span>
                 <h3 className="text-lg font-semibold">{step.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{step.desc}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Services Included */}
       <section id="services" className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            Services <span className="text-primary">Included</span>
-          </h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl">
+              Services <span className="text-primary">Included</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { icon: Mic, title: "Studio Recording", desc: "Professional vocal and instrument recording in a controlled studio environment designed for high-quality sound capture.", link: "/services/audio-production/studio-recording" },
               { icon: Radio, title: "Podcast Recording", desc: "Professional podcast recording setup that ensures clear, broadcast-quality sound for interviews and conversations.", link: "/services/audio-production/podcast-recording" },
@@ -205,59 +208,64 @@ const AudioProduction = () => {
               { icon: Headphones, title: "Mixing", desc: "Professional mix balancing, EQ, compression, and effects to bring your sound to life.", link: "/services/audio-production/mixing-coordination" },
               { icon: AudioWaveform, title: "Mastering", desc: "Loudness optimization and final polish to ensure your tracks are streaming-ready.", link: "/services/audio-production/mixing-coordination" },
               { icon: Music, title: "Beat Sourcing & Production Management", desc: "We source beats, connect with producers, and manage the production workflow specifically for your project.", link: "/services/audio-production/production-management" },
-            ].map((s, i) => (
-              <Link to={s.link} key={s.title}>
-                <Card
-                  className="animate-fade-in border-border bg-muted hover:border-primary/50 transition-colors h-full"
-                  style={{ animationDelay: `${i * 80}ms` }}
-                >
-                  <CardContent className="p-6">
-                    <div className="mb-4 inline-flex rounded-full bg-primary/10 p-3">
-                      <s.icon className="h-6 w-6 text-primary" />
-                    </div>
-                    <h3 className="text-lg font-semibold flex items-center gap-2">
-                      {s.title} <ArrowRight className="h-4 w-4 text-primary" />
-                    </h3>
-                    <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-                  </CardContent>
-                </Card>
-              </Link>
+            ].map((s) => (
+              <StaggerItem key={s.title}>
+                <Link to={s.link}>
+                  <Card className="border-border bg-muted hover:border-primary/50 transition-colors h-full">
+                    <CardContent className="p-6">
+                      <div className="mb-4 inline-flex rounded-full bg-primary/10 p-3">
+                        <s.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-semibold flex items-center gap-2">
+                        {s.title} <ArrowRight className="h-4 w-4 text-primary" />
+                      </h3>
+                      <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Extra Services (Upsells) */}
       <section className="bg-muted/30 py-20 border-y border-border">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl mb-12">
-            Extra <span className="text-primary">Services</span>
-          </h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl mb-12">
+              Extra <span className="text-primary">Services</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
             {[
               { title: "Extra studio hour", price: "R300" },
               { title: "Vocal tuning", price: "R250" },
               { title: "Express delivery (48h)", price: "R500" },
               { title: "Extra revisions", price: "R150" },
             ].map((item, i) => (
-              <Card key={i} className="bg-card/50 border-primary/10">
-                <CardContent className="p-6 text-center">
-                  <h3 className="font-semibold text-lg">{item.title}</h3>
-                  <p className="text-2xl font-black text-primary mt-2">{item.price}</p>
-                </CardContent>
-              </Card>
+              <StaggerScaleItem key={i}>
+                <Card className="bg-card/50 border-primary/10">
+                  <CardContent className="p-6 text-center">
+                    <h3 className="font-semibold text-lg">{item.title}</h3>
+                    <p className="text-2xl font-black text-primary mt-2">{item.price}</p>
+                  </CardContent>
+                </Card>
+              </StaggerScaleItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Audio Production Packages */}
       <section id="packages" className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            Production <span className="text-primary">Packages</span>
-          </h2>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl">
+              Production <span className="text-primary">Packages</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 name: "Starter Recording",
@@ -305,47 +313,47 @@ const AudioProduction = () => {
                 ],
                 highlighted: false,
               },
-            ].map((tier, i) => (
-              <Card
-                key={tier.name}
-                className={`flex flex-col animate-fade-in shadow-lg ${tier.highlighted
-                  ? "border-2 border-primary"
-                  : "border-primary/20"
-                  }`}
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <CardHeader className="text-center">
-                  {tier.highlighted && (
-                    <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">
-                      Most Popular
-                    </span>
-                  )}
-                  <CardTitle className="text-xl">{tier.name}</CardTitle>
-                  <p className="mt-2 text-3xl font-black text-primary">
-                    {tier.price}
-                  </p>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 mb-8">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-center gap-3 text-sm">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
-                        {f}
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    asChild
-                    size="lg"
-                    className="mt-auto w-full"
-                    variant={tier.highlighted ? "default" : "outline"}
-                  >
-                    <Link to="/booking">Book Your Session</Link>
-                  </Button>
-                </CardContent>
-              </Card>
+            ].map((tier) => (
+              <StaggerScaleItem key={tier.name}>
+                <Card
+                  className={`flex flex-col h-full shadow-lg ${tier.highlighted
+                    ? "border-2 border-primary"
+                    : "border-primary/20"
+                    }`}
+                >
+                  <CardHeader className="text-center">
+                    {tier.highlighted && (
+                      <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">
+                        Most Popular
+                      </span>
+                    )}
+                    <CardTitle className="text-xl">{tier.name}</CardTitle>
+                    <p className="mt-2 text-3xl font-black text-primary">
+                      {tier.price}
+                    </p>
+                  </CardHeader>
+                  <CardContent className="flex-1 flex flex-col">
+                    <ul className="space-y-3 mb-8">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-center gap-3 text-sm">
+                          <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      asChild
+                      size="lg"
+                      className="mt-auto w-full"
+                      variant={tier.highlighted ? "default" : "outline"}
+                    >
+                      <Link to="/booking">Book Your Session</Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              </StaggerScaleItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -353,18 +361,20 @@ const AudioProduction = () => {
       {/* Final CTA */}
       <section className="bg-card py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">
-            Ready to Create Professional{" "}
-            <span className="text-primary">Audio?</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Book your session and let us manage the recording and production process from start to finish.
-          </p>
-          <Button asChild size="lg" className="mt-8 gap-2">
-            <Link to="/booking">
-              Book Your Session <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+          <FadeInSection>
+            <h2 className="text-3xl font-bold md:text-4xl">
+              Ready to Create Professional{" "}
+              <span className="text-primary">Audio?</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              Book your session and let us manage the recording and production process from start to finish.
+            </p>
+            <Button asChild size="lg" className="mt-8 gap-2">
+              <Link to="/booking">
+                Book Your Session <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </FadeInSection>
         </div>
       </section>
 

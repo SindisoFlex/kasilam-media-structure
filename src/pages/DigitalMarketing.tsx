@@ -14,6 +14,7 @@ import {
   Send,
   Share2,
 } from "lucide-react";
+import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
 
 const processSteps = [
   {
@@ -86,34 +87,36 @@ const DigitalMarketing = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
         <div className="container relative mx-auto px-4">
           <div className="mx-auto max-w-3xl text-center">
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-              <Globe className="h-4 w-4" />
-              Digital Media Solutions
-            </div>
-            <h1 className="animate-fade-in text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-              Digital Strategy That Grows Your{" "}
-              <span className="text-primary">Brand Online</span>
-            </h1>
-            <p
-              className="mx-auto mt-6 max-w-2xl animate-fade-in text-lg text-muted-foreground"
-              style={{ animationDelay: "100ms" }}
-            >
-              We build and manage your digital presence with purposeful content,
-              targeted campaigns, and clear reporting — so you see real results.
-            </p>
-            <div
-              className="mt-8 flex animate-fade-in flex-col items-center gap-4 sm:flex-row sm:justify-center"
-              style={{ animationDelay: "200ms" }}
-            >
-              <Button asChild size="lg" className="gap-2">
-                <Link to="/booking">
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="gap-2">
-                <a href="#packages">View Plans</a>
-              </Button>
-            </div>
+            <HeroSection>
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+                <Globe className="h-4 w-4" />
+                Digital Media Solutions
+              </div>
+            </HeroSection>
+            <HeroSection delay={0.1}>
+              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
+                Digital Strategy That Grows Your{" "}
+                <span className="text-primary">Brand Online</span>
+              </h1>
+            </HeroSection>
+            <HeroSection delay={0.2}>
+              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
+                We build and manage your digital presence with purposeful content,
+                targeted campaigns, and clear reporting — so you see real results.
+              </p>
+            </HeroSection>
+            <HeroSection delay={0.3}>
+              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                <Button asChild size="lg" className="gap-2">
+                  <Link to="/booking">
+                    Get Started <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline" className="gap-2">
+                  <a href="#packages">View Plans</a>
+                </Button>
+              </div>
+            </HeroSection>
           </div>
         </div>
       </section>
@@ -121,7 +124,7 @@ const DigitalMarketing = () => {
       {/* Authority Section */}
       <section className="bg-muted/30 py-16">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-8 md:flex-row">
+          <FadeInSection className="flex flex-col items-center justify-between gap-8 md:flex-row">
             <div className="max-w-md">
               <h2 className="text-3xl font-bold md:text-4xl text-white">Why Businesses Work With <span className="text-primary">KMP</span></h2>
               <p className="mt-4 text-muted-foreground">
@@ -136,14 +139,14 @@ const DigitalMarketing = () => {
                 </div>
               ))}
             </div>
-          </div>
+          </FadeInSection>
         </div>
       </section>
 
       {/* Who We Are */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+          <FadeInSection className="mx-auto max-w-3xl text-center">
             <h2 className="text-3xl font-bold md:text-4xl text-white">
               Your Digital <span className="text-primary">Growth Partner</span>
             </h2>
@@ -153,23 +156,21 @@ const DigitalMarketing = () => {
               website management, we coordinate every piece of your online
               presence so it's consistent, measurable, and effective.
             </p>
-          </div>
+          </FadeInSection>
         </div>
       </section>
 
       {/* Our Process */}
       <section className="bg-card py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-center text-3xl font-bold md:text-4xl">
-            How We <span className="text-primary">Work</span>
-          </h2>
-          <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl">
+              How We <span className="text-primary">Work</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, i) => (
-              <div
-                key={step.title}
-                className="animate-fade-in text-center"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
+              <StaggerItem key={step.title} className="text-center">
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
                   <step.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -178,44 +179,42 @@ const DigitalMarketing = () => {
                 </span>
                 <h3 className="text-lg font-semibold">{step.title}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{step.desc}</p>
-              </div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* Our Services */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="mb-12 text-center">
+          <FadeInSection className="mb-12 text-center">
             <h2 className="text-3xl font-bold md:text-4xl text-white">
               Our Digital <span className="text-primary">Services</span>
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
               Explore our specialized digital solutions designed to scale your brand.
             </p>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s, i) => (
-              <Card
-                key={s.title}
-                className="group relative animate-fade-in overflow-hidden border-border bg-muted transition-all hover:border-primary/50 hover:shadow-2xl"
-                style={{ animationDelay: `${i * 80}ms` }}
-              >
-                <Link to={s.link} className="absolute inset-0 z-10" />
-                <CardContent className="p-8">
-                  <div className="mb-6 inline-flex rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
-                    <s.icon className="h-8 w-8 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-white transition-colors group-hover:text-primary">{s.title}</h3>
-                  <p className="mt-3 text-muted-foreground">{s.desc}</p>
-                  <div className="mt-6 flex items-center gap-2 font-bold text-primary opacity-0 transition-all group-hover:opacity-100">
-                    View Service <ArrowRight className="h-4 w-4" />
-                  </div>
-                </CardContent>
-              </Card>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((s) => (
+              <StaggerItem key={s.title}>
+                <Card className="group relative overflow-hidden border-border bg-muted transition-all hover:border-primary/50 hover:shadow-2xl">
+                  <Link to={s.link} className="absolute inset-0 z-10" />
+                  <CardContent className="p-8">
+                    <div className="mb-6 inline-flex rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
+                      <s.icon className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white transition-colors group-hover:text-primary">{s.title}</h3>
+                    <p className="mt-3 text-muted-foreground">{s.desc}</p>
+                    <div className="mt-6 flex items-center gap-2 font-bold text-primary opacity-0 transition-all group-hover:opacity-100">
+                      View Service <ArrowRight className="h-4 w-4" />
+                    </div>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
@@ -224,18 +223,20 @@ const DigitalMarketing = () => {
       {/* Final CTA */}
       <section className="bg-card py-20">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold md:text-4xl">
-            Ready to Take Your Brand{" "}
-            <span className="text-primary">Digital?</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-            Let's build a digital strategy that drives real engagement, growth, and results for your business.
-          </p>
-          <Button asChild size="lg" className="mt-8 gap-2">
-            <Link to="/booking">
-              Start Your Digital Journey <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+          <FadeInSection>
+            <h2 className="text-3xl font-bold md:text-4xl">
+              Ready to Take Your Brand{" "}
+              <span className="text-primary">Digital?</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+              Let's build a digital strategy that drives real engagement, growth, and results for your business.
+            </p>
+            <Button asChild size="lg" className="mt-8 gap-2">
+              <Link to="/booking">
+                Start Your Digital Journey <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </FadeInSection>
         </div>
       </section>
     </div>
