@@ -133,11 +133,11 @@ const Navbar = () => {
       {/* Mobile Slide-in Menu */}
       <div
         className={cn(
-          "fixed right-0 top-0 z-50 flex h-full w-[85%] max-w-sm flex-col bg-background border-l border-border shadow-2xl transition-transform duration-500 ease-in-out md:hidden",
+          "fixed right-0 top-0 z-[60] flex h-screen w-[85%] max-w-sm flex-col bg-background border-l border-border shadow-2xl transition-transform duration-500 ease-in-out md:hidden",
           mobileOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex items-center justify-between border-b border-border px-8 py-6">
+        <div className="flex flex-shrink-0 items-center justify-between border-b border-border px-8 py-6">
           <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
             <img src={logo} alt="KMP Logo" className="h-8 w-auto" />
           </Link>
@@ -146,20 +146,19 @@ const Navbar = () => {
           </button>
         </div>
 
-        <div className="flex flex-1 flex-col gap-1 px-6 py-8 overflow-y-auto">
-          {mobileLinks.map((link, i) => (
+        <div className="flex flex-1 flex-col gap-1 min-h-0 overflow-y-auto px-6 py-8">
+          {mobileLinks.map((link) => (
             <Link
               key={link.label}
               to={link.path}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "animate-fade-in rounded-xl px-5 py-4 transition-colors hover:bg-accent hover:text-primary",
+                "rounded-xl px-5 py-4 transition-colors hover:bg-accent hover:text-primary opacity-100",
                 link.indent
                   ? "ml-4 text-sm font-bold text-muted-foreground"
                   : "text-lg font-black uppercase tracking-tight text-foreground",
                 isActive(link.path) && "text-primary bg-accent"
               )}
-              style={{ animationDelay: `${i * 40}ms` }}
             >
               {link.label}
             </Link>

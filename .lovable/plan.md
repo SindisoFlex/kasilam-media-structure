@@ -1,72 +1,45 @@
 
-# Fix: Flexible Cards & Missing Mobile Menu Links
 
-## Two Issues Identified
+# Audio Production Landing Page — Implementation Plan
 
-### 1. Mobile Hamburger Menu: Only "HOME" visible
-**Root cause:** The mobile slide-in panel clips navigation links. Based on screenshot, only "HOME" and the theme toggle are visible; 7 other links are cut off.
+## Overview
+Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
 
-**Problem in `Navbar.tsx`:**
-- The nav links container (`div.flex-1.flex-col`) scrolls, but the menu itself lacks proper height constraints
-- The animation (`animate-fade-in` with staggered delays) may cause initial opacity:0 that never resolves visually
+## Files to Create
 
-**Fix:**
-- Ensure menu panel has `h-screen` or `min-h-screen` and inner scroll container allows full overflow
-- Remove `animate-fade-in` from mobile links (CSS animation may conflict with visibility on mobile Safari/some browsers)
-- Add explicit `opacity-100` to links to override any animation issues
+### `src/pages/AudioProduction.tsx`
+A standalone page component with 6 sections:
 
-### 2. Cards: Universal Flexibility & Containment
-**Requirements:**
-- Equal-height cards in grids
-- Content always stays inside (no overflow)
-- Mobile-friendly spacing
-- Universal defaults
+1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
 
-**Changes:**
+2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
 
-**A. Update `.premium-card` in `index.css`:**
-- Add `flex flex-col` for internal content flow
-- Add `min-h-0` and `overflow-hidden` to prevent blowout
-- Reduce padding on mobile (`p-6 md:p-10`)
+3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
 
-**B. Create utility class `.flexible-card`:**
-- For use with shadcn `<Card>` component
-- Same flex + overflow rules
+4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
 
-**C. Update `CardContent` in `card.tsx`:**
-- Add `flex-1 min-h-0 overflow-hidden` defaults
-- Ensure children don't break card boundaries
+5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
 
----
+6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
 
-## File Changes
+## Files to Modify
 
-| File | Change |
-|------|--------|
-| `src/index.css` | Update `.premium-card` with flex, overflow, responsive padding |
-| `src/components/ui/card.tsx` | Add `flex flex-col h-full min-h-0 overflow-hidden` to Card defaults |
-| `src/components/Navbar.tsx` | Remove `animate-fade-in` from mobile links, fix height/scroll on menu panel |
+### `src/App.tsx`
+- Import `AudioProduction` component
+- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
 
----
+### `src/pages/Services.tsx`
+- Convert from detailed service sections into a **navigation hub**
+- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
+- Keep brief intro text per service but remove detailed item lists
 
-## Technical Details
+### `src/components/Navbar.tsx`
+- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
 
-### Card CSS Update (`index.css`)
-```css
-.premium-card {
-  @apply relative overflow-hidden bg-card border border-white/5 rounded-[2rem] 
-         p-6 md:p-10  /* responsive padding */
-         flex flex-col min-h-0  /* flexbox + prevent overflow */
-         transition-all duration-700 ...;
-}
-```
+## Design Approach
+- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
+- Soft gray cards: `bg-muted` (maps to the theme's muted color)
+- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
+- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
+- All content strictly audio-focused, no cross-service contamination
 
-### Card Component Update (`card.tsx`)
-```tsx
-<div className={cn("rounded-lg ... flex flex-col h-full min-h-0 overflow-hidden", className)} />
-```
-
-### Navbar Mobile Fix
-- Remove `animate-fade-in` class from `mobileLinks.map()` 
-- Add `min-h-0 overflow-y-auto` to the links container
-- Ensure panel has `h-full` (already present)
