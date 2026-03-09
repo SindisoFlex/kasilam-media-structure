@@ -1,45 +1,138 @@
 
 
-# Audio Production Landing Page — Implementation Plan
+# Universal Booking Flow & Package Card Fix
 
 ## Overview
-Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
 
-## Files to Create
+Replace the existing 6-step generic booking page with a unified, context-aware booking system that all service pages feed into. Fix package cards so only buttons trigger navigation, not the card itself.
 
-### `src/pages/AudioProduction.tsx`
-A standalone page component with 6 sections:
+---
 
-1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
+## Two Problems, One Solution
 
-2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
+### Problem 1: Card Click Behavior
+Currently, Wedding and Funeral pages have package cards where the entire card could be perceived as clickable. The fix is straightforward — ensure only explicit `<Button>` elements trigger booking, and cards have no `onClick` or wrapping `<button>` elements. Most pages already do this correctly (buttons use `<Link>` or `onClick`), but we need to audit and ensure consistency.
 
-3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
+### Problem 2: Disconnected Booking Flow
+The current `/booking` page has a generic 6-step flow (Service → Package → Add-ons → Travel → Date → Client) that doesn't receive context from service pages. When users click "Photography" or "Combo" on a package card, the booking page doesn't use those URL params.
 
-4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
+---
 
-5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
+## New Architecture
 
-6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
+### A. Shared Booking Dialog Component
+Create `src/components/BookingFlow.tsx` — a multi-step dialog/sheet that can be triggered from any service page.
 
-## Files to Modify
+**5 Steps:**
+1. **Add-Ons** — Optional extras (rush delivery, raw files, social edits, drone, etc.)
+2. **Event Details** — Event type, location, date (calendar), time, client name, WhatsApp number, notes
+3. **Price Summary** — Base price + add-ons + tax (15% VAT) = total
+4. **Confirmation** — Opens WhatsApp with formatted booking summary
 
-### `src/App.tsx`
-- Import `AudioProduction` component
-- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
+### B. Booking Context
+Create `src/contexts/BookingContext.tsx` with:
+```text
+- serviceName: string (e.g., "Wedding Production")
+- packageName: string (e.g., "Classic Coverage")
+- mediaType: "photography" | "videography" | "combo"
+- basePrice: number
+- hours: number
+```
 
-### `src/pages/Services.tsx`
-- Convert from detailed service sections into a **navigation hub**
-- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
-- Keep brief intro text per service but remove detailed item lists
+Service pages call `openBooking({ serviceName, packageName, mediaType, basePrice, hours })` when a format button is clicked.
 
-### `src/components/Navbar.tsx`
-- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
+### C. Updated Package Cards
+On pages with Photography/Videography/Combo pricing (Wedding, Funeral, Family Events):
+- Each pricing row gets its own `<Button>` that calls `openBooking()` with the correct media type and price
+- Remove any card-level click handlers
+- The card remains non-interactive (display only)
 
-## Design Approach
-- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
-- Soft gray cards: `bg-muted` (maps to the theme's muted color)
-- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
-- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
-- All content strictly audio-focused, no cross-service contamination
+On pages without media type selection (Creators/Artists, Business, Studio Recording):
+- The single "Select Package" or "Book Now" button calls `openBooking()` with the package info
+- No card-level click handlers
+
+---
+
+## File Changes
+
+| File | Change |
+|------|--------|
+| `src/components/BookingFlow.tsx` | **New** — Multi-step booking dialog (add-ons → details → summary → WhatsApp confirm) |
+| `src/contexts/BookingContext.tsx` | **New** — Booking state + `openBooking()` function |
+| `src/App.tsx` | Wrap with `BookingProvider`, render `<BookingFlow />` globally |
+| `src/pages/visual/WeddingProduction.tsx` | Replace single "Book" button per card with 3 format buttons calling `openBooking()` |
+| `src/pages/visual/FuneralCoverage.tsx` | Same — 3 format buttons per card instead of single button |
+| `src/pages/visual/CommunityEvents.tsx` | Update tier buttons to call `openBooking()` with selected media + tier price |
+| `src/pages/visual/CreatorsArtists.tsx` | Update "Select Package" buttons to call `openBooking()` |
+| `src/pages/visual/BusinessCorporate.tsx` | Update buttons to call `openBooking()` |
+| `src/pages/audio/StudioRecording.tsx` | Update "Book Now" buttons to call `openBooking()` |
+| `src/pages/Booking.tsx` | Keep as fallback for direct `/booking` navigation, but simplified |
+
+---
+
+## BookingFlow Component Design
+
+```text
+┌─────────────────────────────────────┐
+│  Sheet/Dialog (slides from right)   │
+│                                     │
+│  Step 1: Add-Ons                    │
+│  ┌─ Rush Delivery (R500)     [✓] ─┐│
+│  ├─ Raw Files (R400)         [ ] ─┤│
+│  ├─ Social Edits (R600)      [ ] ─┤│
+│  ├─ Drone Footage (R1500)    [ ] ─┤│
+│  └─ Extra Revisions (R300)   [ ] ─┘│
+│                    [Skip] [Next →]  │
+│                                     │
+│  Step 2: Event Details              │
+│  Event Type: [________]            │
+│  Location:   [________]            │
+│  Date:       [📅 Pick date]        │
+│  Time:       [10:00 ▼]             │
+│  Name:       [________]            │
+│  WhatsApp:   [________]            │
+│  Notes:      [________]            │
+│                    [← Back] [Next]  │
+│                                     │
+│  Step 3: Summary                    │
+│  Wedding - Classic (Combo)  R12,000 │
+│  + Rush Delivery              R500  │
+│  Subtotal                  R12,500  │
+│  VAT (15%)                  R1,875  │
+│  Total                    R14,375   │
+│              [← Back] [Confirm →]   │
+│                                     │
+│  Step 4: ✓ Confirmed!              │
+│  Ref: KMP-XXXX                      │
+│  [Download PDF] [Open WhatsApp]     │
+└─────────────────────────────────────┘
+```
+
+### WhatsApp Message Format
+```
+Hi KMP! I'd like to confirm my booking:
+
+Ref: KMP-XXXX
+Service: Wedding Production
+Package: Classic Coverage (Combo)
+Date: March 15, 2026 at 10:00
+Location: Port Elizabeth
+Total: R14,375
+
+Name: John Doe
+WhatsApp: 082 123 4567
+Notes: Outdoor ceremony
+```
+
+---
+
+## Technical Details
+
+- BookingFlow uses `<Sheet>` from shadcn for slide-in panel
+- Calendar uses existing `<Calendar>` with `pointer-events-auto`
+- PDF generation reuses existing `jsPDF` logic
+- WhatsApp URL: `https://wa.me/27000000000?text=...`
+- VAT rate: 15% (South Africa standard)
+- All prices in ZAR using `Intl.NumberFormat`
+- Add-ons are service-agnostic (same list for all services)
 
