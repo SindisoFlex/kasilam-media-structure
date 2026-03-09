@@ -1,21 +1,24 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Briefcase, Video, Camera, TrendingUp, Check, Zap, Award, Users, BarChart3 } from "lucide-react";
+import { ArrowRight, Video, Camera, TrendingUp, Check, Zap, Award, Users, BarChart3 } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const BusinessCorporate = () => {
+  const { openBooking } = useBooking();
+
   const services = [
-    { id: "promotional-video", title: "Promotional Video Production", description: "Compelling branded videos for marketing and campaigns", icon: Video, details: ["Scriptwriting and storyboarding", "Professional cinematography", "On-location and studio filming"], pricing: "Custom Quote" },
-    { id: "product-photography", title: "Product Photography", description: "Professional product shots for e-commerce and marketing", icon: Camera, details: ["Studio lighting setup", "360° product views", "Lifestyle shots"], pricing: "From R 2,000 per product" },
-    { id: "brand-story", title: "Brand Story Videos", description: "Narrative-driven content that tells your company's story", icon: TrendingUp, details: ["Brand messaging consultation", "Interview filming", "Documentary-style production"], pricing: "Custom Quote" },
-    { id: "corporate-events", title: "Corporate Event Coverage", description: "Professional documentation of conferences, launches, and celebrations", icon: Users, details: ["Multi-camera setup", "Live event coverage", "Post-event highlights"], pricing: "From R 5,000/day" },
-    { id: "marketing-content", title: "Marketing Content Creation", description: "Diverse visual content for social media, ads, and campaigns", icon: BarChart3, details: ["Strategic content planning", "Multi-format production", "Platform optimization"], pricing: "Monthly Packages" },
+    { id: "promotional-video", title: "Promotional Video Production", description: "Compelling branded videos for marketing and campaigns", icon: Video, details: ["Scriptwriting and storyboarding", "Professional cinematography", "On-location and studio filming"], pricing: "Custom Quote", price: 5000 },
+    { id: "product-photography", title: "Product Photography", description: "Professional product shots for e-commerce and marketing", icon: Camera, details: ["Studio lighting setup", "360° product views", "Lifestyle shots"], pricing: "From R 2,000 per product", price: 2000 },
+    { id: "brand-story", title: "Brand Story Videos", description: "Narrative-driven content that tells your company's story", icon: TrendingUp, details: ["Brand messaging consultation", "Interview filming", "Documentary-style production"], pricing: "Custom Quote", price: 8000 },
+    { id: "corporate-events", title: "Corporate Event Coverage", description: "Professional documentation of conferences, launches, and celebrations", icon: Users, details: ["Multi-camera setup", "Live event coverage", "Post-event highlights"], pricing: "From R 5,000/day", price: 5000 },
+    { id: "marketing-content", title: "Marketing Content Creation", description: "Diverse visual content for social media, ads, and campaigns", icon: BarChart3, details: ["Strategic content planning", "Multi-format production", "Platform optimization"], pricing: "Monthly Packages", price: 8000 },
   ];
 
   const packages = [
-    { name: "Starter Package", desc: "Perfect for small businesses", price: "R 8,000", period: "/month", features: ["20 content pieces monthly", "Video + Photography mix", "Social media optimization", "Basic consultation"] },
-    { name: "Professional Package", desc: "For growing businesses", price: "R 15,000", period: "/month", features: ["35 content pieces monthly", "Custom content strategy", "Advanced editing", "Weekly strategy calls", "Performance reporting"] },
-    { name: "Enterprise Package", desc: "Full marketing production", price: "Custom", period: "Quote", features: ["Unlimited content creation", "Dedicated team", "Strategic planning", "Campaign management", "Priority delivery", "Quarterly reviews"] },
+    { name: "Starter Package", desc: "Perfect for small businesses", price: 8000, period: "/month", features: ["20 content pieces monthly", "Video + Photography mix", "Social media optimization", "Basic consultation"] },
+    { name: "Professional Package", desc: "For growing businesses", price: 15000, period: "/month", features: ["35 content pieces monthly", "Custom content strategy", "Advanced editing", "Weekly strategy calls", "Performance reporting"] },
+    { name: "Enterprise Package", desc: "Full marketing production", price: 25000, period: "Quote", features: ["Unlimited content creation", "Dedicated team", "Strategic planning", "Campaign management", "Priority delivery", "Quarterly reviews"] },
   ];
 
   const processSteps = [
@@ -74,8 +77,16 @@ const BusinessCorporate = () => {
                     ))}
                   </div>
                   <div className="text-2xl font-black text-red-600 mb-6">{service.pricing}</div>
-                  <Button asChild className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]">
-                    <Link to={`/booking?service=visual&category=${service.id}`}>Request Quote <ArrowRight className="h-3 w-3 ml-2" /></Link>
+                  <Button
+                    onClick={() => openBooking({
+                      serviceName: "Business & Corporate",
+                      packageName: service.title,
+                      mediaType: "none",
+                      basePrice: service.price,
+                    })}
+                    className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]"
+                  >
+                    Request Quote <ArrowRight className="h-3 w-3 ml-2" />
                   </Button>
                 </div>
               </StaggerItem>
@@ -98,7 +109,7 @@ const BusinessCorporate = () => {
                   <p className="text-sm text-white/60 mb-6 font-medium">{pkg.desc}</p>
                   <div className="mb-8 pb-8 border-b border-white/10">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-black text-red-600">{pkg.price}</span>
+                      <span className="text-3xl font-black text-red-600">R {pkg.price.toLocaleString()}</span>
                       <span className="text-sm text-white/50 font-medium">{pkg.period}</span>
                     </div>
                   </div>
@@ -110,8 +121,16 @@ const BusinessCorporate = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button asChild className="w-full h-12 bg-white/5 hover:bg-red-600 text-white font-black border border-white/10 hover:border-red-600 rounded-lg uppercase tracking-widest text-[10px]">
-                    <Link to="/contact">Get Started</Link>
+                  <Button
+                    onClick={() => openBooking({
+                      serviceName: "Business & Corporate",
+                      packageName: pkg.name,
+                      mediaType: "none",
+                      basePrice: pkg.price,
+                    })}
+                    className="w-full h-12 bg-white/5 hover:bg-red-600 text-white font-black border border-white/10 hover:border-red-600 rounded-lg uppercase tracking-widest text-[10px]"
+                  >
+                    Get Started
                   </Button>
                 </div>
               </StaggerItem>

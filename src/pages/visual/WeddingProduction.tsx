@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Heart, Check, Camera, Video, Sparkles } from "lucide-react";
-import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, ScaleIn } from "@/components/animations";
+import { ArrowRight, Heart, Check, Sparkles } from "lucide-react";
+import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const WeddingProduction = () => {
+  const { openBooking } = useBooking();
+
   const packages = [
     {
       name: "Essential Coverage", hours: 4, gracePeriod: 45,
@@ -26,18 +29,22 @@ const WeddingProduction = () => {
     },
   ];
 
-  const mediaTypes = [
-    { id: "photography", label: "Photography Only", icon: "📸", desc: "Professional still photography" },
-    { id: "videography", label: "Videography Only", icon: "🎥", desc: "Cinematic video coverage" },
-    { id: "combo", label: "Photo + Video Combo", icon: "✨", desc: "Complete visual storytelling (Recommended)", recommended: true },
-  ];
-
   const whyChooseUs = [
     { title: "Authentic Moments", desc: "We capture genuine emotions and unscripted moments that tell your unique story" },
     { title: "Professional Equipment", desc: "State-of-the-art cameras and lighting ensure stunning results in any lighting condition" },
     { title: "Experienced Team", desc: "Years of wedding experience means we anticipate and capture the moments that matter" },
     { title: "Timeless Quality", desc: "Professional editing and color grading create memories you'll treasure for generations" },
   ];
+
+  const handleBook = (pkg: typeof packages[0], mediaType: "photography" | "videography" | "combo") => {
+    openBooking({
+      serviceName: "Wedding Production",
+      packageName: pkg.name,
+      mediaType,
+      basePrice: pkg.pricing[mediaType],
+      hours: pkg.hours,
+    });
+  };
 
   return (
     <div className="bg-background text-white min-h-screen">
@@ -112,44 +119,24 @@ const WeddingProduction = () => {
                     ))}
                   </div>
                   <div className="space-y-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Pricing by Format:</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">📸</span> Photography</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.photography}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">🎥</span> Videography</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.videography}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5 border border-red-600/30">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">✨</span> Combo</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.combo}</span>
-                      </div>
-                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Select Format:</p>
+                    <Button onClick={() => handleBook(pkg, "photography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">📸</span> Photography</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.photography.toLocaleString()}</span>
+                    </Button>
+                    <Button onClick={() => handleBook(pkg, "videography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">🎥</span> Videography</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.videography.toLocaleString()}</span>
+                    </Button>
+                    <Button onClick={() => handleBook(pkg, "combo")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border border-red-600/30">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">✨</span> Combo</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.combo.toLocaleString()}</span>
+                    </Button>
                   </div>
                 </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
-
-          <FadeInSection className="max-w-4xl mx-auto bg-white/[0.02] border border-white/5 rounded-2xl p-10">
-            <h3 className="text-2xl font-black mb-8 text-center text-gradient">Choose Your Format</h3>
-            <StaggerContainer className="grid md:grid-cols-3 gap-6">
-              {mediaTypes.map((media) => (
-                <StaggerItem key={media.id}>
-                  <div className={`premium-card group border-white/5 hover:border-red-600/50 relative p-6 text-center ${media.recommended ? "border-red-600/50" : ""}`}>
-                    {media.recommended && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.2em]">Best Choice</div>
-                    )}
-                    <div className="text-5xl mb-4">{media.icon}</div>
-                    <h4 className="text-lg font-black text-white mb-2 uppercase tracking-tight">{media.label}</h4>
-                    <p className="text-xs text-white/60 font-medium">{media.desc}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </FadeInSection>
         </div>
       </section>
 
@@ -185,7 +172,7 @@ const WeddingProduction = () => {
             </p>
             <div className="flex flex-wrap justify-center gap-6">
               <Button asChild className="h-14 px-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-full uppercase tracking-widest text-[10px]">
-                <Link to="/contact">Book Your Wedding</Link>
+                <Link to="/contact">Contact Us</Link>
               </Button>
               <Button asChild variant="outline" className="h-14 px-12 border-white/10 text-white hover:bg-white/5 font-black rounded-full uppercase tracking-widest text-[10px]">
                 <Link to="/services/visual-production/community-events">Back to Events</Link>

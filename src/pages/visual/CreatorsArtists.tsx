@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Music2, Instagram, Camera, Check, Zap, Award, Users } from "lucide-react";
+import { Music2, Instagram, Camera, Check, Zap, Award, Users } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const CreatorsArtists = () => {
+  const { openBooking } = useBooking();
+
   const services = [
     {
       id: "music-video", title: "Music Video Production", description: "Professional cinematic music videos for your tracks", icon: Music2,
@@ -99,7 +102,7 @@ const CreatorsArtists = () => {
                         <div className="premium-card group border-white/5 hover:border-red-600/50">
                           <h4 className="text-2xl font-black text-red-600 mb-2 uppercase tracking-tight">{pkg.tier}</h4>
                           <p className="text-sm text-white/50 mb-4 font-medium">{pkg.hours}</p>
-                          <p className="text-3xl font-black text-white mb-8">R {pkg.price}</p>
+                          <p className="text-3xl font-black text-white mb-8">R {pkg.price.toLocaleString()}</p>
                           <ul className="space-y-3 mb-12 flex-grow">
                             {pkg.features.map((feature) => (
                               <li key={feature} className="flex items-start gap-3 text-sm">
@@ -108,8 +111,16 @@ const CreatorsArtists = () => {
                               </li>
                             ))}
                           </ul>
-                          <Button asChild className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]">
-                            <Link to={`/booking?service=visual&category=${service.id}&package=${pkg.tier}`}>Select Package</Link>
+                          <Button
+                            onClick={() => openBooking({
+                              serviceName: service.title,
+                              packageName: pkg.tier,
+                              mediaType: "none",
+                              basePrice: pkg.price,
+                            })}
+                            className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]"
+                          >
+                            Select Package
                           </Button>
                         </div>
                       </StaggerItem>
