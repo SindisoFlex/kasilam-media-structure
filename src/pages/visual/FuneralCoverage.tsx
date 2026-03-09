@@ -1,23 +1,26 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Flower, Check, Heart } from "lucide-react";
+import { Flower, Check } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const FuneralCoverage = () => {
+  const { openBooking } = useBooking();
+
   const packages = [
     { name: "Basic Memorial Coverage", hours: 3, description: "Essential ceremony documentation", includes: ["Ceremony coverage", "Photography OR Videography option", "Edited final media", "USB delivery"], pricing: { photography: 1500, videography: 2000, combo: 3500 } },
     { name: "Standard Memorial Coverage", hours: 5, description: "Comprehensive memorial documentation", includes: ["Ceremony coverage", "Selected family moments", "Photography OR Videography option", "Edited final media", "USB delivery"], pricing: { photography: 2200, videography: 2800, combo: 4200 }, recommended: true },
     { name: "Complete Memorial Coverage", hours: 7, description: "Full memorial service coverage", includes: ["Full memorial coverage", "Family moments and gathering highlights", "Photography OR Videography option", "Edited final media", "USB delivery"], pricing: { photography: 3000, videography: 3500, combo: 5200 } },
   ];
 
-  const mediaTypes = [
-    { id: "photography", label: "Photography", icon: "📸", desc: "Professional still photography" },
-    { id: "videography", label: "Videography", icon: "🎥", desc: "Complete video coverage" },
-    { id: "combo", label: "Photo + Video Combo", icon: "✨", desc: "Comprehensive visual record", recommended: true },
-  ];
-
-  const handleBooking = (packageName: string) => {
-    window.location.href = `/booking?service=visual&category=funeral&package=${packageName}`;
+  const handleBook = (pkg: typeof packages[0], mediaType: "photography" | "videography" | "combo") => {
+    openBooking({
+      serviceName: "Funeral Coverage",
+      packageName: pkg.name,
+      mediaType,
+      basePrice: pkg.pricing[mediaType],
+      hours: pkg.hours,
+    });
   };
 
   return (
@@ -84,49 +87,24 @@ const FuneralCoverage = () => {
                     ))}
                   </div>
                   <div className="space-y-3">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Pricing by Format:</p>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">📸</span> Photography</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.photography}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">🎥</span> Videography</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.videography}</span>
-                      </div>
-                      <div className="flex justify-between items-center p-2 rounded bg-white/5 border border-red-600/30">
-                        <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">✨</span> Combo</span>
-                        <span className="text-red-600 font-black">R {pkg.pricing.combo}</span>
-                      </div>
-                    </div>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-4">Select Format:</p>
+                    <Button onClick={() => handleBook(pkg, "photography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">📸</span> Photography</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.photography.toLocaleString()}</span>
+                    </Button>
+                    <Button onClick={() => handleBook(pkg, "videography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">🎥</span> Videography</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.videography.toLocaleString()}</span>
+                    </Button>
+                    <Button onClick={() => handleBook(pkg, "combo")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border border-red-600/30">
+                      <span className="text-sm font-medium flex items-center gap-2"><span className="text-lg">✨</span> Combo</span>
+                      <span className="text-red-600 font-black">R {pkg.pricing.combo.toLocaleString()}</span>
+                    </Button>
                   </div>
-                  <Button onClick={() => handleBooking(pkg.name)} className="mt-8 w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px] transition-all">
-                    Book This Package <ArrowRight className="h-3 w-3 ml-2" />
-                  </Button>
                 </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
-
-          <FadeInSection className="max-w-4xl mx-auto bg-white/[0.02] border border-white/5 rounded-2xl p-10">
-            <h3 className="text-2xl font-black mb-8 text-center text-gradient">Choose Your Format</h3>
-            <StaggerContainer className="grid md:grid-cols-3 gap-6">
-              {mediaTypes.map((media) => (
-                <StaggerItem key={media.id}>
-                  <div className={`premium-card group border-white/5 hover:border-red-600/50 relative p-6 text-center ${media.recommended ? "border-red-600/50" : ""}`}>
-                    {media.recommended && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.2em]">Include with All</div>
-                    )}
-                    <div className="text-5xl mb-4">{media.icon}</div>
-                    <h4 className="text-lg font-black text-white mb-2 uppercase tracking-tight">{media.label}</h4>
-                    <p className="text-xs text-white/60 font-medium">{media.desc}</p>
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </FadeInSection>
-        </div>
-      </section>
 
       <section className="section-padding bg-zinc-950">
         <div className="content-width max-w-3xl mx-auto">
@@ -146,6 +124,8 @@ const FuneralCoverage = () => {
               ))}
             </div>
           </FadeInSection>
+        </div>
+      </section>
         </div>
       </section>
 

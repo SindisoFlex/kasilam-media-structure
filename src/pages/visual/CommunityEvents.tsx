@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Heart, Users, Cake, BookOpen, Flower, Home, Target, Check, Music2 } from "lucide-react";
+import { ArrowRight, Heart, Home, Flower, Check } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const CommunityEvents = () => {
+  const { openBooking } = useBooking();
   const [selectedService, setSelectedService] = useState<string | null>(null);
   const [showPackages, setShowPackages] = useState(false);
 
@@ -14,24 +16,26 @@ const CommunityEvents = () => {
     { id: "family", title: "Family & Social Events", description: "Personal celebrations and gatherings", icon: Home, details: ["Birthdays", "Baby Showers", "Graduations", "Traditional Ceremonies", "Family Gatherings", "Private Celebrations"] },
   ];
 
-  const eventTypes = ["Birthday", "Baby Shower", "Graduation", "Traditional Ceremony", "Family Gathering", "Other"];
-
   const coverageTiers = [
     { tier: 1, hours: 2, pricingPhoto: 1800, pricingVideo: 2000, pricingCombo: 2500, deliverables: ["Professional coverage of key moments", "Selected highlights edited", "Color corrected gallery/video", "Digital delivery (web + USB)", "Same-day previews via WhatsApp"] },
     { tier: 2, hours: 4, pricingPhoto: 3500, pricingVideo: 4000, pricingCombo: 5000, deliverables: ["Extended comprehensive coverage", "Multiple creative angles", "Full edited gallery or video", "Advanced color grading", "Priority delivery within 10 days", "Mobile preview gallery"] },
     { tier: 3, hours: 6, pricingPhoto: 5500, pricingVideo: 6500, pricingCombo: 7500, deliverables: ["Complete extended coverage", "Cinematic storytelling approach", "Priority editing and delivery", "45-minute grace period", "Expedited delivery within 5 days", "Backup equipment on standby", "Highlight reel included"] },
   ];
 
-  const mediaTypes = [
-    { id: "photography", label: "Photography Only", description: "Professional still photography", icon: "📸" },
-    { id: "videography", label: "Videography Only", description: "Cinematic video coverage", icon: "🎥" },
-    { id: "combo", label: "Photo + Video Combo", description: "Complete visual storytelling (Recommended)", icon: "✨", recommended: true },
-  ];
-
   const handleServiceSelect = (serviceId: string, link?: string) => {
     if (serviceId === "family") { setSelectedService(serviceId); setShowPackages(true); }
     else if (link) { window.location.href = link; }
-    else { window.location.href = `/booking?service=visual&category=${serviceId}`; }
+  };
+
+  const handleTierBook = (tier: typeof coverageTiers[0], mediaType: "photography" | "videography" | "combo") => {
+    const price = mediaType === "photography" ? tier.pricingPhoto : mediaType === "videography" ? tier.pricingVideo : tier.pricingCombo;
+    openBooking({
+      serviceName: "Family & Social Events",
+      packageName: `Tier ${tier.tier} Coverage`,
+      mediaType,
+      basePrice: price,
+      hours: tier.hours,
+    });
   };
 
   if (showPackages && selectedService === "family") {
@@ -42,27 +46,12 @@ const CommunityEvents = () => {
           <div className="content-width relative z-10">
             <HeroSection className="max-w-4xl mx-auto text-center mb-16">
               <h1 className="text-5xl md:text-6xl font-black mb-6 text-gradient">Family & Social Events</h1>
-              <p className="text-xl text-white/70 font-medium">Select your event type, coverage time, and media format.</p>
+              <p className="text-xl text-white/70 font-medium">Select your coverage tier and format below.</p>
             </HeroSection>
-
-            <FadeInSection className="max-w-4xl mx-auto mb-24">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight"><span className="text-red-600">Step 1:</span> Select Event Type</h2>
-              </div>
-              <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {eventTypes.map((type) => (
-                  <StaggerItem key={type}>
-                    <button className="premium-card h-24 w-full flex items-center justify-center text-center group hover:border-red-600/50">
-                      <span className="text-lg font-bold uppercase tracking-widest">{type}</span>
-                    </button>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </FadeInSection>
 
             <FadeInSection delay={0.1} className="max-w-6xl mx-auto mb-24">
               <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight"><span className="text-red-600">Step 2:</span> Select Coverage Tier</h2>
+                <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight"><span className="text-red-600">Coverage</span> Tiers</h2>
               </div>
               <StaggerContainer className="grid md:grid-cols-3 gap-8">
                 {coverageTiers.map((tier) => (
@@ -73,7 +62,7 @@ const CommunityEvents = () => {
                         <p className="text-4xl font-black text-white mb-2">{tier.hours} Hours</p>
                         <p className="text-sm text-white/50">Perfect for {tier.hours === 2 ? "intimate gatherings" : tier.hours === 4 ? "medium-sized events" : "extensive celebrations"}</p>
                       </div>
-                      <div className="space-y-4 mb-12 flex-grow">
+                      <div className="space-y-4 mb-8 flex-grow">
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600">Deliverables:</p>
                         {tier.deliverables.map((d) => (
                           <div key={d} className="flex items-start gap-3">
@@ -82,46 +71,21 @@ const CommunityEvents = () => {
                           </div>
                         ))}
                       </div>
-                      <Button asChild className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black border-0 rounded-lg uppercase tracking-widest text-[10px]">
-                        <Link to={`/booking?service=visual&type=${selectedService}&tier=${tier.tier}&hours=${tier.hours}`}>Select This Tier</Link>
-                      </Button>
-                    </div>
-                  </StaggerItem>
-                ))}
-              </StaggerContainer>
-            </FadeInSection>
-
-            <FadeInSection delay={0.2} className="max-w-6xl mx-auto mb-24">
-              <div className="mb-8">
-                <h2 className="text-3xl font-bold mb-6 uppercase tracking-tight"><span className="text-red-600">Step 3:</span> Choose Your Media Format</h2>
-                <p className="text-white/60 text-lg">Each tier is available in photography, videography, or premium combo format.</p>
-              </div>
-              <StaggerContainer className="grid md:grid-cols-3 gap-8">
-                {mediaTypes.map((media) => (
-                  <StaggerItem key={media.id}>
-                    <div className="premium-card group relative h-full border-white/5 hover:border-red-600/50 transition-all cursor-pointer">
-                      {media.recommended && (
-                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-red-600 text-[10px] font-black uppercase tracking-[0.2em] text-white">Recommended</div>
-                      )}
-                      <div className="text-5xl mb-6">{media.icon}</div>
-                      <h3 className="text-2xl font-black text-white mb-2 uppercase tracking-tight">{media.label}</h3>
-                      <p className="text-white/60 mb-8 font-medium text-sm leading-relaxed">{media.description}</p>
-                      <div className="space-y-4 mb-12">
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600">Available with all tiers</p>
-                        <div className="space-y-3">
-                          {coverageTiers.map((tier) => (
-                            <div key={tier.tier} className="flex justify-between items-center p-3 rounded-lg bg-white/5 border border-white/10">
-                              <span className="text-xs font-bold">Tier {tier.tier} ({tier.hours}h)</span>
-                              <span className="text-red-600 font-black text-sm">
-                                R {media.id === "photography" ? tier.pricingPhoto : media.id === "videography" ? tier.pricingVideo : tier.pricingCombo}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                      <div className="space-y-2">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-3">Select Format:</p>
+                        <Button onClick={() => handleTierBook(tier, "photography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                          <span className="text-sm font-medium">📸 Photography</span>
+                          <span className="text-red-600 font-black">R {tier.pricingPhoto.toLocaleString()}</span>
+                        </Button>
+                        <Button onClick={() => handleTierBook(tier, "videography")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border-0">
+                          <span className="text-sm font-medium">🎥 Videography</span>
+                          <span className="text-red-600 font-black">R {tier.pricingVideo.toLocaleString()}</span>
+                        </Button>
+                        <Button onClick={() => handleTierBook(tier, "combo")} variant="ghost" className="w-full justify-between p-3 h-auto rounded bg-white/5 hover:bg-red-600/20 border border-red-600/30">
+                          <span className="text-sm font-medium">✨ Combo</span>
+                          <span className="text-red-600 font-black">R {tier.pricingCombo.toLocaleString()}</span>
+                        </Button>
                       </div>
-                      <Button asChild className={`w-full h-12 font-black border rounded-lg uppercase tracking-widest text-[10px] transition-all ${media.recommended ? "bg-red-600 hover:bg-red-700 text-white border-red-600" : "bg-white/5 hover:bg-red-600 text-white border-white/10 hover:border-red-600"}`}>
-                        <Link to={`/booking?service=visual&type=${selectedService}&media=${media.id}`}>Select {media.label}</Link>
-                      </Button>
                     </div>
                   </StaggerItem>
                 ))}

@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { BookingProvider } from "@/contexts/BookingContext";
+import BookingFlow from "@/components/BookingFlow";
 import Layout from "@/components/Layout";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
@@ -44,47 +46,50 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/services" element={<Services />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/booking" element={<Booking />} />
-              <Route path="/services/audio-production" element={<AudioProduction />} />
-              <Route path="/services/visual-production" element={<VisualProduction />} />
-              <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
+        <BookingProvider>
+          <Toaster />
+          <Sonner />
+          <BookingFlow />
+          <BrowserRouter>
+            <ScrollToTop />
+            <Layout>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/services" element={<Services />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/booking" element={<Booking />} />
+                <Route path="/services/audio-production" element={<AudioProduction />} />
+                <Route path="/services/visual-production" element={<VisualProduction />} />
+                <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
 
-              {/* Audio Sub-routes */}
-              <Route path="/services/audio-production/studio-recording" element={<StudioRecording />} />
-              <Route path="/services/audio-production/podcast-recording" element={<PodcastRecording />} />
-              <Route path="/services/audio-production/voiceover-production" element={<VoiceOverProduction />} />
-              <Route path="/services/audio-production/mixing-coordination" element={<MixingMastering />} />
-              <Route path="/services/audio-production/production-management" element={<MusicProduction />} />
+                {/* Audio Sub-routes */}
+                <Route path="/services/audio-production/studio-recording" element={<StudioRecording />} />
+                <Route path="/services/audio-production/podcast-recording" element={<PodcastRecording />} />
+                <Route path="/services/audio-production/voiceover-production" element={<VoiceOverProduction />} />
+                <Route path="/services/audio-production/mixing-coordination" element={<MixingMastering />} />
+                <Route path="/services/audio-production/production-management" element={<MusicProduction />} />
 
-              {/* Digital Sub-routes */}
-              <Route path="/services/social-media-management" element={<SocialMediaManagement />} />
-              <Route path="/services/paid-advertising" element={<PaidAdvertising />} />
-              <Route path="/services/content-creation" element={<ContentCreation />} />
-              <Route path="/services/web-app-development" element={<WebDevelopment />} />
-              <Route path="/services/analytics-reporting" element={<AnalyticsReporting />} />
+                {/* Digital Sub-routes */}
+                <Route path="/services/social-media-management" element={<SocialMediaManagement />} />
+                <Route path="/services/paid-advertising" element={<PaidAdvertising />} />
+                <Route path="/services/content-creation" element={<ContentCreation />} />
+                <Route path="/services/web-app-development" element={<WebDevelopment />} />
+                <Route path="/services/analytics-reporting" element={<AnalyticsReporting />} />
 
-              {/* Visual Sub-routes */}
-              <Route path="/services/visual-production/community-events" element={<CommunityEvents />} />
-              <Route path="/services/visual-production/creators-artists" element={<CreatorsArtists />} />
-              <Route path="/services/visual-production/business-corporate" element={<BusinessCorporate />} />
-              <Route path="/services/visual-production/wedding-production" element={<WeddingProduction />} />
-              <Route path="/services/visual-production/funeral-coverage" element={<FuneralCoverage />} />
+                {/* Visual Sub-routes */}
+                <Route path="/services/visual-production/community-events" element={<CommunityEvents />} />
+                <Route path="/services/visual-production/creators-artists" element={<CreatorsArtists />} />
+                <Route path="/services/visual-production/business-corporate" element={<BusinessCorporate />} />
+                <Route path="/services/visual-production/wedding-production" element={<WeddingProduction />} />
+                <Route path="/services/visual-production/funeral-coverage" element={<FuneralCoverage />} />
 
-              <Route path="/portfolio" element={<Portfolio />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </BrowserRouter>
+                <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Layout>
+          </BrowserRouter>
+        </BookingProvider>
       </TooltipProvider>
     </ThemeProvider>
   </QueryClientProvider>
