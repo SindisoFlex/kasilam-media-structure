@@ -2,21 +2,33 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Music, ArrowRight, CheckCircle, ArrowLeft } from "lucide-react";
-import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 import { useBooking } from "@/contexts/BookingContext";
+import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
-const whatWeDo = ["Beat sourcing from producers", "Production coordination", "Negotiation with beat makers", "Artist-producer collaboration", "Project workflow management"];
-const perfectFor = ["Recording artists", "Independent musicians", "Music labels", "Content creators", "Brands needing original music"];
+const whatWeDo = [
+  "Beat sourcing from producers",
+  "Production coordination",
+  "Negotiation with beat makers",
+  "Artist-producer collaboration",
+  "Project workflow management",
+];
+
+const perfectFor = [
+  "Recording artists",
+  "Independent musicians",
+  "Music labels",
+  "Content creators",
+  "Brands needing original music",
+];
 
 const pricingTiers = [
-  { name: "Single Track", price: 800, priceLabel: "R800", features: ["Beat sourcing", "1 producer connection", "Basic coordination"], highlighted: false },
-  { name: "EP Package", price: 3000, priceLabel: "R3,000", features: ["Up to 5 tracks", "Multiple producer sourcing", "Full coordination", "Project management"], highlighted: true },
-  { name: "Album Production", price: 8000, priceLabel: "R8,000", features: ["Up to 12 tracks", "Full beat sourcing", "Producer negotiations", "Complete workflow management", "Priority support"], highlighted: false },
+  { name: "Single Track", price: "R____", features: ["Beat sourcing", "1 producer connection", "Basic coordination"], highlighted: false },
+  { name: "EP Package", price: "R____", features: ["Up to 5 tracks", "Multiple producer sourcing", "Full coordination", "Project management"], highlighted: true },
+  { name: "Album Production", price: "R____", features: ["Up to 12 tracks", "Full beat sourcing", "Producer negotiations", "Complete workflow management", "Priority support"], highlighted: false },
 ];
 
 const ProductionManagement = () => {
   const { openBooking } = useBooking();
-
   return (
     <div>
       <section className="relative overflow-hidden bg-background py-28 md:py-36">
@@ -43,7 +55,15 @@ const ProductionManagement = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button onClick={() => openBooking({ serviceName: "Production Management", packageName: "Production Session", mediaType: "none", basePrice: 800, eventType: "Music Production" })} size="lg" className="mt-8 gap-2">
+              <Button
+                onClick={() => openBooking({
+                  service: "Music Production Management",
+                  package: "Management Project",
+                  price: 0
+                })}
+                size="lg"
+                className="mt-8 gap-2 cursor-pointer"
+              >
                 Start Your Music Production Project <ArrowRight className="h-4 w-4" />
               </Button>
             </HeroSection>
@@ -110,7 +130,7 @@ const ProductionManagement = () => {
                       <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">Most Popular</span>
                     )}
                     <CardTitle className="text-xl">{tier.name}</CardTitle>
-                    <p className="mt-2 text-3xl font-black text-primary">{tier.priceLabel}</p>
+                    <p className="mt-2 text-3xl font-black text-primary">{tier.price}</p>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
                     <ul className="space-y-3 mb-6 flex-1">
@@ -122,10 +142,14 @@ const ProductionManagement = () => {
                       ))}
                     </ul>
                     <Button
+                      onClick={() => openBooking({
+                        service: "Music Production Management",
+                        package: tier.name,
+                        price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                      })}
                       size="lg"
-                      className="w-full"
+                      className="w-full cursor-pointer"
                       variant={tier.highlighted ? "default" : "outline"}
-                      onClick={() => openBooking({ serviceName: "Production Management", packageName: tier.name, mediaType: "none", basePrice: tier.price, eventType: "Music Production" })}
                     >
                       Get Started
                     </Button>
@@ -144,7 +168,15 @@ const ProductionManagement = () => {
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
               Let us connect you with the right producers and manage the entire production workflow.
             </p>
-            <Button onClick={() => openBooking({ serviceName: "Production Management", packageName: "Production Session", mediaType: "none", basePrice: 800, eventType: "Music Production" })} size="lg" className="mt-8 gap-2">
+            <Button
+              onClick={() => openBooking({
+                service: "Music Production Management",
+                package: "General Inquiry",
+                price: 0
+              })}
+              size="lg"
+              className="mt-8 gap-2 cursor-pointer"
+            >
               Book Now <ArrowRight className="h-4 w-4" />
             </Button>
           </FadeInSection>

@@ -30,10 +30,10 @@ const CommunityEvents = () => {
   const handleTierBook = (tier: typeof coverageTiers[0], mediaType: "photography" | "videography" | "combo") => {
     const price = mediaType === "photography" ? tier.pricingPhoto : mediaType === "videography" ? tier.pricingVideo : tier.pricingCombo;
     openBooking({
-      serviceName: "Family & Social Events",
-      packageName: `Tier ${tier.tier} Coverage`,
-      mediaType,
-      basePrice: price,
+      service: "Family & Social Events",
+      package: `Tier ${tier.tier} Coverage`,
+      price: price,
+      format: mediaType.charAt(0).toUpperCase() + mediaType.slice(1),
       hours: tier.hours,
     });
   };

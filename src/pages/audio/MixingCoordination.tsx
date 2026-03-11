@@ -2,8 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Headphones, ArrowRight, CheckCircle, ArrowLeft } from "lucide-react";
-import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 import { useBooking } from "@/contexts/BookingContext";
+import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const whatWeCoordinate = [
   "Vocal and instrumental balance",
@@ -13,17 +13,22 @@ const whatWeCoordinate = [
   "Quality control and review",
 ];
 
-const perfectFor = ["Recording artists", "Music producers", "Podcast creators", "Brands with audio content", "Independent musicians"];
+const perfectFor = [
+  "Recording artists",
+  "Music producers",
+  "Podcast creators",
+  "Brands with audio content",
+  "Independent musicians",
+];
 
 const pricingTiers = [
-  { name: "Basic Mix", price: 900, priceLabel: "R900", features: ["Single track mix", "1 revision", "MP3 delivery"], highlighted: false },
-  { name: "Full Mix & Master", price: 1800, priceLabel: "R1,800", features: ["Multi-track mixing", "Mastering coordination", "3 revisions", "WAV + MP3 delivery"], highlighted: true },
-  { name: "Album Package", price: 8000, priceLabel: "R8,000", features: ["Up to 10 tracks", "Full mixing & mastering", "Unlimited revisions", "Priority delivery"], highlighted: false },
+  { name: "Basic Mix", price: "R____", features: ["Single track mix", "1 revision", "MP3 delivery"], highlighted: false },
+  { name: "Full Mix & Master", price: "R____", features: ["Multi-track mixing", "Mastering coordination", "3 revisions", "WAV + MP3 delivery"], highlighted: true },
+  { name: "Album Package", price: "R____", features: ["Up to 10 tracks", "Full mixing & mastering", "Unlimited revisions", "Priority delivery"], highlighted: false },
 ];
 
 const MixingCoordination = () => {
   const { openBooking } = useBooking();
-
   return (
     <div>
       <section className="relative overflow-hidden bg-background py-28 md:py-36">
@@ -50,7 +55,15 @@ const MixingCoordination = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button onClick={() => openBooking({ serviceName: "Mixing Coordination", packageName: "Mixing Session", mediaType: "none", basePrice: 900, eventType: "Mixing & Mastering" })} size="lg" className="mt-8 gap-2">
+              <Button
+                onClick={() => openBooking({
+                  service: "Mixing & Mastering Coordination",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg"
+                className="mt-8 gap-2 cursor-pointer"
+              >
                 Start Your Mixing Process <ArrowRight className="h-4 w-4" />
               </Button>
             </HeroSection>
@@ -96,7 +109,9 @@ const MixingCoordination = () => {
           <StaggerContainer className="mx-auto mt-12 flex max-w-2xl flex-wrap justify-center gap-3">
             {perfectFor.map((item) => (
               <StaggerItem key={item}>
-                <span className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-medium text-primary inline-block">{item}</span>
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-5 py-2 text-sm font-medium text-primary inline-block">
+                  {item}
+                </span>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -117,7 +132,7 @@ const MixingCoordination = () => {
                       <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">Most Popular</span>
                     )}
                     <CardTitle className="text-xl">{tier.name}</CardTitle>
-                    <p className="mt-2 text-3xl font-black text-primary">{tier.priceLabel}</p>
+                    <p className="mt-2 text-3xl font-black text-primary">{tier.price}</p>
                   </CardHeader>
                   <CardContent className="flex-1 flex flex-col">
                     <ul className="space-y-3 mb-6 flex-1">
@@ -129,10 +144,14 @@ const MixingCoordination = () => {
                       ))}
                     </ul>
                     <Button
+                      onClick={() => openBooking({
+                        service: "Mixing & Mastering Coordination",
+                        package: tier.name,
+                        price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                      })}
                       size="lg"
-                      className="w-full"
+                      className="w-full cursor-pointer"
                       variant={tier.highlighted ? "default" : "outline"}
-                      onClick={() => openBooking({ serviceName: "Mixing Coordination", packageName: tier.name, mediaType: "none", basePrice: tier.price, eventType: "Mixing & Mastering" })}
                     >
                       Get Started
                     </Button>
@@ -151,7 +170,15 @@ const MixingCoordination = () => {
             <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
               Let us coordinate with the right engineers to make your audio sound its best.
             </p>
-            <Button onClick={() => openBooking({ serviceName: "Mixing Coordination", packageName: "Mixing Session", mediaType: "none", basePrice: 900, eventType: "Mixing & Mastering" })} size="lg" className="mt-8 gap-2">
+            <Button
+              onClick={() => openBooking({
+                service: "Mixing & Mastering Coordination",
+                package: "General Inquiry",
+                price: 0
+              })}
+              size="lg"
+              className="mt-8 gap-2 cursor-pointer"
+            >
               Book Now <ArrowRight className="h-4 w-4" />
             </Button>
           </FadeInSection>

@@ -8,23 +8,36 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import {
-  CalendarIcon, ArrowRight, ArrowLeft, CheckCircle, Download, MessageCircle,
-  MapPin, Navigation, Package, Clock
-} from "lucide-react";
+import { format, addDays } from "date-fns";
+import { CalendarIcon, ArrowRight, ArrowLeft, CheckCircle, Download, MessageCircle, MapPin, Navigation, Package, Clock } from "lucide-react";
 import jsPDF from "jspdf";
 import { useBooking } from "@/contexts/BookingContext";
+import logo from "@/images/kmp.svg";
 
-const addOns = [
-  { id: "rush", name: "Rush Delivery (48h)", price: 500 },
-  { id: "raw-files", name: "Raw Files Included", price: 400 },
-  { id: "social-edit", name: "Social Media Edits", price: 600 },
-  { id: "drone", name: "Drone Footage", price: 1500 },
-  { id: "extra-revisions", name: "Extra Revisions (3)", price: 300 },
-  { id: "extra-hours", name: "Extra Coverage Hours", price: 800 },
-  { id: "extra-camera", name: "Additional Camera Operator", price: 1200 },
-  { id: "editing-upgrade", name: "Premium Editing Package", price: 1000 },
+const serviceAddOns = {
+  audio: [
+    { id: "extra-hour", name: "Extra Recording Hour", price: 350 },
+    { id: "mixing", name: "Mixing", price: 600 },
+    { id: "mastering", name: "Mastering", price: 400 },
+    { id: "podcast-edit", name: "Podcast Editing", price: 500 },
+  ],
+  visual: [
+    { id: "extra-camera", name: "Extra Camera", price: 1000 },
+    { id: "drone", name: "Drone Footage", price: 1500 },
+    { id: "photography", name: "Photography Coverage", price: 800 },
+    { id: "extended-edit", name: "Extended Editing", price: 1200 },
+  ],
+  digital: [
+    { id: "add-platform", name: "Additional Social Platform", price: 1000 },
+    { id: "extra-posts", name: "Extra Content Posts", price: 500 },
+    { id: "ads-mgmt", name: "Paid Advertising Management", price: 1500 },
+    { id: "analytics", name: "Analytics Reporting", price: 800 },
+  ],
+};
+
+const timeSlots = [
+  "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
+  "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00"
 ];
 
 const VAT_RATE = 0.15;
@@ -36,73 +49,13 @@ const formatZAR = (amount: number) =>
 const generateRef = () =>
   `KMP-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-// Time picker wheel component
-const TimeScrollPicker = ({
-  value,
-  onChange,
-  items,
-  label,
-}: {
-  value: number;
-  onChange: (v: number) => void;
-  items: number[];
-  label: string;
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemHeight = 40;
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const idx = items.indexOf(value);
-      containerRef.current.scrollTop = idx * itemHeight;
-    }
-  }, []);
-
-  const handleScroll = () => {
-    if (containerRef.current) {
-      const idx = Math.round(containerRef.current.scrollTop / itemHeight);
-      const clamped = Math.min(Math.max(idx, 0), items.length - 1);
-      if (items[clamped] !== value) onChange(items[clamped]);
-    }
-  };
-
-  return (
-    <div className="flex flex-col items-center gap-1">
-      <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
-      <div className="relative h-[120px] w-16 overflow-hidden rounded-xl border border-border bg-muted/50">
-        <div className="absolute inset-x-0 top-[40px] h-[40px] border-y border-primary/30 bg-primary/5 z-10 pointer-events-none rounded-sm" />
-        <div
-          ref={containerRef}
-          onScroll={handleScroll}
-          className="h-full overflow-y-auto scrollbar-hide snap-y snap-mandatory"
-          style={{ scrollSnapType: "y mandatory", paddingTop: 40, paddingBottom: 40 }}
-        >
-          {items.map((item) => (
-            <div
-              key={item}
-              className={cn(
-                "h-[40px] flex items-center justify-center text-lg font-bold snap-center cursor-pointer transition-all",
-                item === value ? "text-primary scale-110" : "text-muted-foreground/50 scale-90"
-              )}
-              onClick={() => {
-                onChange(item);
-                if (containerRef.current) {
-                  const idx = items.indexOf(item);
-                  containerRef.current.scrollTo({ top: idx * itemHeight, behavior: "smooth" });
-                }
-              }}
-            >
-              {String(item).padStart(2, "0")}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+const getServiceCategory = (service: string): "audio" | "visual" | "digital" => {
+  const s = (service || "").toLowerCase();
+  if (s.includes("wedding") || s.includes("funeral") || s.includes("event") || s.includes("visual") || s.includes("photography") || s.includes("video") || s.includes("creator") || s.includes("artist") || s.includes("corporate") || s.includes("production")) return "visual";
+  if (s.includes("audio") || s.includes("recording") || s.includes("podcast") || s.includes("voice") || s.includes("mix") || s.includes("mastering") || s.includes("music") || s.includes("studio")) return "audio";
+  if (s.includes("digital") || s.includes("social") || s.includes("web") || s.includes("marketing") || s.includes("analytics") || s.includes("content creation") || s.includes("advertising") || s.includes("ads")) return "digital";
+  return "visual"; 
 };
-
-const hours = Array.from({ length: 24 }, (_, i) => i);
-const minutes = Array.from({ length: 12 }, (_, i) => i * 5);
 
 const BookingFlow = () => {
   const { isOpen, bookingInfo, closeBooking } = useBooking();
@@ -112,12 +65,10 @@ const BookingFlow = () => {
   const [location, setLocation] = useState("");
   const [mapsLink, setMapsLink] = useState("");
   const [date, setDate] = useState<Date>();
-  const [hour, setHour] = useState(10);
-  const [minute, setMinute] = useState(0);
+  const [time, setTime] = useState("");
   const [clientName, setClientName] = useState("");
   const [clientPhone, setClientPhone] = useState("");
   const [clientEmail, setClientEmail] = useState("");
-  const [notes, setNotes] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState("");
   const [locatingUser, setLocatingUser] = useState(false);
@@ -128,12 +79,10 @@ const BookingFlow = () => {
     setLocation("");
     setMapsLink("");
     setDate(undefined);
-    setHour(10);
-    setMinute(0);
+    setTime("");
     setClientName("");
     setClientPhone("");
     setClientEmail("");
-    setNotes("");
     setConfirmed(false);
     setRefNumber("");
   };
@@ -143,30 +92,21 @@ const BookingFlow = () => {
     setTimeout(resetState, 300);
   };
 
-  const basePrice = bookingInfo?.basePrice || 0;
-  const addOnTotal = addOns.filter((a) => selectedAddOns.includes(a.id)).reduce((s, a) => s + a.price, 0);
+  const category = getServiceCategory(bookingInfo?.service || "");
+  const currentAddOns = serviceAddOns[category];
+  
+  const basePrice = bookingInfo?.price || 0;
+  const addOnTotal = currentAddOns
+    .filter((a) => selectedAddOns.includes(a.id))
+    .reduce((s, a) => s + a.price, 0);
   const subtotal = basePrice + addOnTotal;
   const vat = subtotal * VAT_RATE;
   const total = subtotal + vat;
 
-  const mediaLabel =
-    bookingInfo?.mediaType === "combo"
-      ? "Photo + Video"
-      : bookingInfo?.mediaType === "photography"
-      ? "Photography"
-      : bookingInfo?.mediaType === "videography"
-      ? "Videography"
-      : "";
-
-  const eventType = bookingInfo?.eventType || bookingInfo?.serviceName || "";
-  const timeString = `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-
-  const canNextStep3 = location || mapsLink;
-  const canNextStep4 = !!date;
-  const canNextStep5 = clientName && clientPhone;
-
   const toggleAddOn = (id: string) =>
-    setSelectedAddOns((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
+    setSelectedAddOns((prev) => 
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+    );
 
   const useMyLocation = () => {
     if (!navigator.geolocation) return;
@@ -183,470 +123,550 @@ const BookingFlow = () => {
     );
   };
 
-  const locationDisplay = location || (mapsLink ? "Google Maps link provided" : "");
-
   const buildWhatsAppMsg = (ref: string) => {
     const dateStr = date ? format(date, "PPP") : "";
-    return `Hi KMP! I'd like to confirm my booking:\n\nRef: ${ref}\nService: ${eventType}\nPackage: ${bookingInfo?.packageName}${mediaLabel ? ` (${mediaLabel})` : ""}\nDate: ${dateStr} at ${timeString}\nLocation: ${locationDisplay}\nTotal: ${formatZAR(total)}\n\nName: ${clientName}\nPhone: ${clientPhone}${clientEmail ? `\nEmail: ${clientEmail}` : ""}${notes ? `\nNotes: ${notes}` : ""}`;
+    let msg = `Hi KMP! I'd like to confirm my booking:\n\nRef: ${ref}\nService: ${bookingInfo?.service}\nPackage: ${bookingInfo?.package}\nDate: ${dateStr} at ${time}\nLocation: ${location}\nTotal: ${formatZAR(total)}\n\nName: ${clientName}\nPhone: ${clientPhone}`;
+    if (bookingInfo?.format) msg += `\nFormat: ${bookingInfo.format}`;
+    if (bookingInfo?.hours) msg += `\nDuration: ${bookingInfo.hours} Hours`;
+    if (clientEmail) msg += `\nEmail: ${clientEmail}`;
+    return msg;
   };
 
   const handleConfirm = () => {
     const ref = generateRef();
     setRefNumber(ref);
     setConfirmed(true);
-    setStep(7);
+    setStep(6);
   };
 
-  const openWhatsApp = () => {
-    const msg = encodeURIComponent(buildWhatsAppMsg(refNumber));
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
-  };
-
-  const downloadPDF = () => {
+  const getPDFBlob = async (): Promise<Blob> => {
     const doc = new jsPDF();
-    const pageWidth = doc.internal.pageSize.getWidth();
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.src = logo;
+      const canvas = document.createElement("canvas");
+      canvas.width = 300;
+      canvas.height = 200;
+      const ctx = canvas.getContext("2d");
 
-    // Header
-    doc.setFillColor(220, 38, 38);
-    doc.rect(0, 0, pageWidth, 45, "F");
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text("KASILAM MEDIA PRODUCTION", 20, 22);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Professional Media Production Services", 20, 32);
+      img.onload = () => {
+        if (ctx) {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, 300, 200);
+          const logoData = canvas.toDataURL("image/png");
+          doc.addImage(logoData, "PNG", 20, 10, 40, 25);
+          doc.setFontSize(24);
+          doc.setTextColor(0);
+          doc.text("KMP - QUOTATION", 70, 28);
+          doc.setFontSize(10);
+          doc.setTextColor(100);
+          doc.text(`Reference: ${refNumber}`, 70, 38);
+          doc.text(`Generated: ${new Date().toLocaleDateString()}`, 70, 44);
+          doc.line(20, 52, 190, 52);
 
-    // Quote info
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(18);
-    doc.setFont("helvetica", "bold");
-    doc.text("QUOTATION", 20, 60);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Reference: ${refNumber}`, 20, 68);
-    doc.text(`Date: ${new Date().toLocaleDateString("en-ZA")}`, 20, 74);
+          doc.setFontSize(14);
+          doc.setTextColor(0);
+          doc.text("CLIENT INFORMATION", 20, 65);
+          doc.setFontSize(11);
+          doc.text(`Name: ${clientName}`, 20, 75);
+          doc.text(`Phone: ${clientPhone}`, 20, 82);
+          if (clientEmail) doc.text(`Email: ${clientEmail}`, 20, 89);
 
-    // Client details
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text("Bill To:", pageWidth - 80, 60);
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
-    doc.text(clientName, pageWidth - 80, 68);
-    doc.text(clientPhone, pageWidth - 80, 74);
-    if (clientEmail) doc.text(clientEmail, pageWidth - 80, 80);
+          doc.setFontSize(14);
+          doc.text("BOOKING DETAILS", 20, 105);
+          doc.setFontSize(11);
+          doc.text(`Service: ${bookingInfo?.service}`, 20, 115);
+          doc.text(`Package: ${bookingInfo?.package}`, 20, 122);
+          if (bookingInfo?.format) doc.text(`Format: ${bookingInfo.format}`, 20, 129);
+          if (bookingInfo?.hours) doc.text(`Duration: ${bookingInfo.hours} Hours`, 20, 136);
+          doc.text(`Location: ${location}`, 20, 143);
+          doc.text(`Date & Time: ${date ? format(date, "PPP") : ""} at ${time}`, 20, 150);
 
-    // Line
-    doc.setDrawColor(220, 38, 38);
-    doc.setLineWidth(0.5);
-    doc.line(20, 88, pageWidth - 20, 88);
+          doc.setFontSize(14);
+          doc.text("INVESTMENT SUMMARY", 20, 175);
+          doc.setFontSize(11);
+          doc.text(`${bookingInfo?.package} Base:`, 20, 185);
+          doc.text(`${formatZAR(basePrice)}`, 150, 185);
 
-    // Service details table header
-    let y = 98;
-    doc.setFillColor(245, 245, 245);
-    doc.rect(20, y - 6, pageWidth - 40, 14, "F");
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text("Description", 25, y + 2);
-    doc.text("Amount", pageWidth - 45, y + 2, { align: "right" });
-    y += 16;
+          let yPosition = 192;
+          if (selectedAddOns.length > 0) {
+            selectedAddOns.forEach((id) => {
+              const a = currentAddOns.find((x) => x.id === id)!;
+              doc.text(`+ ${a.name}:`, 20, yPosition);
+              doc.text(`${formatZAR(a.price)}`, 150, yPosition);
+              yPosition += 7;
+            });
+          }
 
-    // Service line
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(40, 40, 40);
-    doc.text(`${eventType} — ${bookingInfo?.packageName}${mediaLabel ? ` (${mediaLabel})` : ""}`, 25, y);
-    doc.text(formatZAR(basePrice), pageWidth - 45, y, { align: "right" });
-    y += 10;
+          doc.line(20, yPosition + 5, 190, yPosition + 5);
+          doc.text("Subtotal:", 20, yPosition + 15);
+          doc.text(`${formatZAR(subtotal)}`, 150, yPosition + 15);
+          doc.text("VAT (15%):", 20, yPosition + 22);
+          doc.text(`${formatZAR(vat)}`, 150, yPosition + 22);
+          doc.setFontSize(16);
+          doc.text("TOTAL INVESTMENT:", 20, yPosition + 35);
+          doc.text(`${formatZAR(total)}`, 150, yPosition + 35);
 
-    // Add-ons
-    if (selectedAddOns.length > 0) {
-      selectedAddOns.forEach((id) => {
-        const a = addOns.find((x) => x.id === id)!;
-        doc.text(`  + ${a.name}`, 25, y);
-        doc.text(formatZAR(a.price), pageWidth - 45, y, { align: "right" });
-        y += 8;
-      });
-    }
+          const bankY = yPosition + 55;
+          doc.setFontSize(12);
+          doc.text("PAYMENT DETAILS (BANKING)", 20, bankY);
+          doc.setFontSize(10);
+          doc.text("Bank Name: Capitec Bank", 20, bankY + 10);
+          doc.text("Account Holder: Sindiso Sophazi", 20, bankY + 17);
+          doc.text("Account Number: 2512337916", 20, bankY + 24);
+          doc.text("Branch Code: 470010", 20, bankY + 31);
+          doc.text("Account Type: Entrepreneur", 20, bankY + 38);
 
-    // Event details
-    y += 5;
-    doc.setDrawColor(200, 200, 200);
-    doc.line(20, y, pageWidth - 20, y);
-    y += 12;
-    doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
-    doc.text(`Event: ${eventType}`, 25, y);
-    y += 7;
-    doc.text(`Location: ${locationDisplay}`, 25, y);
-    y += 7;
-    doc.text(`Date & Time: ${date ? format(date, "PPP") : ""} at ${timeString}`, 25, y);
-    if (notes) { y += 7; doc.text(`Notes: ${notes}`, 25, y); }
-
-    // Totals
-    y += 15;
-    doc.line(20, y, pageWidth - 20, y);
-    y += 10;
-    doc.setTextColor(60, 60, 60);
-    doc.text("Subtotal:", pageWidth - 90, y);
-    doc.text(formatZAR(subtotal), pageWidth - 45, y, { align: "right" });
-    y += 8;
-    doc.text("VAT (15%):", pageWidth - 90, y);
-    doc.text(formatZAR(vat), pageWidth - 45, y, { align: "right" });
-    y += 10;
-    doc.setFontSize(13);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(220, 38, 38);
-    doc.text("Total:", pageWidth - 90, y);
-    doc.text(formatZAR(total), pageWidth - 45, y, { align: "right" });
-
-    // Banking details
-    y += 20;
-    doc.setDrawColor(220, 38, 38);
-    doc.setLineWidth(0.5);
-    doc.line(20, y, pageWidth - 20, y);
-    y += 12;
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(0, 0, 0);
-    doc.text("Banking Details", 25, y);
-    y += 8;
-    doc.setFontSize(9);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(60, 60, 60);
-    doc.text("Bank: Capitec Bank", 25, y);
-    y += 6;
-    doc.text("Account Name: Kasilam Media Production", 25, y);
-    y += 6;
-    doc.text(`Reference: ${refNumber}`, 25, y);
-
-    // Footer
-    doc.setFontSize(7);
-    doc.setTextColor(150, 150, 150);
-    doc.text("Kasilam Media Production | Professional Media Services | Gqeberha, South Africa", pageWidth / 2, 285, { align: "center" });
-
-    doc.save(`KMP-Quote-${refNumber}.pdf`);
+          doc.setFontSize(8);
+          doc.setTextColor(150);
+          doc.text("Kasilam Media Production | 6034 NTONGELA STREET, KWAZAKHELE, PORT ELIZABETH, 6205", 105, 285, { align: "center" });
+          doc.text("Contact: 065 970 4101 | Ref: " + refNumber, 105, 290, { align: "center" });
+          resolve(doc.output("blob"));
+        }
+      };
+      if (img.complete) img.onload(new Event('load'));
+    });
   };
 
-  const stepLabels = ["Package", "Add-ons", "Location", "Date & Time", "Details", "Summary"];
+  const openWhatsApp = async () => {
+    const msgText = buildWhatsAppMsg(refNumber);
+    const blob = await getPDFBlob();
+    const file = new File([blob], `KMP-Quotation-${refNumber}.pdf`, { type: "application/pdf" });
+
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: `KMP Quotation - ${refNumber}`,
+          text: msgText,
+        });
+      } catch (err) {
+        console.error("Share failed", err);
+        const msg = encodeURIComponent(msgText);
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+      }
+    } else {
+      const msg = encodeURIComponent(msgText);
+      window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
+    }
+  };
+
+  const downloadPDF = async () => {
+    const blob = await getPDFBlob();
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `KMP-Quotation-${refNumber}.pdf`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto bg-background border-border">
-        <SheetHeader className="mb-6">
-          <SheetTitle className="text-xl font-black tracking-tight">
-            {confirmed ? "Booking Confirmed!" : "Complete Your Booking"}
-          </SheetTitle>
-          <SheetDescription className="text-sm">
-            {confirmed
-              ? `Reference: ${refNumber}`
-              : `${eventType} — ${bookingInfo?.packageName}${mediaLabel ? ` (${mediaLabel})` : ""}`}
-          </SheetDescription>
-        </SheetHeader>
-
-        {/* Progress */}
-        {!confirmed && (
-          <div className="mb-6">
-            <div className="flex gap-1 mb-2">
-              {stepLabels.map((_, i) => (
-                <div key={i} className={cn("h-1 flex-1 rounded-full transition-all duration-500", i + 1 <= step ? "bg-primary" : "bg-muted")} />
-              ))}
-            </div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-              Step {step} of 6 — {stepLabels[step - 1]}
-            </p>
-          </div>
-        )}
-
-        {/* Step 1: Service Package */}
-        {step === 1 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-3 mb-2">
-              <Package className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-bold">Selected Package</h3>
-            </div>
-            <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 space-y-3">
+    <Sheet open={isOpen} onOpenChange={handleClose}>
+      <SheetContent className="w-full sm:max-w-[450px] bg-[#0A0A0A] border-white/5 p-0 overflow-y-auto scrollbar-hide">
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="p-8 pb-4 space-y-4">
+            <SheetHeader className="text-left">
               <div className="flex justify-between items-start">
-                <div>
-                  <p className="font-bold text-base">{bookingInfo?.packageName}</p>
-                  <p className="text-sm text-muted-foreground">{eventType}</p>
-                  {mediaLabel && (
-                    <span className="inline-block mt-2 rounded-full bg-primary/10 border border-primary/20 px-3 py-0.5 text-xs font-bold text-primary">
-                      {mediaLabel}
-                    </span>
-                  )}
-                </div>
-                <p className="text-2xl font-black text-primary">{formatZAR(basePrice)}</p>
-              </div>
-              {bookingInfo?.hours && (
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Clock className="h-3.5 w-3.5" /> {bookingInfo.hours} hours coverage
-                </p>
-              )}
-            </div>
-            <div className="flex justify-end pt-4">
-              <Button onClick={() => setStep(2)} className="gap-2">
-                Continue <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Add-Ons */}
-        {step === 2 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <h3 className="text-lg font-bold">Optional Add-Ons</h3>
-            <div className="space-y-2">
-              {addOns.map((a) => (
-                <label
-                  key={a.id}
-                  className={cn(
-                    "flex items-center justify-between rounded-xl border p-4 cursor-pointer transition-all hover:border-primary/50",
-                    selectedAddOns.includes(a.id) ? "border-primary bg-primary/5" : "border-border"
-                  )}
-                >
-                  <div className="flex items-center gap-3">
-                    <Checkbox
-                      checked={selectedAddOns.includes(a.id)}
-                      onCheckedChange={() => toggleAddOn(a.id)}
-                    />
-                    <span className="text-sm font-medium">{a.name}</span>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-8 bg-red-600 rounded-full" />
+                    <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">Official Booking</span>
                   </div>
-                  <span className="text-sm font-bold text-primary">{formatZAR(a.price)}</span>
-                </label>
-              ))}
-            </div>
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setStep(1)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <div className="flex gap-2">
-                <Button variant="ghost" onClick={() => { setSelectedAddOns([]); setStep(3); }}>Skip</Button>
-                <Button onClick={() => setStep(3)} className="gap-2">
-                  Next <ArrowRight className="h-4 w-4" />
+                  <SheetTitle className="text-3xl font-black text-white uppercase tracking-tighter">
+                    {confirmed ? "Booking Confirmed" : `Step ${step} of 6`}
+                  </SheetTitle>
+                </div>
+                {!confirmed && (
+                  <div className="bg-white/5 rounded-full px-3 py-1 border border-white/10 uppercase text-[9px] font-bold text-white/40 tracking-widest">
+                    {category} Production
+                  </div>
+                )}
+              </div>
+              {!confirmed && (
+                <SheetDescription className="text-white/40 text-xs font-bold uppercase tracking-widest pt-2">
+                  Kasilam Media Production Standard Flow
+                </SheetDescription>
+              )}
+            </SheetHeader>
+
+            {/* Progress Bar */}
+            {!confirmed && (
+              <div className="grid grid-cols-6 gap-2 pt-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className={cn("h-1 rounded-full transition-all duration-500", i <= step ? "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-white/10")} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="flex-1 px-8 pb-8">
+            {/* Step 1: Service Confirmation */}
+            {step === 1 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white">Confirm Service</h3>
+                  <p className="text-white/50 text-sm font-medium">Please review the selected production service and starting investment.</p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Production Package</p>
+                      <p className="text-lg font-black text-white uppercase leading-tight">{bookingInfo?.package}</p>
+                      <p className="text-xs font-bold text-red-500 uppercase mt-1">{bookingInfo?.service}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Starting From</p>
+                      <p className="text-xl font-black text-white">{formatZAR(basePrice)}</p>
+                    </div>
+                  </div>
+                  <div className="pt-4 border-t border-white/5">
+                    <div className="flex items-center gap-3 text-white/40 text-[10px] font-bold uppercase tracking-widest">
+                      <div className="p-2 rounded-lg bg-white/5"><CheckCircle className="h-3 w-3 text-red-600" /></div>
+                      Standard Production Quality Guaranteed
+                    </div>
+                  </div>
+                </div>
+                <Button onClick={() => setStep(2)} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group">
+                  EXPLORE ADD-ONS <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Step 3: Location */}
-        {step === 3 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-3 mb-2">
-              <MapPin className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-bold">Event Location</h3>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="location">Address</Label>
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g. 123 Main Street, Gqeberha"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="mapsLink">Or paste Google Maps link</Label>
-                <Input
-                  id="mapsLink"
-                  value={mapsLink}
-                  onChange={(e) => setMapsLink(e.target.value)}
-                  placeholder="https://maps.google.com/..."
-                  className="mt-1"
-                />
-              </div>
-              <Button
-                variant="outline"
-                onClick={useMyLocation}
-                disabled={locatingUser}
-                className="w-full gap-2"
-              >
-                <Navigation className="h-4 w-4" />
-                {locatingUser ? "Locating..." : "Use My Location"}
-              </Button>
-            </div>
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setStep(2)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button onClick={() => setStep(4)} disabled={!canNextStep3} className="gap-2">
-                Next <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 4: Date & Time */}
-        {step === 4 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <div className="flex items-center gap-3 mb-2">
-              <CalendarIcon className="h-5 w-5 text-primary" />
-              <h3 className="text-lg font-bold">Date & Time</h3>
-            </div>
-            <div>
-              <Label>Event Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" className={cn("w-full mt-1 justify-start text-left font-normal", !date && "text-muted-foreground")}>
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP") : "Pick a date"}
+            {/* Step 2: Add-ons */}
+            {step === 2 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white">Production Add-ons</h3>
+                  <p className="text-white/50 text-sm font-medium">Enhance your production with these optional extras.</p>
+                </div>
+                <div className="grid gap-3">
+                  {currentAddOns.map((addon) => (
+                    <div 
+                      key={addon.id}
+                      onClick={() => toggleAddOn(addon.id)}
+                      className={cn(
+                        "p-4 rounded-xl border transition-all duration-300 cursor-pointer flex justify-between items-center group",
+                        selectedAddOns.includes(addon.id) ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-white/[0.02] border-white/5 hover:border-white/20"
+                      )}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className={cn("h-5 w-5 rounded-md border flex items-center justify-center transition-colors", selectedAddOns.includes(addon.id) ? "bg-red-600 border-red-600" : "border-white/20 bg-black/40")}>
+                          {selectedAddOns.includes(addon.id) && <CheckCircle className="h-3 w-3 text-white" />}
+                        </div>
+                        <div>
+                          <p className="text-xs font-black text-white uppercase tracking-wider">{addon.name}</p>
+                          <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5">{formatZAR(addon.price)}</p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button onClick={() => setStep(3)} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group">
+                    SET LOCATION <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 pointer-events-auto" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={date}
-                    onSelect={setDate}
-                    disabled={(d) => d < new Date()}
-                    initialFocus
-                    className="pointer-events-auto"
-                  />
-                </PopoverContent>
-              </Popover>
-            </div>
-            <div>
-              <Label className="mb-3 block">Event Time</Label>
-              <div className="flex items-center justify-center gap-4 py-4 rounded-xl border border-border bg-muted/30">
-                <TimeScrollPicker value={hour} onChange={setHour} items={hours} label="Hour" />
-                <span className="text-3xl font-black text-primary mt-5">:</span>
-                <TimeScrollPicker value={minute} onChange={setMinute} items={minutes} label="Min" />
+                  <Button variant="ghost" onClick={() => setStep(1)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                    BACK TO SERVICE
+                  </Button>
+                </div>
               </div>
-              <p className="text-center text-sm text-muted-foreground mt-2 font-medium">
-                Selected: <span className="text-primary font-bold">{timeString}</span>
-              </p>
-            </div>
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setStep(3)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button onClick={() => setStep(5)} disabled={!canNextStep4} className="gap-2">
-                Next <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* Step 5: Client Details */}
-        {step === 5 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <h3 className="text-lg font-bold">Your Details</h3>
-            <div className="space-y-3">
-              <div>
-                <Label htmlFor="clientName">Full Name *</Label>
-                <Input id="clientName" value={clientName} onChange={(e) => setClientName(e.target.value)} placeholder="John Doe" className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="clientPhone">Phone Number *</Label>
-                <Input id="clientPhone" type="tel" value={clientPhone} onChange={(e) => setClientPhone(e.target.value)} placeholder="082 123 4567" className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="clientEmail">Email (optional)</Label>
-                <Input id="clientEmail" type="email" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} placeholder="john@example.com" className="mt-1" />
-              </div>
-              <div>
-                <Label htmlFor="notes">Additional Notes (optional)</Label>
-                <Textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any special requests or details..." className="mt-1" rows={3} />
-              </div>
-            </div>
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setStep(4)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button onClick={() => setStep(6)} disabled={!canNextStep5} className="gap-2">
-                Next <ArrowRight className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Step 6: Summary */}
-        {step === 6 && !confirmed && (
-          <div className="space-y-4 animate-in slide-in-from-right-4 duration-300">
-            <h3 className="text-lg font-bold">Booking Summary</h3>
-
-            {/* Price breakdown */}
-            <div className="rounded-xl border border-border p-4 space-y-3 text-sm">
-              <div className="flex justify-between">
-                <span className="font-medium">{bookingInfo?.packageName}{mediaLabel ? ` (${mediaLabel})` : ""}</span>
-                <span className="font-bold">{formatZAR(basePrice)}</span>
-              </div>
-              {selectedAddOns.map((id) => {
-                const a = addOns.find((x) => x.id === id)!;
-                return (
-                  <div key={id} className="flex justify-between text-muted-foreground">
-                    <span>+ {a.name}</span>
-                    <span>{formatZAR(a.price)}</span>
+            {/* Step 3: Location */}
+            {step === 3 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white">Production Location</h3>
+                  <p className="text-white/50 text-sm font-medium">Where will the production take place?</p>
+                </div>
+                <div className="space-y-4">
+                  <div 
+                    onClick={() => setLocation("KMP Studio - Gqeberha")}
+                    className={cn(
+                      "p-5 rounded-2xl border transition-all duration-300 cursor-pointer group",
+                      location === "KMP Studio - Gqeberha" ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-white/[0.02] border-white/5 hover:border-white/20"
+                    )}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 rounded-xl bg-white/5">
+                        <MapPin className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black text-white uppercase tracking-wider text-left">KMP Studio - Gqeberha</p>
+                        <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5 text-left text-wrap">6034 NTONGELA STREET, KWAZAKHELE, PORT ELIZABETH</p>
+                      </div>
+                    </div>
                   </div>
-                );
-              })}
-              <div className="border-t border-border pt-3 flex justify-between">
-                <span>Subtotal</span><span>{formatZAR(subtotal)}</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>VAT (15%)</span><span>{formatZAR(vat)}</span>
-              </div>
-              <div className="border-t border-border pt-3 flex justify-between font-bold text-lg">
-                <span>Total</span><span className="text-primary">{formatZAR(total)}</span>
-              </div>
-            </div>
 
-            {/* Event details */}
-            <div className="rounded-xl border border-border p-4 space-y-2 text-sm">
-              <p><span className="text-muted-foreground">Service:</span> {eventType}</p>
-              <p><span className="text-muted-foreground">Location:</span> {locationDisplay}</p>
-              <p><span className="text-muted-foreground">Date:</span> {date ? format(date, "PPP") : ""} at {timeString}</p>
-              <p><span className="text-muted-foreground">Name:</span> {clientName}</p>
-              <p><span className="text-muted-foreground">Phone:</span> {clientPhone}</p>
-              {clientEmail && <p><span className="text-muted-foreground">Email:</span> {clientEmail}</p>}
-              {notes && <p><span className="text-muted-foreground">Notes:</span> {notes}</p>}
-            </div>
+                  <div className="space-y-3 pt-2">
+                    <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black">Mobile Production Site</Label>
+                    <div className="relative group">
+                      <Input 
+                        value={location === "KMP Studio - Gqeberha" ? "" : location} 
+                        onChange={(e) => setLocation(e.target.value)} 
+                        placeholder="Enter full address or site name" 
+                        className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl pr-12 focus:border-red-600/50"
+                      />
+                      <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-red-600 transition-colors" />
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      onClick={useMyLocation} 
+                      disabled={locatingUser}
+                      className="w-full h-12 border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2"
+                    >
+                      <Navigation className={cn("h-3 w-3", locatingUser && "animate-pulse")} />
+                      {locatingUser ? "LOCATING..." : "USE CURRENT DEVICE LOCATION"}
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button onClick={() => setStep(4)} disabled={!location} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                    SELECT DATE & TIME <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                  <Button variant="ghost" onClick={() => setStep(2)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                    BACK TO ADD-ONS
+                  </Button>
+                </div>
+              </div>
+            )}
 
-            <div className="flex justify-between pt-4">
-              <Button variant="outline" onClick={() => setStep(5)} className="gap-2">
-                <ArrowLeft className="h-4 w-4" /> Back
-              </Button>
-              <Button onClick={handleConfirm} className="gap-2">
-                <CheckCircle className="h-4 w-4" /> Confirm Booking
-              </Button>
-            </div>
+            {/* Step 4: Date & Time */}
+            {step === 4 && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2 text-center pb-2">
+                  <h3 className="text-xl font-bold text-white">Production Schedule</h3>
+                  <p className="text-white/50 text-sm font-medium">Standard 48-hour lead time enforced.</p>
+                </div>
+                <div className="space-y-4">
+                  <div className="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={setDate}
+                      disabled={(d) => d < addDays(new Date(), 2)}
+                      className="mx-auto"
+                    />
+                  </div>
+                  <div className="space-y-3">
+                    <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black text-center block">Select Time Slot</Label>
+                    <div className="grid grid-cols-4 gap-2">
+                      {timeSlots.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => setTime(t)}
+                          className={cn(
+                            "h-10 rounded-lg border text-[10px] font-black uppercase tracking-tighter transition-all duration-300",
+                            time === t 
+                              ? "bg-red-600 border-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.3)]" 
+                              : "bg-white/[0.02] border-white/5 text-white/40 hover:border-white/20"
+                          )}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button onClick={() => setStep(5)} disabled={!date || !time} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                    CONTINUE TO DETAILS <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                  <Button variant="ghost" onClick={() => setStep(3)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                    BACK TO LOCATION
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 5: Client Details */}
+            {step === 5 && !confirmed && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white">Client Information</h3>
+                  <p className="text-white/50 text-sm font-medium">How should we contact you about your production?</p>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="clientName" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Full Name</Label>
+                    <Input 
+                      id="clientName" 
+                      value={clientName} 
+                      onChange={(e) => setClientName(e.target.value)} 
+                      placeholder="John Doe" 
+                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="clientPhone" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Phone Number / WhatsApp</Label>
+                    <Input 
+                      id="clientPhone" 
+                      type="tel"
+                      value={clientPhone} 
+                      onChange={(e) => setClientPhone(e.target.value)} 
+                      placeholder="065 970 4101" 
+                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="clientEmail" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Email Address (Optional)</Label>
+                    <Input 
+                      id="clientEmail" 
+                      type="email"
+                      value={clientEmail} 
+                      onChange={(e) => setClientEmail(e.target.value)} 
+                      placeholder="john@example.com" 
+                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                    />
+                  </div>
+                </div>
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button onClick={() => setStep(6)} disabled={!clientName || !clientPhone} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                    REVIEW SUMMARY <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                  <Button variant="ghost" onClick={() => setStep(4)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                    BACK TO SCHEDULE
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 6: Summary */}
+            {step === 6 && !confirmed && (
+              <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-10">
+                <div className="space-y-2">
+                  <h3 className="text-xl font-bold text-white">Booking Summary</h3>
+                  <p className="text-white/50 text-sm font-medium">Review your production details before final confirmation.</p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+                    <div className="p-5 border-b border-white/5 bg-white/5 flex justify-between items-center">
+                      <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Investment Details</span>
+                      <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Pricing Summary</span>
+                    </div>
+                    <div className="p-5 space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-black text-white uppercase">{bookingInfo?.package}</p>
+                          <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5">{bookingInfo?.service}</p>
+                        </div>
+                        <span className="text-sm font-black text-white">{formatZAR(basePrice)}</span>
+                      </div>
+                      {selectedAddOns.map((id) => {
+                        const a = currentAddOns.find((x) => x.id === id)!;
+                        return (
+                          <div key={id} className="flex justify-between items-start">
+                            <p className="text-[11px] font-bold text-white/50 uppercase">+ {a.name}</p>
+                            <span className="text-[11px] font-bold text-white/50">{formatZAR(a.price)}</span>
+                          </div>
+                        );
+                      })}
+                      <div className="pt-4 border-t border-white/5 space-y-2">
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="font-bold text-white/30 uppercase">Subtotal</span>
+                          <span className="font-bold text-white/60">{formatZAR(subtotal)}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-xs">
+                          <span className="font-bold text-white/30 uppercase">VAT (15%)</span>
+                          <span className="font-bold text-white/60">{formatZAR(vat)}</span>
+                        </div>
+                        <div className="flex justify-between items-center pt-2">
+                          <span className="text-xs font-black text-white uppercase tracking-widest">Total Investment</span>
+                          <span className="text-xl font-black text-red-600">{formatZAR(total)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-3">
+                    <div className="flex gap-4">
+                      <div className="h-4 w-4 text-red-500 mt-1"><CheckCircle className="h-full w-full" /></div>
+                      <div>
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest underline">Location</p>
+                        <p className="text-sm font-bold text-white uppercase text-left">{location}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-4">
+                      <div className="h-4 w-4 text-red-500 mt-1"><CheckCircle className="h-full w-full" /></div>
+                      <div>
+                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest underline">Schedule</p>
+                        <p className="text-sm font-bold text-white uppercase text-left">{date ? format(date, "PPP") : ""} AT {time}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-red-600/5 border border-red-600/10 p-5 rounded-2xl text-center space-y-3">
+                  <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">Trust Statement</p>
+                  <p className="text-xs font-bold text-white leading-relaxed">
+                    Trusted by artists, weddings, and corporate clients across the Eastern Cape.
+                  </p>
+                </div>
+
+                <div className="flex flex-col gap-3 pt-4">
+                  <Button onClick={handleConfirm} className="w-full h-16 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-[0.2em] text-xs shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] transition-all">
+                    CONFIRM PRODUCTION BOOKING
+                  </Button>
+                  <Button variant="ghost" onClick={() => setStep(5)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                    BACK TO DETAILS
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Confirmation Success */}
+            {confirmed && (
+              <div className="space-y-8 text-center py-12 animate-in zoom-in-95 duration-700">
+                <div className="relative mx-auto h-24 w-24">
+                  <div className="absolute inset-0 animate-ping rounded-full bg-red-600/20" />
+                  <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-red-600 shadow-[0_0_40px_rgba(220,38,38,0.4)]">
+                    <CheckCircle className="h-12 w-12 text-white" />
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Production Reserved</h3>
+                  <p className="text-white/50 text-sm font-bold mt-2 uppercase tracking-widest">Reference No: <span className="text-red-500">{refNumber}</span></p>
+                </div>
+                
+                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 space-y-4 text-left">
+                  <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/30 border-b border-white/5 pb-4">
+                    <span>Summary</span>
+                    <span>Investment</span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="text-sm font-black text-white uppercase">{bookingInfo?.package}</p>
+                        <p className="text-[10px] font-bold text-white/40 uppercase">{bookingInfo?.service}</p>
+                      </div>
+                      <span className="text-lg font-black text-red-600">{formatZAR(total)}</span>
+                    </div>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-tighter leading-relaxed">
+                      Scheduled for {date ? format(date, "PPP") : ""} at {time}.<br />
+                      Location: {location}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-3">
+                  <Button onClick={openWhatsApp} className="w-full h-16 bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3">
+                    <MessageCircle className="h-5 w-5" /> SEND TO WHATSAPP
+                  </Button>
+                  <Button variant="outline" onClick={downloadPDF} className="w-full h-16 border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3">
+                    <Download className="h-5 w-5" /> DOWNLOAD QUOTATION
+                  </Button>
+                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em] pt-4">
+                    A representative will contact you shortly to finalize technical requirements.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-
-        {/* Step 7: Confirmation */}
-        {confirmed && (
-          <div className="space-y-6 text-center py-8 animate-in zoom-in-95 duration-500">
-            <div className="inline-flex rounded-full bg-primary/10 p-6 mx-auto">
-              <CheckCircle className="h-12 w-12 text-primary" />
-            </div>
-            <div>
-              <h3 className="text-2xl font-black">Booking Confirmed!</h3>
-              <p className="text-muted-foreground mt-1">Reference: <span className="font-bold text-primary">{refNumber}</span></p>
-            </div>
-            <div className="rounded-xl border border-border p-4 space-y-2 text-sm text-left">
-              <div className="flex justify-between font-bold">
-                <span>{bookingInfo?.packageName}{mediaLabel ? ` (${mediaLabel})` : ""}</span>
-                <span className="text-primary">{formatZAR(total)}</span>
-              </div>
-              <p className="text-muted-foreground">{eventType} • {locationDisplay}</p>
-              <p className="text-muted-foreground">{date ? format(date, "PPP") : ""} at {timeString}</p>
-            </div>
-            <div className="flex flex-col gap-3">
-              <Button onClick={openWhatsApp} className="w-full gap-2">
-                <MessageCircle className="h-4 w-4" /> Send via WhatsApp
-              </Button>
-              <Button variant="outline" onClick={downloadPDF} className="w-full gap-2">
-                <Download className="h-4 w-4" /> Download PDF Quote
-              </Button>
-            </div>
-          </div>
-        )}
+        </div>
       </SheetContent>
     </Sheet>
   );

@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Megaphone, CheckCircle, ArrowRight, Target, Search, Zap, BarChart, MousePointer2, PieChart } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const PaidAdvertising = () => {
+  const { openBooking } = useBooking();
   const problems = ["Wasting budget on the wrong audience", "Low click-through rates (CTR)", "Ads not converting into customers", "Difficulty tracking ROI"];
   const services = [
     { icon: Target, title: "Audience Targeting", desc: "Finding the people most likely to buy from your business." },
@@ -90,8 +92,16 @@ const PaidAdvertising = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button asChild size="lg" className="mt-8 gap-2">
-                <Link to="/booking">Start Your Campaign <ArrowRight className="h-4 w-4" /></Link>
+              <Button 
+                onClick={() => openBooking({
+                  service: "Paid Advertising",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg" 
+                className="mt-8 gap-2 cursor-pointer"
+              >
+                Start Your Campaign <ArrowRight className="h-4 w-4" />
               </Button>
             </HeroSection>
           </div>
@@ -203,7 +213,17 @@ const PaidAdvertising = () => {
                   <ul className="mb-8 space-y-4 text-left w-full">
                     {tier.features.map((f) => (<li key={f} className="flex items-center gap-3 text-sm text-muted-foreground"><CheckCircle className="h-4 w-4 shrink-0 text-primary" />{f}</li>))}
                   </ul>
-                  <Button className="mt-auto w-full" variant={tier.highlighted ? "default" : "outline"} asChild><Link to="/booking">Choose Plan</Link></Button>
+                  <Button 
+                    onClick={() => openBooking({
+                      service: "Paid Advertising",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    className="mt-auto w-full cursor-pointer" 
+                    variant={tier.highlighted ? "default" : "outline"}
+                  >
+                    Choose Plan
+                  </Button>
                 </Card>
               </StaggerScaleItem>
             ))}
@@ -221,8 +241,16 @@ const PaidAdvertising = () => {
             <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
               Let&apos;s build a campaign that reaches your ideal audience and turns clicks into customers.
             </p>
-            <Button asChild size="lg" className="px-10 h-14 text-lg">
-              <Link to="/booking">Book an Ad Strategy Session</Link>
+            <Button 
+              onClick={() => openBooking({
+                service: "Paid Advertising",
+                package: "Ad Strategy Session",
+                price: 0
+              })}
+              size="lg" 
+              className="px-10 h-14 text-lg cursor-pointer"
+            >
+              Book an Ad Strategy Session
             </Button>
           </FadeInSection>
         </div>

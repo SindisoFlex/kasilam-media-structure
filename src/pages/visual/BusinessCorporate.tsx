@@ -79,10 +79,9 @@ const BusinessCorporate = () => {
                   <div className="text-2xl font-black text-red-600 mb-6">{service.pricing}</div>
                   <Button
                     onClick={() => openBooking({
-                      serviceName: "Business & Corporate",
-                      packageName: service.title,
-                      mediaType: "none",
-                      basePrice: service.price,
+                      service: "Business & Corporate",
+                      package: service.title,
+                      price: service.price,
                     })}
                     className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]"
                   >
@@ -123,10 +122,9 @@ const BusinessCorporate = () => {
                   </ul>
                   <Button
                     onClick={() => openBooking({
-                      serviceName: "Business & Corporate",
-                      packageName: pkg.name,
-                      mediaType: "none",
-                      basePrice: pkg.price,
+                      service: "Business & Corporate",
+                      package: pkg.name,
+                      price: pkg.price,
                     })}
                     className="w-full h-12 bg-white/5 hover:bg-red-600 text-white font-black border border-white/10 hover:border-red-600 rounded-lg uppercase tracking-widest text-[10px]"
                   >

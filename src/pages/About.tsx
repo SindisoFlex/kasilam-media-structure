@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 const timeline = [
   { year: "2015", title: "Formal Filmmaking Studies", desc: "Establishing a technical foundation in visual storytelling and disciplined production." },
   { year: "2016", title: "Infrastructure Investment", desc: "Direct investment in recording infrastructure and strategic collaboration with emerging artists." },
@@ -18,6 +19,7 @@ const principles = [
 ];
 
 const About = () => {
+  const { openBooking } = useBooking();
   return (
     <div className="flex flex-col min-h-screen pt-20">
       {/* 1. Hero Section - Brand Story */}
@@ -172,8 +174,16 @@ const About = () => {
             “Kasilam Media Production was built with a long-term mindset. The goal is not only to create content — but to build presence.”
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Button asChild size="lg" className="h-14 px-12 text-base font-bold shadow-2xl hover:translate-y-[-2px] transition-transform">
-              <Link to="/booking">Start Your Project</Link>
+            <Button 
+              onClick={() => openBooking({
+                service: "Creative Production",
+                package: "General Inquiry",
+                price: 0
+              })}
+              size="lg" 
+              className="h-14 px-12 text-base font-bold shadow-2xl hover:translate-y-[-2px] transition-transform cursor-pointer"
+            >
+              Start Your Project
             </Button>
             <Button asChild variant="outline" size="lg" className="h-14 px-12 text-base font-bold border-primary/20">
               <Link to="/services">View Our Work</Link>

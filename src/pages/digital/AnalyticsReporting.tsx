@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BarChart3, CheckCircle, ArrowRight, LineChart, PieChart, Search, Trophy, Settings, FileText, Zap, MousePointerClick } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const AnalyticsReporting = () => {
+  const { openBooking } = useBooking();
   const problems = [
     "Not knowing which marketing channels are actually generating results",
     "Being overwhelmed by dashboards and reports that provide little direction",
@@ -85,7 +87,17 @@ const AnalyticsReporting = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button asChild size="lg" className="mt-8 gap-2"><Link to="/booking">Get Your Data Audit <ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button 
+                onClick={() => openBooking({
+                  service: "Analytics & Reporting",
+                  package: "Data Audit",
+                  price: 0
+                })}
+                size="lg" 
+                className="mt-8 gap-2 cursor-pointer"
+              >
+                Get Your Data Audit <ArrowRight className="h-4 w-4" />
+              </Button>
             </HeroSection>
           </div>
         </div>
@@ -205,7 +217,17 @@ const AnalyticsReporting = () => {
                   <ul className="mb-8 space-y-4 text-left w-full">
                     {tier.features.map((f) => (<li key={f} className="flex items-center gap-3 text-sm text-muted-foreground"><CheckCircle className="h-4 w-4 shrink-0 text-primary" />{f}</li>))}
                   </ul>
-                  <Button className="mt-auto w-full" variant={tier.highlighted ? "default" : "outline"} asChild><Link to="/booking">Choose Plan</Link></Button>
+                  <Button 
+                    onClick={() => openBooking({
+                      service: "Analytics & Reporting",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    className="mt-auto w-full cursor-pointer" 
+                    variant={tier.highlighted ? "default" : "outline"}
+                  >
+                    Choose Plan
+                  </Button>
                 </Card>
               </StaggerScaleItem>
             ))}
@@ -238,7 +260,17 @@ const AnalyticsReporting = () => {
               <br />
               Let&apos;s build the analytics infrastructure and reporting systems you need to grow with confidence.
             </p>
-            <Button asChild size="lg" className="px-10 h-14 text-lg"><Link to="/booking">Book a Data Audit</Link></Button>
+            <Button 
+              onClick={() => openBooking({
+                service: "Analytics & Reporting",
+                package: "Data Audit",
+                price: 0
+              })}
+              size="lg" 
+              className="px-10 h-14 text-lg cursor-pointer"
+            >
+              Book a Data Audit
+            </Button>
           </FadeInSection>
         </div>
       </section>

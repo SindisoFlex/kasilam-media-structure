@@ -17,6 +17,7 @@ import {
   Music2,
   Users2,
 } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 import heroImage from "@/images/hero-bg.png";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, ScaleIn } from "@/components/animations";
 
@@ -146,6 +147,7 @@ const processSteps = [
 ];
 
 const VisualProduction = () => {
+  const { openBooking } = useBooking();
   return (
     <div className="bg-background text-white min-h-screen">
       {/* 1. Hero Section */}
@@ -182,10 +184,16 @@ const VisualProduction = () => {
           </HeroSection>
           <HeroSection delay={0.35}>
             <div className="mt-16 flex flex-wrap justify-center gap-6">
-              <Button asChild size="lg" className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow">
-                <Link to="/booking">
-                  Book a Shoot <ArrowRight className="h-4 w-4 ml-4" />
-                </Link>
+              <Button
+                onClick={() => openBooking({
+                  service: "Visual Production",
+                  package: "General Shoot",
+                  price: 1500
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
+              >
+                Book a Shoot <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
               <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
                 <a href="#production-types">View Packages</a>
@@ -363,8 +371,16 @@ const VisualProduction = () => {
                       </div>
                     ))}
                   </div>
-                  <Button asChild variant="outline" className="w-full h-14 bg-white/5 border-white/10 hover:border-red-600 text-white font-black transition-all uppercase tracking-widest text-[10px] rounded-full">
-                    <Link to="/booking">Inquire Now</Link>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Visual Production",
+                      package: pkg.time,
+                      price: pkg.time.includes("2") ? 1500 : pkg.time.includes("4") ? 2800 : 4000
+                    })}
+                    variant="outline"
+                    className="w-full h-14 bg-white/5 border-white/10 hover:border-red-600 text-white font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer"
+                  >
+                    Inquire Now
                   </Button>
                 </div>
               </StaggerItem>
@@ -445,8 +461,16 @@ const VisualProduction = () => {
           </FadeInSection>
           <FadeInSection delay={0.3}>
             <div className="flex flex-wrap justify-center gap-8">
-              <Button asChild size="lg" className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow">
-                <Link to="/booking">Book a Shoot</Link>
+              <Button
+                onClick={() => openBooking({
+                  service: "Visual Production",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
+              >
+                Book a Shoot
               </Button>
               <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
                 <Link to="/contact">Request Consultation</Link>

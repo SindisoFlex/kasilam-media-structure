@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Globe, CheckCircle, ArrowRight, Code, MousePointer2, Layout, Zap, Smartphone, Search, LineChart, Server, ShieldCheck } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const WebDevelopment = () => {
+  const { openBooking } = useBooking();
   const startupFeatures = ["1 professional landing page", "mobile responsive design", "contact form integration", "basic SEO setup", "fast loading optimization"];
   const businessFeatures = ["5–10 pages", "responsive design", "contact forms", "SEO setup", "Google Analytics integration"];
   const appExamples = ["booking systems", "client portals", "dashboards", "custom web applications"];
@@ -55,7 +57,17 @@ const WebDevelopment = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button asChild size="lg" className="mt-8 gap-2"><Link to="/booking">Discuss Your Project <ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button
+                onClick={() => openBooking({
+                  service: "Web Development",
+                  package: "General Project",
+                  price: 0
+                })}
+                size="lg"
+                className="mt-8 gap-2 cursor-pointer"
+              >
+                Discuss Your Project <ArrowRight className="h-4 w-4" />
+              </Button>
             </HeroSection>
           </div>
         </div>
@@ -116,7 +128,16 @@ const WebDevelopment = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="mt-auto w-full h-12" asChild><Link to="/booking">Get Started</Link></Button>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Web Development",
+                      package: "Landing Page",
+                      price: 4500
+                    })}
+                    className="mt-auto w-full h-12 cursor-pointer"
+                  >
+                    Get Started
+                  </Button>
                 </CardContent>
               </Card>
             </StaggerScaleItem>
@@ -148,7 +169,16 @@ const WebDevelopment = () => {
                   <p className="mb-8 text-xs text-muted-foreground italic leading-relaxed">
                     Optional Hosting &amp; Maintenance add-on available.
                   </p>
-                  <Button className="mt-auto w-full h-12" asChild><Link to="/booking">Get Started</Link></Button>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Web Development",
+                      package: "Small Business Website",
+                      price: 12000
+                    })}
+                    className="mt-auto w-full h-12 cursor-pointer"
+                  >
+                    Get Started
+                  </Button>
                 </CardContent>
               </Card>
             </StaggerScaleItem>
@@ -177,7 +207,17 @@ const WebDevelopment = () => {
                     </ul>
                   </div>
                   <p className="mb-8 text-xs text-muted-foreground italic leading-relaxed">* Pricing depends on project complexity.</p>
-                  <Button className="mt-auto w-full h-12" variant="outline" asChild><Link to="/booking">Inquire Custom Project</Link></Button>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Web Development",
+                      package: "Custom Web App",
+                      price: 25000
+                    })}
+                    className="mt-auto w-full h-12 cursor-pointer"
+                    variant="outline"
+                  >
+                    Inquire Custom Project
+                  </Button>
                 </CardContent>
               </Card>
             </StaggerScaleItem>
@@ -253,7 +293,17 @@ const WebDevelopment = () => {
                       <li key={j} className="flex items-center gap-3 text-sm text-white/80 font-medium"><CheckCircle className="h-4 w-4 text-primary shrink-0" />{f}</li>
                     ))}
                   </ul>
-                  <Button variant={pkg.highlighted ? "default" : "outline"} className="w-full" asChild><Link to="/booking">Select Plan</Link></Button>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Web Hosting",
+                      package: pkg.name,
+                      price: parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    variant={pkg.highlighted ? "default" : "outline"}
+                    className="w-full cursor-pointer"
+                  >
+                    Select Plan
+                  </Button>
                 </Card>
               </StaggerScaleItem>
             ))}
@@ -292,7 +342,17 @@ const WebDevelopment = () => {
               Whether you need a professional website or a custom web application, we help businesses turn ideas into powerful digital platforms.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild size="lg" className="px-10 h-16 text-lg bg-white text-primary hover:bg-zinc-100 font-black uppercase tracking-widest shadow-2xl"><Link to="/booking">Start Your Project</Link></Button>
+              <Button
+                onClick={() => openBooking({
+                  service: "Web Development",
+                  package: "General Project",
+                  price: 0
+                })}
+                size="lg"
+                className="px-10 h-16 text-lg bg-white text-primary hover:bg-zinc-100 font-black uppercase tracking-widest shadow-2xl cursor-pointer"
+              >
+                Start Your Project
+              </Button>
               <Button asChild variant="outline" size="lg" className="px-10 h-16 text-lg border-white text-white hover:bg-white/10 font-bold uppercase tracking-widest"><Link to="/contact">Contact Support</Link></Button>
             </div>
           </FadeInSection>

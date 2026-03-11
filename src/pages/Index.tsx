@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 import heroBg from "@/images/hero-bg.png";
 
 const steps = [
@@ -11,6 +12,7 @@ const steps = [
 ];
 
 const Index = () => {
+  const { openBooking } = useBooking();
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Hero Section - Cinematic & Professional */}
@@ -41,13 +43,15 @@ const Index = () => {
           </p>
           <div className="mt-16 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
             <Button
-              asChild
+              onClick={() => openBooking({
+                service: "General Inquiry",
+                package: "Project Kickoff",
+                price: 0
+              })}
               size="lg"
-              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] bg-red-600 hover:bg-red-700 text-white rounded-full transition-all hover:scale-105 active:scale-95 red-glow"
+              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] bg-red-600 hover:bg-red-700 text-white rounded-full transition-all hover:scale-105 active:scale-95 red-glow pointer-events-auto cursor-pointer"
             >
-              <Link to="/booking">
-                Start Your Project <ArrowRight className="h-4 w-4 ml-3" />
-              </Link>
+              Start Your Project <ArrowRight className="h-4 w-4 ml-3" />
             </Button>
             <Button
               asChild
@@ -295,11 +299,15 @@ const Index = () => {
           </p>
           <div className="flex justify-center flex-wrap gap-8">
             <Button
-              asChild
+              onClick={() => openBooking({
+                service: "General Inquiry",
+                package: "Project Kickoff",
+                price: 0
+              })}
               size="lg"
-              className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow"
+              className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow pointer-events-auto cursor-pointer"
             >
-              <Link to="/booking">Start Your Project</Link>
+              Start Your Project
             </Button>
             <Button
               asChild

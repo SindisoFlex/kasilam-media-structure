@@ -113,10 +113,9 @@ const CreatorsArtists = () => {
                           </ul>
                           <Button
                             onClick={() => openBooking({
-                              serviceName: service.title,
-                              packageName: pkg.tier,
-                              mediaType: "none",
-                              basePrice: pkg.price,
+                              service: service.title,
+                              package: pkg.tier,
+                              price: pkg.price,
                             })}
                             className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-black rounded-lg uppercase tracking-widest text-[10px]"
                           >

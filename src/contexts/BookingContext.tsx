@@ -1,12 +1,11 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 export interface BookingInfo {
-  serviceName: string;
-  packageName: string;
-  mediaType: "photography" | "videography" | "combo" | "none";
-  basePrice: number;
+  service: string;
+  package: string;
+  price: number;
   hours?: number;
-  eventType?: string;
+  format?: string;
 }
 
 interface BookingContextValue {

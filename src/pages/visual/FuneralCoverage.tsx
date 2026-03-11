@@ -15,10 +15,10 @@ const FuneralCoverage = () => {
 
   const handleBook = (pkg: typeof packages[0], mediaType: "photography" | "videography" | "combo") => {
     openBooking({
-      serviceName: "Funeral Coverage",
-      packageName: pkg.name,
-      mediaType,
-      basePrice: pkg.pricing[mediaType],
+      service: "Funeral Coverage",
+      package: pkg.name,
+      price: pkg.pricing[mediaType],
+      format: mediaType.charAt(0).toUpperCase() + mediaType.slice(1),
       hours: pkg.hours,
     });
   };

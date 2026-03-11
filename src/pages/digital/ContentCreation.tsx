@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PenTool, CheckCircle, ArrowRight, Camera, Video, Type, Palette, Lightbulb, Zap, Image as ImageIcon } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const ContentCreation = () => {
+  const { openBooking } = useBooking();
   const problems = [
     "Content that looks unprofessional or inconsistent",
     "Running out of ideas for posts and videos",
@@ -80,7 +82,17 @@ const ContentCreation = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button asChild size="lg" className="mt-8 gap-2"><Link to="/booking">Start Creating <ArrowRight className="h-4 w-4" /></Link></Button>
+              <Button 
+                onClick={() => openBooking({
+                  service: "Content Creation",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg" 
+                className="mt-8 gap-2 cursor-pointer"
+              >
+                Start Creating <ArrowRight className="h-4 w-4" />
+              </Button>
             </HeroSection>
           </div>
         </div>
@@ -224,7 +236,17 @@ const ContentCreation = () => {
                   <ul className="mb-8 space-y-4 text-left w-full">
                     {tier.features.map((f) => (<li key={f} className="flex items-center gap-3 text-sm text-muted-foreground"><CheckCircle className="h-4 w-4 shrink-0 text-primary" />{f}</li>))}
                   </ul>
-                  <Button className="mt-auto w-full" variant={tier.highlighted ? "default" : "outline"} asChild><Link to="/booking">Choose Plan</Link></Button>
+                  <Button 
+                    onClick={() => openBooking({
+                      service: "Content Creation",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    className="mt-auto w-full cursor-pointer" 
+                    variant={tier.highlighted ? "default" : "outline"}
+                  >
+                    Choose Plan
+                  </Button>
                 </Card>
               </StaggerScaleItem>
             ))}
@@ -327,8 +349,29 @@ const ContentCreation = () => {
               Let&apos;s create visuals, videos, and messaging that truly represent your business and connect with your audience.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild size="lg" className="px-10 h-14 text-lg"><Link to="/booking">Request a Quote</Link></Button>
-              <Button asChild size="lg" className="px-10 h-14 text-lg" variant="outline"><Link to="/booking">Start Your Project</Link></Button>
+              <Button 
+                onClick={() => openBooking({
+                  service: "Content Creation",
+                  package: "Quote Request",
+                  price: 0
+                })}
+                size="lg" 
+                className="px-10 h-14 text-lg cursor-pointer"
+              >
+                Request a Quote
+              </Button>
+              <Button 
+                onClick={() => openBooking({
+                  service: "Content Creation",
+                  package: "Project Kickoff",
+                  price: 0
+                })}
+                size="lg" 
+                className="px-10 h-14 text-lg cursor-pointer" 
+                variant="outline"
+              >
+                Start Your Project
+              </Button>
             </div>
           </FadeInSection>
         </div>

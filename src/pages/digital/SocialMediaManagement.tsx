@@ -2,9 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Share2, CheckCircle, ArrowRight, MessageSquare, Zap } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const SocialMediaManagement = () => {
+  const { openBooking } = useBooking();
   const whatWeDo = ["Content strategy and planning", "Graphic design and captions", "Content scheduling and publishing", "Audience engagement monitoring", "Performance analytics and reporting"];
 
   const platforms = ["Facebook", "Instagram", "LinkedIn", "TikTok", "YouTube Shorts"];
@@ -76,8 +78,16 @@ const SocialMediaManagement = () => {
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button asChild size="lg" className="mt-8 gap-2">
-                <Link to="/booking">Get Started <ArrowRight className="h-4 w-4" /></Link>
+              <Button
+                onClick={() => openBooking({
+                  service: "Social Media Management",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg"
+                className="mt-8 gap-2 cursor-pointer"
+              >
+                Get Started <ArrowRight className="h-4 w-4" />
               </Button>
             </HeroSection>
           </div>
@@ -171,8 +181,15 @@ const SocialMediaManagement = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="mt-auto w-full" asChild>
-                    <Link to="/booking">Get Started</Link>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Social Media Management",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    className="mt-auto w-full cursor-pointer"
+                  >
+                    Get Started
                   </Button>
                 </Card>
               </StaggerScaleItem>
@@ -233,9 +250,8 @@ const SocialMediaManagement = () => {
             {pricing.map((tier) => (
               <StaggerScaleItem key={tier.name}>
                 <Card
-                  className={`relative flex flex-col items-center p-8 text-center bg-background h-full ${
-                    tier.highlighted ? "border-primary border-2" : "border-border"
-                  }`}
+                  className={`relative flex flex-col items-center p-8 text-center bg-background h-full ${tier.highlighted ? "border-primary border-2" : "border-border"
+                    }`}
                 >
                   {tier.highlighted && (
                     <span className="absolute -top-4 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">
@@ -254,8 +270,16 @@ const SocialMediaManagement = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="mt-auto w-full" variant={tier.highlighted ? "default" : "outline"} asChild>
-                    <Link to="/booking">Get Started</Link>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Social Media Management",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                    })}
+                    className="mt-auto w-full cursor-pointer"
+                    variant={tier.highlighted ? "default" : "outline"}
+                  >
+                    Get Started
                   </Button>
                 </Card>
               </StaggerScaleItem>
@@ -303,8 +327,16 @@ const SocialMediaManagement = () => {
             <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
               Let&apos;s turn your social media into a powerful tool for visibility, engagement, and brand growth.
             </p>
-            <Button asChild size="lg" className="px-10 h-14 text-lg">
-              <Link to="/booking">Get Started</Link>
+            <Button
+              onClick={() => openBooking({
+                service: "Social Media Management",
+                package: "General Inquiry",
+                price: 0
+              })}
+              size="lg"
+              className="px-10 h-14 text-lg cursor-pointer"
+            >
+              Get Started
             </Button>
           </FadeInSection>
         </div>

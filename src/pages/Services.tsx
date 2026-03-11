@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mic, Camera, Globe, ArrowRight, Zap, Sparkles, Layers } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 
 const services = [
   {
@@ -28,6 +29,7 @@ const services = [
 ];
 
 const Services = () => {
+  const { openBooking } = useBooking();
   return (
     <div className="bg-black text-white min-h-screen">
       {/* Hero */}
@@ -113,8 +115,16 @@ const Services = () => {
             Whether it's a single session or a full brand transformation, we're ready to produce.
           </p>
           <div className="flex flex-wrap justify-center gap-6">
-            <Button asChild size="lg" className="h-16 px-12 bg-white text-red-600 hover:bg-zinc-100 font-black uppercase tracking-widest text-sm shadow-2xl transition-all hover:scale-105">
-              <Link to="/booking">Book a Strategy Call</Link>
+            <Button
+              onClick={() => openBooking({
+                service: "Strategy Call",
+                package: "Initial Consultation",
+                price: 0
+              })}
+              size="lg"
+              className="h-16 px-12 bg-white text-red-600 hover:bg-zinc-100 font-black uppercase tracking-widest text-sm shadow-2xl transition-all hover:scale-105 cursor-pointer"
+            >
+              Book a Strategy Call
             </Button>
             <Button asChild variant="outline" size="lg" className="h-16 px-12 border-white/40 text-white hover:bg-white/10 font-black uppercase tracking-widest text-sm transition-all">
               <Link to="/contact">Contact Support</Link>

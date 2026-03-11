@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Camera, Video, Globe, ArrowRight, Play, ExternalLink } from "lucide-react";
+import { useBooking } from "@/contexts/BookingContext";
 
 const portfolioItems = [
     { id: 1, title: "Lakeside Wedding", type: "Photography", category: "Community", image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80" },
@@ -12,6 +13,7 @@ const portfolioItems = [
 ];
 
 const Portfolio = () => {
+    const { openBooking } = useBooking();
     return (
         <div className="bg-background text-white min-h-screen">
             {/* Hero */}
@@ -82,8 +84,16 @@ const Portfolio = () => {
                     <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">Your Story<br />is Next.</h2>
                     <p className="mx-auto max-w-4xl text-xl md:text-2xl text-white/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">Ready to produce elite visuals or build your digital legacy?</p>
                     <div className="flex justify-center flex-wrap gap-8">
-                        <Button asChild size="lg" className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow">
-                            <Link to="/booking">Start Your Project</Link>
+                        <Button 
+                            onClick={() => openBooking({
+                                service: "Portfolio Strategy",
+                                package: "General Inquiry",
+                                price: 0
+                            })}
+                            size="lg" 
+                            className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
+                        >
+                            Start Your Project
                         </Button>
                         <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
                             <Link to="/contact">Let's Talk</Link>
