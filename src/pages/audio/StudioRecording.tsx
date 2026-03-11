@@ -15,7 +15,6 @@ const StudioRecording = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Hero */}
       <section className="relative py-24 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent" />
         <div className="container relative mx-auto px-4 text-center">
@@ -38,21 +37,19 @@ const StudioRecording = () => {
         </div>
       </section>
 
-      {/* About Service */}
       <section className="py-20 bg-card/50">
         <div className="container mx-auto px-4">
           <FadeInSection className="max-w-4xl mx-auto">
             <h2 className="text-3xl font-bold mb-8 text-center">About This Service</h2>
             <div className="space-y-6 text-lg text-muted-foreground leading-relaxed text-center">
               <p>Great audio starts with a great recording environment.</p>
-              <p>Our studio recording service provides artists, musicians, and creators with a professional space to capture high-quality audio. Whether you're recording vocals, spoken content, or instruments, we ensure your sound is recorded clearly and accurately.</p>
+              <p>Our studio recording service provides artists, musicians, and creators with a professional space to capture high-quality audio.</p>
               <p>We focus on creating a comfortable creative environment so you can focus on performance while we handle the technical side.</p>
             </div>
           </FadeInSection>
         </div>
       </section>
 
-      {/* Includes */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <FadeInSection>
@@ -69,7 +66,6 @@ const StudioRecording = () => {
         </div>
       </section>
 
-      {/* Pricing */}
       <section className="py-20 bg-card/50">
         <div className="container mx-auto px-4 text-center">
           <FadeInSection>
@@ -96,6 +92,7 @@ const StudioRecording = () => {
                       packageName: tier.name,
                       mediaType: "none",
                       basePrice: tier.price,
+                      eventType: "Studio Recording",
                     })}
                     variant={tier.highlighted ? "default" : "outline"}
                     className="w-full"
@@ -109,7 +106,6 @@ const StudioRecording = () => {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-24 border-t border-border">
         <div className="container mx-auto px-4 text-center">
           <FadeInSection>
