@@ -63,74 +63,87 @@ const ContentCreation = () => {
 
   return (
     <div className="pt-20">
-      <section className="relative overflow-hidden bg-background py-20 md:py-28">
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+      <section className="relative overflow-hidden section-padding pb-32">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+        </div>
+        
+        <div className="content-width relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
                 <PenTool className="h-4 w-4" /> Content Creation
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
-              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl text-white">
-                Professional Content Designed To <span className="text-primary">Engage</span>
+              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12 uppercase">
+                Design That <span className="text-gradient">Engages</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-6 text-lg text-muted-foreground">
+              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
                 We create the graphics, videos, and copy that help your brand stand out and connect with your audience.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button 
-                onClick={() => openBooking({
-                  service: "Content Creation",
-                  package: "General Inquiry",
-                  price: 0
-                })}
-                size="lg" 
-                className="mt-8 gap-2 cursor-pointer"
-              >
-                Start Creating <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex flex-wrap justify-center gap-6 mt-16">
+                <Button
+                  onClick={() => openBooking({
+                    service: "Content Creation",
+                    package: "General Inquiry",
+                    price: 0
+                  })}
+                  size="lg"
+                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                >
+                  Start Creating <ArrowRight className="h-4 w-4 ml-4" />
+                </Button>
+              </div>
             </HeroSection>
           </div>
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white">The <span className="text-primary">Problem</span></h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              In a visual-first world, poor quality content reflects directly on how customers perceive your business.
-            </p>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">The Quality Gap</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">In a visual-first world, poor quality content reflects directly on your business credibility.</p>
           </FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-2">
+          <StaggerContainer className="grid gap-8 sm:grid-cols-2">
             {problems.map((p) => (
-              <StaggerItem key={p} className="flex items-center gap-4 rounded-lg bg-background p-6 text-left border border-border">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary"><Zap className="h-5 w-5" /></div>
-                <p className="font-medium text-white">{p}</p>
+              <StaggerItem key={p}>
+                <div className="flex items-center gap-6 p-8 rounded-2xl bg-background border border-foreground/5 group hover:border-red-600/30 transition-all">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-red-600/10 text-red-600 group-hover:scale-110 transition-transform">
+                    <Zap className="h-6 w-6" />
+                  </div>
+                  <p className="text-base font-black uppercase tracking-tight text-foreground/80">{p}</p>
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
-          <FadeInSection delay={0.2}>
-            <p className="mt-10 text-lg font-medium text-primary uppercase tracking-wider">
-              We help businesses present themselves as professionally as the services they provide.
+          <FadeInSection delay={0.2} className="mt-20 text-center">
+            <p className="text-lg font-black text-red-600 uppercase tracking-[0.3em]">
+              We help you present yourself as professionally as the services you provide.
             </p>
           </FadeInSection>
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection><h2 className="text-center text-3xl font-bold md:text-4xl text-white">What <span className="text-primary">We Do</span></h2></FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+      <section className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Creative Capabilities</h2>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s) => (
-              <StaggerItem key={s.title} className="text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10"><s.icon className="h-7 w-7 text-primary" /></div>
-                <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
-                <p className="text-muted-foreground">{s.desc}</p>
+              <StaggerItem key={s.title} className="text-center group">
+                <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 border border-foreground/5 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+                  <s.icon className="h-8 w-8 text-red-600 group-hover:text-white" />
+                </div>
+                <h3 className="text-xl font-black text-foreground mb-4 uppercase tracking-tighter">{s.title}</h3>
+                <p className="text-sm text-foreground/50 font-medium uppercase tracking-tight leading-relaxed">{s.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -218,37 +231,67 @@ const ContentCreation = () => {
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-4">Flexible <span className="text-primary">Pricing</span></h2>
-            <p className="mx-auto mb-12 max-w-3xl text-center text-muted-foreground">
-              Monthly creative production packages designed for growing brands.
-            </p>
+      <section id="packages" className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Creative Subscriptions
+            </h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">High-volume production for high-growth brands.</p>
           </FadeInSection>
+
+          <div className="mb-12 text-center md:hidden">
+            <p className="text-xs font-black uppercase tracking-widest text-red-600 animate-pulse">
+              Swipe to view plans
+            </p>
+          </div>
+          <div className="mb-12 text-center hidden md:block">
+            <p className="text-xs font-black uppercase tracking-widest text-foreground/30">
+              Click/Tap on a plan card to select
+            </p>
+          </div>
+
           <StaggerContainer className="grid gap-8 md:grid-cols-3">
             {pricing.map((tier) => (
-              <StaggerScaleItem key={tier.name}>
-                <Card className={`relative flex flex-col items-center p-8 text-center h-full ${tier.highlighted ? "border-primary border-2" : "border-border"}`}>
-                  {tier.highlighted && (<span className="absolute -top-4 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">Most Popular</span>)}
-                  <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                  <div className="mb-6 flex items-baseline"><span className="text-4xl font-black text-primary">{tier.price}</span><span className="ml-1 text-muted-foreground">{tier.period}</span></div>
-                  <ul className="mb-8 space-y-4 text-left w-full">
-                    {tier.features.map((f) => (<li key={f} className="flex items-center gap-3 text-sm text-muted-foreground"><CheckCircle className="h-4 w-4 shrink-0 text-primary" />{f}</li>))}
+              <StaggerItem key={tier.name}>
+                <div
+                  onClick={() => openBooking({
+                    service: "Content Creation",
+                    package: tier.name,
+                    price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                  })}
+                  className={`premium-card p-10 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 bg-background ${
+                    tier.highlighted ? "border-red-600 border-2" : ""
+                  }`}
+                >
+                  {tier.highlighted && (
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                      <span className="bg-red-600 text-white px-8 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-xl">
+                        Most Popular
+                      </span>
+                    </div>
+                  )}
+                  <h3 className="text-2xl font-black text-foreground mb-4 uppercase tracking-tighter">{tier.name}</h3>
+                  <div className="mb-10 flex items-baseline gap-2">
+                    <span className="text-5xl font-black text-red-600">{tier.price}</span>
+                    <span className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">{tier.period}</span>
+                  </div>
+
+                  <ul className="mb-10 space-y-5 text-left w-full border-t border-foreground/5 pt-10">
+                    {tier.features.map((f) => (
+                      <li key={f} className="flex items-center gap-4 text-xs font-black text-foreground/80 uppercase tracking-tight">
+                        <CheckCircle className="h-5 w-5 shrink-0 text-red-600" /> {f}
+                      </li>
+                    ))}
                   </ul>
-                  <Button 
-                    onClick={() => openBooking({
-                      service: "Content Creation",
-                      package: tier.name,
-                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
-                    })}
-                    className="mt-auto w-full cursor-pointer" 
-                    variant={tier.highlighted ? "default" : "outline"}
-                  >
-                    Choose Plan
+
+                  <Button className={`mt-auto w-full h-16 transition-all font-black uppercase tracking-[0.3em] ${
+                    tier.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
+                  }`}>
+                    Select Plan
                   </Button>
-                </Card>
-              </StaggerScaleItem>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
@@ -339,38 +382,31 @@ const ContentCreation = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-background text-center">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Ready to Elevate Your Content?</h2>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
-              Professional content is one of the most powerful investments a brand can make.
-              <br />
-              Let&apos;s create visuals, videos, and messaging that truly represent your business and connect with your audience.
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
+        <div className="content-width relative z-10">
+          <HeroSection>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Elevate Your<br />Content Now
+            </h2>
+          </HeroSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
+              Great content does more than look good — it helps your brand connect with the right audience and grow its visibility online.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button 
+          </FadeInSection>
+          <FadeInSection delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-8">
+              <Button
                 onClick={() => openBooking({
                   service: "Content Creation",
-                  package: "Quote Request",
+                  package: "General Project",
                   price: 0
                 })}
-                size="lg" 
-                className="px-10 h-14 text-lg cursor-pointer"
+                size="lg"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
               >
-                Request a Quote
-              </Button>
-              <Button 
-                onClick={() => openBooking({
-                  service: "Content Creation",
-                  package: "Project Kickoff",
-                  price: 0
-                })}
-                size="lg" 
-                className="px-10 h-14 text-lg cursor-pointer" 
-                variant="outline"
-              >
-                Start Your Project
+                Request A Quote <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
             </div>
           </FadeInSection>

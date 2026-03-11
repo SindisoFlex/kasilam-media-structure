@@ -38,36 +38,43 @@ const WebDevelopment = () => {
 
   return (
     <div className="pt-20">
-      <section className="relative overflow-hidden bg-background py-20 md:py-28">
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+      <section className="relative overflow-hidden section-padding pb-32">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+        </div>
+        
+        <div className="content-width relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                <Globe className="h-4 w-4" /> Website & Web Application Development
+              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
+                <Globe className="h-4 w-4" /> Web Development & Engineering
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
-              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl text-white">
-                Modern Websites & Web Applications Built for <span className="text-primary">Business Growth</span>
+              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12">
+                Build Your Elite <span className="text-gradient">Digital Asset</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-6 text-lg text-muted-foreground">
-                We design and develop high-performance websites and web applications that help startups, SMEs, and growing businesses build credibility, generate leads, and scale their digital presence.
+              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
+                We design and develop high-performance websites and web applications built to scale your business.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button
-                onClick={() => openBooking({
-                  service: "Web Development",
-                  package: "General Project",
-                  price: 0
-                })}
-                size="lg"
-                className="mt-8 gap-2 cursor-pointer"
-              >
-                Discuss Your Project <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex flex-wrap justify-center gap-6 mt-16">
+                <Button
+                  onClick={() => openBooking({
+                    service: "Web Development",
+                    package: "General Project",
+                    price: 0
+                  })}
+                  size="lg"
+                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                >
+                  Discuss Your Project <ArrowRight className="h-4 w-4 ml-4" />
+                </Button>
+              </div>
             </HeroSection>
           </div>
         </div>
@@ -101,126 +108,104 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection><h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">Development <span className="text-primary">Packages</span></h2></FadeInSection>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Development Packages</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Engineered for high-performance and business growth.</p>
+          </FadeInSection>
+          
+          <div className="mb-12 text-center md:hidden">
+            <p className="text-xs font-black uppercase tracking-widest text-red-600 animate-pulse">
+              Swipe to view packages
+            </p>
+          </div>
+          <div className="mb-12 text-center hidden md:block">
+            <p className="text-xs font-black uppercase tracking-widest text-foreground/30">
+              Click/Tap on a package card to start booking
+            </p>
+          </div>
+
           <StaggerContainer className="grid gap-8 lg:grid-cols-3">
-            <StaggerScaleItem>
-              <Card className="flex flex-col border-border bg-background transition-all hover:border-primary/50 h-full">
-                <CardHeader className="text-center p-8">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary"><Smartphone className="h-6 w-6" /></div>
-                  <CardTitle className="text-2xl font-bold text-white mb-2">Landing Page</CardTitle>
-                  <p className="text-sm text-muted-foreground uppercase font-bold tracking-wider">(Startup Entrance)</p>
-                </CardHeader>
-                <CardContent className="px-8 pb-8 flex-1">
-                  <div className="mb-8 text-center p-6 rounded-2xl bg-muted/50 border border-primary/10">
-                    <div className="mb-2 text-sm text-muted-foreground uppercase font-bold">Full Price</div>
-                    <div className="text-3xl font-black text-primary mb-4">R4500 <span className="text-sm text-muted-foreground">once-off</span></div>
-                    <div className="h-px bg-border my-4" />
-                    <div className="mb-2 text-sm text-muted-foreground uppercase font-bold">Monthly Option</div>
-                    <div className="text-xl font-bold text-white">R180 <span className="text-sm text-muted-foreground">/ month</span></div>
-                    <div className="text-[10px] text-muted-foreground mt-1">for 36 months</div>
+            {[
+              {
+                title: "Landing Page",
+                subtitle: "(Startup Entrance)",
+                price: "R4500",
+                monthly: "R180",
+                features: startupFeatures,
+                icon: Smartphone,
+              },
+              {
+                title: "Small Business Website",
+                subtitle: "Growth Focus",
+                price: "R12000",
+                monthly: "R400",
+                features: businessFeatures,
+                icon: Layout,
+                highlighted: true,
+              },
+              {
+                title: "Custom / Web App",
+                subtitle: "Advanced Solutions",
+                price: "R25000+",
+                features: appExamples,
+                icon: Code,
+                isCustom: true,
+              }
+            ].map((pkg) => (
+              <StaggerItem key={pkg.title}>
+                <div
+                  onClick={() => openBooking({
+                    service: "Web Development",
+                    package: pkg.title,
+                    price: pkg.isCustom ? 25000 : parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
+                  })}
+                  className={`premium-card p-10 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 bg-background ${
+                    pkg.highlighted ? "border-red-600 border-2" : ""
+                  }`}
+                >
+                  {pkg.highlighted && (
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                      <span className="bg-red-600 text-white px-8 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-xl">
+                        SME Essential
+                      </span>
+                    </div>
+                  )}
+                  <div className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
+                    <pkg.icon className="h-8 w-8" />
                   </div>
-                  <ul className="mb-8 space-y-4 text-left">
-                    {startupFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground font-medium uppercase tracking-tight">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary mt-0.5" />{f}
+                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase tracking-tighter">{pkg.title}</h3>
+                  <p className="text-[10px] font-black tracking-widest text-foreground/30 uppercase mb-8">{pkg.subtitle}</p>
+                  
+                  <div className={`mb-10 flex flex-col items-center p-8 rounded-[2rem] w-full transition-colors ${
+                    pkg.highlighted ? "bg-red-600/10" : "bg-foreground/5 group-hover:bg-red-600/5"
+                  }`}>
+                    <span className="text-4xl font-black text-red-600">{pkg.price}</span>
+                    {pkg.monthly && (
+                      <div className="mt-4 pt-4 border-t border-foreground/10 w-full">
+                        <span className="text-lg font-black text-foreground">{pkg.monthly} <span className="text-[10px] uppercase tracking-widest opacity-50">/ mo</span></span>
+                        <p className="text-[8px] font-black uppercase tracking-widest opacity-30 mt-1">for 36 months</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <ul className="mb-10 space-y-4 text-left w-full border-t border-foreground/5 pt-8">
+                    {pkg.features.map((f, i) => (
+                      <li key={i} className="flex items-center gap-4 text-xs font-bold text-foreground/80 uppercase tracking-tight">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-red-600" /> {f}
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Web Development",
-                      package: "Landing Page",
-                      price: 4500
-                    })}
-                    className="mt-auto w-full h-12 cursor-pointer"
-                  >
-                    Get Started
-                  </Button>
-                </CardContent>
-              </Card>
-            </StaggerScaleItem>
 
-            <StaggerScaleItem>
-              <Card className="flex flex-col border-primary border-2 bg-background relative shadow-2xl transition-all hover:shadow-primary/10 h-full">
-                <span className="absolute -top-4 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">SME Essential</span>
-                <CardHeader className="text-center p-8">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary"><Layout className="h-6 w-6" /></div>
-                  <CardTitle className="text-2xl font-bold text-white mb-2">Small Business Website</CardTitle>
-                  <p className="text-sm text-muted-foreground uppercase font-bold tracking-wider">Growth Focus</p>
-                </CardHeader>
-                <CardContent className="px-8 pb-8 flex-1">
-                  <div className="mb-8 text-center p-6 rounded-2xl bg-primary/5 border border-primary/20">
-                    <div className="mb-2 text-sm text-muted-foreground uppercase font-bold">Full Price</div>
-                    <div className="text-3xl font-black text-primary mb-4">R12000 <span className="text-sm text-muted-foreground">once-off</span></div>
-                    <div className="h-px bg-border my-4" />
-                    <div className="mb-2 text-sm text-muted-foreground uppercase font-bold">Monthly Option</div>
-                    <div className="text-xl font-bold text-white">R400 <span className="text-sm text-muted-foreground">/ month</span></div>
-                    <div className="text-[10px] text-muted-foreground mt-1">for 36 months</div>
-                  </div>
-                  <ul className="mb-8 space-y-4 text-left">
-                    {businessFeatures.map((f, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground font-medium uppercase tracking-tight">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary mt-0.5" />{f}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="mb-8 text-xs text-muted-foreground italic leading-relaxed">
-                    Optional Hosting &amp; Maintenance add-on available.
-                  </p>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Web Development",
-                      package: "Small Business Website",
-                      price: 12000
-                    })}
-                    className="mt-auto w-full h-12 cursor-pointer"
-                  >
-                    Get Started
+                  <Button className={`mt-auto w-full h-14 font-black uppercase tracking-[0.2em] transition-all ${
+                    pkg.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
+                  }`}>
+                    {pkg.isCustom ? "Inquire Project" : "Get Started"}
                   </Button>
-                </CardContent>
-              </Card>
-            </StaggerScaleItem>
-
-            <StaggerScaleItem>
-              <Card className="flex flex-col border-border bg-background transition-all hover:border-primary/50 h-full">
-                <CardHeader className="text-center p-8">
-                  <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary"><Code className="h-6 w-6" /></div>
-                  <CardTitle className="text-2xl font-bold text-white mb-2">Custom / Web App</CardTitle>
-                  <p className="text-sm text-muted-foreground uppercase font-bold tracking-wider">Advanced Solutions</p>
-                </CardHeader>
-                <CardContent className="px-8 pb-8 flex-1">
-                  <div className="mb-8 text-center p-6 rounded-2xl bg-muted/50 border border-primary/10">
-                    <div className="mb-2 text-sm text-muted-foreground uppercase font-bold">Starting Price</div>
-                    <div className="text-3xl font-black text-primary mb-2">R25000+</div>
-                    <p className="text-xs text-muted-foreground font-medium">Quote Based on Complexity</p>
-                  </div>
-                  <div className="mb-6">
-                    <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-4 flex items-center gap-2"><span className="h-1 w-1 rounded-full bg-primary" />Bespoke Systems</h4>
-                    <ul className="space-y-3">
-                      {appExamples.map((ex, i) => (
-                        <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground font-bold uppercase tracking-tight">
-                          <ArrowRight className="h-3 w-3 text-primary" />{ex}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <p className="mb-8 text-xs text-muted-foreground italic leading-relaxed">* Pricing depends on project complexity.</p>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Web Development",
-                      package: "Custom Web App",
-                      price: 25000
-                    })}
-                    className="mt-auto w-full h-12 cursor-pointer"
-                    variant="outline"
-                  >
-                    Inquire Custom Project
-                  </Button>
-                </CardContent>
-              </Card>
-            </StaggerScaleItem>
+                </div>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
         </div>
       </section>
@@ -272,45 +257,54 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="py-24 bg-background">
-        <div className="container mx-auto px-4">
-          <FadeInSection className="max-w-3xl mx-auto text-center mb-16">
-            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">Website Hosting & <span className="text-primary">Maintenance</span></h2>
-            <p className="text-lg text-muted-foreground">
-              Reliable hosting and ongoing support for businesses that want a hands-off experience.
-            </p>
+      <section className="section-padding bg-background border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Elite Hosting Infrastructure</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Reliable performance and absolute security.</p>
           </FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-3">
+
+          <StaggerContainer className="grid gap-10 md:grid-cols-3">
             {hostingPackages.map((pkg) => (
-              <StaggerScaleItem key={pkg.name}>
-                <Card className={`p-8 bg-muted/30 border-2 transition-all hover:scale-[1.02] h-full ${pkg.highlighted ? "border-primary shadow-lg shadow-primary/5" : "border-border"}`}>
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary"><pkg.icon className="h-7 w-7" /></div>
-                  <h3 className="text-xl font-bold text-white mb-2">{pkg.name}</h3>
-                  <p className="text-sm text-muted-foreground mb-6 h-10">{pkg.desc}</p>
-                  <div className="mb-8"><span className="text-4xl font-black text-white">{pkg.price}</span><span className="text-muted-foreground ml-2">/ month</span></div>
-                  <ul className="space-y-4 mb-10">
+              <StaggerItem key={pkg.name}>
+                <div
+                  onClick={() => openBooking({
+                    service: "Web Hosting",
+                    package: pkg.name,
+                    price: parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
+                  })}
+                  className={`premium-card p-12 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 ${
+                    pkg.highlighted ? "border-red-600 border-2" : ""
+                  }`}
+                >
+                  <div className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
+                    <pkg.icon className="h-8 w-8" />
+                  </div>
+                  <h3 className="text-2xl font-black text-foreground mb-4 uppercase tracking-tighter">{pkg.name}</h3>
+                  <p className="text-xs font-medium text-foreground/40 mb-8 uppercase tracking-widest h-8">{pkg.desc}</p>
+                  
+                  <div className="mb-10 flex items-baseline gap-2">
+                    <span className="text-5xl font-black text-red-600">{pkg.price}</span>
+                    <span className="text-xs font-black text-foreground/30 uppercase tracking-[0.2em]">/ mo</span>
+                  </div>
+
+                  <ul className="mb-12 space-y-5 text-left w-full border-t border-foreground/5 pt-10">
                     {pkg.features.map((f, j) => (
-                      <li key={j} className="flex items-center gap-3 text-sm text-white/80 font-medium"><CheckCircle className="h-4 w-4 text-primary shrink-0" />{f}</li>
+                      <li key={j} className="flex items-center gap-4 text-xs font-black text-foreground/80 uppercase tracking-tight">
+                        <CheckCircle className="h-5 w-5 shrink-0 text-red-600" /> {f}
+                      </li>
                     ))}
                   </ul>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Web Hosting",
-                      package: pkg.name,
-                      price: parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
-                    })}
-                    variant={pkg.highlighted ? "default" : "outline"}
-                    className="w-full cursor-pointer"
-                  >
+
+                  <Button className={`mt-auto w-full h-16 transition-all font-black uppercase tracking-[0.3em] ${
+                    pkg.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
+                  }`}>
                     Select Plan
                   </Button>
-                </Card>
-              </StaggerScaleItem>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
-          <FadeInSection delay={0.2} className="mt-12 text-center p-6 rounded-2xl bg-primary/5 border border-primary/10 max-w-2xl mx-auto">
-            <p className="text-sm text-muted-foreground"><Zap className="inline-block h-4 w-4 text-primary mr-2 mb-1" /><strong>Tip:</strong> Clients who already have hosting can skip this option.</p>
-          </FadeInSection>
         </div>
       </section>
 
@@ -334,14 +328,21 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-primary text-white text-center rounded-t-[3rem] mt-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">Let&apos;s Build Your Digital Asset</h2>
-            <p className="mx-auto mb-10 max-w-2xl text-lg opacity-90 font-medium">
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
+        <div className="content-width relative z-10">
+          <HeroSection>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Build Your<br />Digital Asset
+            </h2>
+          </HeroSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
               Whether you need a professional website or a custom web application, we help businesses turn ideas into powerful digital platforms.
             </p>
-            <div className="flex flex-wrap justify-center gap-4">
+          </FadeInSection>
+          <FadeInSection delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-8">
               <Button
                 onClick={() => openBooking({
                   service: "Web Development",
@@ -349,11 +350,13 @@ const WebDevelopment = () => {
                   price: 0
                 })}
                 size="lg"
-                className="px-10 h-16 text-lg bg-white text-primary hover:bg-zinc-100 font-black uppercase tracking-widest shadow-2xl cursor-pointer"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
               >
-                Start Your Project
+                Start Your Project <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
-              <Button asChild variant="outline" size="lg" className="px-10 h-16 text-lg border-white text-white hover:bg-white/10 font-bold uppercase tracking-widest"><Link to="/contact">Contact Support</Link></Button>
+              <Button asChild className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer btn-secondary">
+                <Link to="/contact">Contact Support</Link>
+              </Button>
             </div>
           </FadeInSection>
         </div>

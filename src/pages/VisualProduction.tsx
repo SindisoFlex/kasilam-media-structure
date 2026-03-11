@@ -151,17 +151,17 @@ const VisualProduction = () => {
   return (
     <div className="bg-background text-white min-h-screen">
       {/* 1. Hero Section */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden">
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
         <div
-          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom opacity-30"
+          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom opacity-70"
           style={{
             backgroundImage: `url(${heroImage})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
-        <div className="absolute inset-0 z-10 bg-background/60 backdrop-blur-[2px]" />
-        <div className="absolute inset-0 z-11 mesh-bg opacity-40" />
+        <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 z-11 mesh-bg opacity-20" />
 
         <div className="content-width relative z-20 text-center">
           <HeroSection className="mb-10 flex justify-center">
@@ -178,7 +178,7 @@ const VisualProduction = () => {
             </h1>
           </HeroSection>
           <HeroSection delay={0.2}>
-            <p className="mx-auto mt-8 max-w-3xl text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-white/50 leading-relaxed">
+            <p className="mx-auto mt-8 max-w-3xl text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-foreground/60 leading-relaxed">
               Capturing the heart of our community — from weddings and graduations to respectful funeral coverage and local celebrations.
             </p>
           </HeroSection>
@@ -191,11 +191,11 @@ const VisualProduction = () => {
                   price: 1500
                 })}
                 size="lg"
-                className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
               >
                 Book a Shoot <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
+              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all btn-secondary border-0">
                 <a href="#production-types">View Packages</a>
               </Button>
             </div>
@@ -209,27 +209,27 @@ const VisualProduction = () => {
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
             <h2 className="mb-8 text-gradient">Choose Your Production Type</h2>
-            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Select the service that best fits your vision.</p>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Select the service that best fits your vision.</p>
           </FadeInSection>
           <StaggerContainer className="grid md:grid-cols-3 gap-10">
             {productionTypes.map((type) => (
               <StaggerItem key={type.title}>
                 <div className="premium-card group h-full">
-                  <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-white/5 border border-white/5 group-hover:border-red-600/30 group-hover:scale-110 transition-all duration-700">
+                  <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 border border-foreground/5 group-hover:border-red-600/30 group-hover:scale-110 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
                     <type.icon className="h-8 w-8 text-red-600" />
                   </div>
-                  <h3 className="text-3xl font-bold text-white mb-6 uppercase tracking-tight">{type.title}</h3>
-                  <p className="text-lg text-white/50 mb-10 font-medium leading-relaxed">{type.desc}</p>
+                  <h3 className="text-3xl font-bold mb-6 uppercase tracking-tight">{type.title}</h3>
+                  <p className="text-lg text-foreground/50 mb-10 font-medium leading-relaxed">{type.desc}</p>
                   <div className="space-y-4 mb-12 flex-grow">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-6">Includes:</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-red-600 mb-6 font-primary">Includes:</p>
                     {type.includes.map((item) => (
-                      <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-white/80">
+                      <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-foreground/80">
                         <div className="h-1.5 w-1.5 rounded-full bg-red-600 shrink-0" />
                         <span>{item}</span>
                       </div>
                     ))}
                   </div>
-                  <Button asChild className="w-full h-14 bg-white/5 hover:bg-red-600 text-white font-black border border-white/10 hover:border-red-600 transition-all uppercase tracking-widest text-[10px] rounded-full">
+                  <Button asChild className="w-full h-14 btn-secondary font-black transition-all uppercase tracking-widest text-[10px] rounded-full border-0">
                     <Link to={type.link}>{type.buttonText}</Link>
                   </Button>
                 </div>
@@ -246,9 +246,9 @@ const VisualProduction = () => {
             <FadeInSection className="space-y-12">
               <div className="flex items-center gap-6">
                 <div className="h-16 w-1 bg-red-600 rounded-full red-glow" />
-                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">Photography</h2>
+                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-foreground/80">Photography</h2>
               </div>
-              <p className="text-xl text-white/50 leading-relaxed font-medium">
+              <p className="text-xl text-foreground/50 leading-relaxed font-medium">
                 Capturing moments with absolute clarity, dignity, and professional precision.
               </p>
               <div className="space-y-6">
@@ -256,9 +256,9 @@ const VisualProduction = () => {
                 <StaggerContainer className="grid sm:grid-cols-2 gap-6">
                   {photographyServices.map((service) => (
                     <StaggerItem key={service}>
-                      <div className="flex items-center gap-4 p-5 rounded-2xl bg-white/[0.03] border border-white/5 group hover:border-red-600/30 transition-all">
+                      <div className="flex items-center gap-4 p-5 rounded-2xl bg-foreground/5 border border-foreground/5 group hover:border-red-600/30 transition-all dark:bg-white/5 dark:border-white/5">
                         <CheckCircle className="h-4 w-4 text-red-600 shrink-0" />
-                        <span className="text-[11px] font-black uppercase tracking-widest text-white/80">{service}</span>
+                        <span className="text-[11px] font-black uppercase tracking-widest text-foreground/80">{service}</span>
                       </div>
                     </StaggerItem>
                   ))}
@@ -274,19 +274,19 @@ const VisualProduction = () => {
       </section>
 
       {/* 4. Videography Services */}
-      <section className="section-padding bg-background relative">
+      <section className="section-padding bg-background relative border-b border-foreground/5">
         <div className="content-width">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
-            <FadeInSection delay={0.1} className="order-2 lg:order-1 aspect-video bg-white/5 rounded-[3rem] border border-white/5 overflow-hidden flex items-center justify-center relative group">
-              <Video className="h-32 w-32 text-white/5 group-hover:text-red-600/10 transition-all duration-1000 scale-90 group-hover:scale-110" />
+            <FadeInSection delay={0.1} className="order-2 lg:order-1 aspect-video bg-foreground/5 rounded-[3rem] border border-foreground/5 overflow-hidden flex items-center justify-center relative group dark:bg-white/5 dark:border-white/5">
+              <Video className="h-32 w-32 text-foreground/5 group-hover:text-red-600/10 transition-all duration-1000 scale-90 group-hover:scale-110 dark:text-white/5" />
               <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
             </FadeInSection>
             <FadeInSection className="space-y-12 order-1 lg:order-2">
               <div className="flex items-center gap-6">
                 <div className="h-16 w-1 bg-red-600 rounded-full red-glow" />
-                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-white">Videography</h2>
+                <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tight text-foreground/80">Videography</h2>
               </div>
-              <p className="text-xl text-white/50 leading-relaxed font-medium">
+              <p className="text-xl text-foreground/50 leading-relaxed font-medium">
                 Cinematic documentation that preserves your story forever. We bring Hollywood-grade precision to community and corporate events.
               </p>
               <div className="space-y-6">
@@ -294,9 +294,9 @@ const VisualProduction = () => {
                 <StaggerContainer className="space-y-5">
                   {videographyServices.map((service) => (
                     <StaggerItem key={service}>
-                      <div className="flex items-center gap-5 p-5 rounded-2xl bg-white/[0.03] border border-white/5 group hover:bg-white/[0.05] transition-all">
+                      <div className="flex items-center gap-5 p-5 rounded-2xl bg-foreground/5 border border-foreground/5 group hover:bg-foreground/[0.08] transition-all dark:bg-white/[0.03] dark:border-white/5">
                         <div className="h-2 w-2 rounded-full bg-red-600 group-hover:scale-150 transition-all duration-500 red-glow" />
-                        <span className="text-[11px] font-black uppercase tracking-widest text-white/90">{service}</span>
+                        <span className="text-[11px] font-black uppercase tracking-widest text-foreground/90">{service}</span>
                       </div>
                     </StaggerItem>
                   ))}
@@ -308,8 +308,8 @@ const VisualProduction = () => {
       </section>
 
       {/* 5. Combo Coverage - Cinematic Re-design */}
-      <section className="py-40 bg-zinc-950 relative overflow-hidden">
-        <div className="absolute inset-0 mesh-bg opacity-20" />
+      <section className="py-40 bg-alternate relative overflow-hidden border-b border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-20" />
         <div className="content-width relative z-10 text-center">
           <FadeInSection>
             <div className="inline-block px-8 py-3 rounded-full bg-red-600/10 border border-red-600/20 mb-12">
@@ -322,7 +322,7 @@ const VisualProduction = () => {
             </h2>
           </HeroSection>
           <FadeInSection delay={0.2}>
-            <p className="max-w-4xl mx-auto text-xl md:text-2xl font-semibold text-white/50 leading-relaxed uppercase tracking-[0.1em]">
+            <p className="max-w-4xl mx-auto text-xl md:text-2xl font-semibold text-foreground/50 leading-relaxed uppercase tracking-[0.1em]">
               Ideal for weddings, funerals, and corporate events. Complete visual storytelling with dual-media documentation.
             </p>
           </FadeInSection>
@@ -334,16 +334,16 @@ const VisualProduction = () => {
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
             <h2 className="mb-8 text-gradient">Our Creative Process</h2>
-            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Structured for elite results and absolute reliability.</p>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Structured for elite results and absolute reliability.</p>
           </FadeInSection>
           <StaggerContainer className="grid sm:grid-cols-2 lg:grid-cols-4 gap-12">
             {processSteps.map((step) => (
               <StaggerItem key={step.title} className="text-center group">
-                <div className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-[2rem] bg-white/5 border border-white/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700">
+                <div className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-[2.5rem] bg-foreground/5 border border-foreground/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
                   <step.icon className="h-8 w-8 text-red-600" />
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4 uppercase tracking-tighter">{step.title}</h3>
-                <p className="text-base text-white/40 leading-relaxed font-medium">{step.desc}</p>
+                <h3 className="text-2xl font-bold mb-4 uppercase tracking-tighter">{step.title}</h3>
+                <p className="text-base text-foreground/40 leading-relaxed font-medium">{step.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -351,21 +351,21 @@ const VisualProduction = () => {
       </section>
 
       {/* 7. Coverage Packages */}
-      <section id="packages" className="section-padding bg-zinc-950 border-y border-white/5">
+      <section id="packages" className="section-padding bg-alternate border-y border-foreground/5">
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
             <h2 className="mb-8 text-gradient">Coverage Packages</h2>
-            <p className="text-xl font-medium uppercase tracking-widest opacity-50">Time-based documentation for private and community events.</p>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Time-based documentation for private and community events.</p>
           </FadeInSection>
-          <StaggerContainer className="grid md:grid-cols-3 gap-10">
+          <StaggerContainer className="grid md:grid-cols-3 gap-10 mb-20">
             {packages.map((pkg) => (
               <StaggerItem key={pkg.time}>
-                <div className="premium-card group h-full border-white/5 hover:border-red-600/50">
+                <div className="premium-card group h-full">
                   <h3 className="text-2xl font-black text-red-600 mb-6 uppercase tracking-tight">{pkg.time}</h3>
-                  <p className="text-base text-white/50 mb-12 font-medium leading-relaxed">{pkg.ideal}</p>
+                  <p className="text-base text-foreground/50 mb-12 font-medium leading-relaxed">{pkg.ideal}</p>
                   <div className="space-y-6 mb-16 flex-grow">
                     {pkg.features.map(f => (
-                      <div key={f} className="flex items-center gap-5 text-[11px] font-black uppercase tracking-widest text-white/80">
+                      <div key={f} className="flex items-center gap-5 text-[11px] font-black uppercase tracking-widest text-foreground/80">
                         <CheckCircle className="h-4 w-4 text-red-600 shrink-0" />
                         <span>{f}</span>
                       </div>
@@ -377,8 +377,7 @@ const VisualProduction = () => {
                       package: pkg.time,
                       price: pkg.time.includes("2") ? 1500 : pkg.time.includes("4") ? 2800 : 4000
                     })}
-                    variant="outline"
-                    className="w-full h-14 bg-white/5 border-white/10 hover:border-red-600 text-white font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer"
+                    className="w-full h-14 btn-secondary font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer border-0"
                   >
                     Inquire Now
                   </Button>
@@ -386,6 +385,15 @@ const VisualProduction = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
+          
+          <div className="text-center">
+            <p className="hidden md:block text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 mt-12 mb-8">
+              Click on a package card to start your booking process.
+            </p>
+            <p className="md:hidden text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 mt-12 mb-8">
+              Tap a package card to start your booking process.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -395,7 +403,7 @@ const VisualProduction = () => {
           <FadeInSection className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-10">
             <div className="max-w-2xl mx-auto md:mx-0">
               <h2 className="text-gradient">Selected Work</h2>
-              <p className="text-xl text-white/50 font-medium mt-6">Moments captured and stories told with cinematic precision.</p>
+              <p className="text-xl text-foreground/50 font-medium mt-6">Moments captured and stories told with cinematic precision.</p>
             </div>
             <Button asChild variant="link" className="h-auto p-0 text-red-600 font-black uppercase tracking-[0.3em] text-[10px] group transition-all mx-auto md:mx-0">
               <Link to="/portfolio" className="flex items-center gap-4">
@@ -406,8 +414,8 @@ const VisualProduction = () => {
           <StaggerContainer className="grid grid-cols-2 lg:grid-cols-3 gap-8">
             {[1, 2, 3].map((i) => (
               <StaggerItem key={i}>
-                <div className="premium-card p-0 aspect-[4/3] flex items-center justify-center group overflow-hidden relative border-white/5 hover:border-red-600/50">
-                  <Camera className="h-12 w-12 text-white/10 group-hover:text-red-600/30 transition-all duration-1000 scale-90 group-hover:scale-125" />
+                <div className="premium-card p-0 aspect-[4/3] flex items-center justify-center group overflow-hidden relative border-foreground/5 hover:border-red-600/50">
+                  <Camera className="h-12 w-12 text-foreground/10 group-hover:text-red-600/30 transition-all duration-1000 scale-90 group-hover:scale-125 dark:text-white/10" />
                   <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
                 </div>
               </StaggerItem>
@@ -417,7 +425,7 @@ const VisualProduction = () => {
       </section>
 
       {/* 9. Why Document With Us? */}
-      <section className="section-padding bg-zinc-950">
+      <section className="section-padding bg-background border-t border-foreground/5">
         <div className="content-width">
           <FadeInSection>
             <h2 className="text-center mb-32 text-gradient">Why Document With Us?</h2>
@@ -432,12 +440,12 @@ const VisualProduction = () => {
               { icon: CheckCircle, title: "Corporate Standard", desc: "Capable of serving both community events and professional business productions." },
             ].map((reason) => (
               <StaggerItem key={reason.title} className="flex gap-8 group">
-                <div className="h-16 w-16 rounded-[2rem] bg-white/5 border border-white/5 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-700">
+                <div className="h-16 w-16 rounded-[2rem] bg-foreground/5 border border-foreground/5 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
                   <reason.icon className="h-7 w-7 text-red-600 group-hover:text-white transition-colors" />
                 </div>
                 <div className="space-y-3">
-                  <h4 className="text-white font-bold text-2xl uppercase tracking-tighter">{reason.title}</h4>
-                  <p className="text-base text-white/40 leading-relaxed font-medium">{reason.desc}</p>
+                  <h4 className="font-bold text-2xl uppercase tracking-tighter">{reason.title}</h4>
+                  <p className="text-base text-foreground/40 leading-relaxed font-medium">{reason.desc}</p>
                 </div>
               </StaggerItem>
             ))}
@@ -446,8 +454,8 @@ const VisualProduction = () => {
       </section>
 
       {/* 10. Final CTA */}
-      <section className="section-padding relative overflow-hidden bg-background text-center">
-        <div className="absolute inset-0 mesh-bg opacity-30" />
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
         <div className="content-width relative z-10">
           <HeroSection>
             <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
@@ -455,7 +463,7 @@ const VisualProduction = () => {
             </h2>
           </HeroSection>
           <FadeInSection delay={0.2}>
-            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-white/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">
               Ready to document your next milestone or create elite visual content?
             </p>
           </FadeInSection>
@@ -468,11 +476,11 @@ const VisualProduction = () => {
                   price: 0
                 })}
                 size="lg"
-                className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
               >
                 Book a Shoot
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black bg-white/5 backdrop-blur-md border-white/10 text-white rounded-full uppercase tracking-[0.4em] hover:bg-white/10 hover:border-red-600/50">
+              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all btn-secondary border-0">
                 <Link to="/contact">Request Consultation</Link>
               </Button>
             </div>

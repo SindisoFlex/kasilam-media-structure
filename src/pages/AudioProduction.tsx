@@ -89,57 +89,62 @@ const AudioProduction = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-background py-28 md:py-36">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
-            <HeroSection>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                <Mic className="h-4 w-4" />
-                Audio Production
+      <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-red-600/20 via-background to-background opacity-70" />
+        <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 z-11 mesh-bg opacity-20" />
+
+        <div className="content-width relative z-20 text-center">
+          <HeroSection>
+            <div className="mb-8 flex justify-center">
+              <div className="px-6 py-2 rounded-full bg-foreground/5 border border-foreground/10 red-glow backdrop-blur-xl dark:bg-white/5 dark:border-white/10">
+                <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.4em]">
+                  Audio Production
+                </span>
               </div>
-            </HeroSection>
-            <HeroSection delay={0.1}>
-              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-                Professional Audio Production for{" "}
-                <span className="text-primary">Music, Podcasts & Voice</span>
-              </h1>
-            </HeroSection>
-            <HeroSection delay={0.2}>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-                From studio recording to final delivery, we coordinate every step of your audio production to ensure your project sounds clean, polished, and ready for release.
-              </p>
-            </HeroSection>
-            <HeroSection delay={0.3}>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-                <Button
-                  onClick={() => openBooking({
-                    service: "Audio Production",
-                    package: "General Session",
-                    price: 350
-                  })}
-                  size="lg"
-                  className="gap-2 cursor-pointer"
-                >
-                  Book a Recording Session <ArrowRight className="h-4 w-4" />
-                </Button>
-                <Button asChild size="lg" variant="outline" className="gap-2">
-                  <a href="#services">Explore Services</a>
-                </Button>
-              </div>
-            </HeroSection>
-          </div>
+            </div>
+          </HeroSection>
+          <HeroSection delay={0.1}>
+            <h1 className="mb-8 text-gradient">
+              Professional Audio Production<br />
+              <span className="text-primary italic">Music, Podcasts & Voice.</span>
+            </h1>
+          </HeroSection>
+          <HeroSection delay={0.2}>
+            <p className="mx-auto mt-8 max-w-3xl text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-foreground/60 leading-relaxed">
+              From studio recording to final delivery, we coordinate every step of your audio production for an elite sound.
+            </p>
+          </HeroSection>
+          <HeroSection delay={0.35}>
+            <div className="mt-16 flex flex-wrap justify-center gap-6">
+              <Button
+                onClick={() => openBooking({
+                  service: "Audio Production",
+                  package: "General Session",
+                  price: 350
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+              >
+                Book a Session <ArrowRight className="h-4 w-4 ml-4" />
+              </Button>
+              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all btn-secondary border-0">
+                <a href="#services">Explore Services</a>
+              </Button>
+            </div>
+          </HeroSection>
         </div>
       </section>
 
       {/* Your Creative Production Partner */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
+      <section className="section-padding bg-background relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
+        <div className="content-width">
           <FadeInSection className="mx-auto max-w-4xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl mb-6">
-              Your Creative <span className="text-primary">Production Partner</span>
+            <h2 className="mb-12 text-gradient">
+              Your Creative Production Partner
             </h2>
-            <div className="space-y-6 text-lg leading-relaxed text-muted-foreground">
+            <div className="space-y-8 text-xl leading-relaxed text-foreground/60 font-medium">
               <p>
                 At Kasilam Media Production, we help artists, businesses, and content creators produce high-quality audio projects from start to finish.
               </p>
@@ -155,14 +160,13 @@ const AudioProduction = () => {
       </section>
 
       {/* How It Works */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl">
-              How It <span className="text-primary">Works</span>
-            </h2>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">How It Works</h2>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Structured for elite results and absolute reliability.</p>
           </FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerContainer className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: MessageSquare,
@@ -185,15 +189,15 @@ const AudioProduction = () => {
                 desc: "You receive clean, balanced, professional audio files ready for release or distribution.",
               },
             ].map((step, i) => (
-              <StaggerItem key={step.title} className="text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                  <step.icon className="h-6 w-6 text-primary" />
+              <StaggerItem key={step.title} className="text-center group">
+                <div className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-[2.5rem] bg-foreground/5 border border-foreground/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
+                  <step.icon className="h-8 w-8 text-red-600" />
                 </div>
-                <span className="mb-2 block text-sm font-bold text-primary">
-                  Step {i + 1}
-                </span>
-                <h3 className="text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{step.desc}</p>
+                <div className="mb-4">
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600">Step 0{i + 1}</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-4 uppercase tracking-tighter">{step.title}</h3>
+                <p className="text-base text-foreground/40 leading-relaxed font-medium">{step.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -201,14 +205,13 @@ const AudioProduction = () => {
       </section>
 
       {/* Services Included */}
-      <section id="services" className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl">
-              Services <span className="text-primary">Included</span>
-            </h2>
+      <section id="services" className="section-padding bg-alternate">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Services Included</h2>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Comprehensive audio solutions for every creative need.</p>
           </FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[
               { icon: Mic, title: "Studio Recording", desc: "Professional vocal and instrument recording in a controlled studio environment designed for high-quality sound capture.", link: "/services/audio-production/studio-recording" },
               { icon: Radio, title: "Podcast Recording", desc: "Professional podcast recording setup that ensures clear, broadcast-quality sound for interviews and conversations.", link: "/services/audio-production/podcast-recording" },
@@ -219,17 +222,15 @@ const AudioProduction = () => {
             ].map((s) => (
               <StaggerItem key={s.title}>
                 <Link to={s.link}>
-                  <Card className="border-border bg-muted hover:border-primary/50 transition-colors h-full">
-                    <CardContent className="p-6">
-                      <div className="mb-4 inline-flex rounded-full bg-primary/10 p-3">
-                        <s.icon className="h-6 w-6 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-semibold flex items-center gap-2">
-                        {s.title} <ArrowRight className="h-4 w-4 text-primary" />
-                      </h3>
-                      <p className="mt-2 text-sm text-muted-foreground">{s.desc}</p>
-                    </CardContent>
-                  </Card>
+                  <div className="premium-card group h-full">
+                    <div className="mb-10 flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 border border-foreground/10 group-hover:border-red-600/30 group-hover:scale-110 transition-all duration-700 dark:bg-white/5 dark:border-white/10">
+                      <s.icon className="h-8 w-8 text-red-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 uppercase tracking-tighter flex items-center justify-between">
+                      {s.title} <ArrowRight className="h-5 w-5 text-red-600 transition-transform group-hover:translate-x-2" />
+                    </h3>
+                    <p className="text-base text-foreground/50 leading-relaxed font-medium">{s.desc}</p>
+                  </div>
                 </Link>
               </StaggerItem>
             ))}
@@ -238,12 +239,11 @@ const AudioProduction = () => {
       </section>
 
       {/* Extra Services (Upsells) */}
-      <section className="bg-muted/30 py-20 border-y border-border">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl mb-12">
-              Extra <span className="text-primary">Services</span>
-            </h2>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Extra Services</h2>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Add-ons to elevate your production quality.</p>
           </FadeInSection>
           <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 max-w-5xl mx-auto">
             {[
@@ -252,28 +252,25 @@ const AudioProduction = () => {
               { title: "Express delivery (48h)", price: "R500" },
               { title: "Extra revisions", price: "R150" },
             ].map((item, i) => (
-              <StaggerScaleItem key={i}>
-                <Card className="bg-card/50 border-primary/10">
-                  <CardContent className="p-6 text-center">
-                    <h3 className="font-semibold text-lg">{item.title}</h3>
-                    <p className="text-2xl font-black text-primary mt-2">{item.price}</p>
-                  </CardContent>
-                </Card>
-              </StaggerScaleItem>
+              <StaggerItem key={i}>
+                <div className="premium-card text-center group">
+                  <h3 className="font-bold text-lg mb-4 uppercase tracking-tight">{item.title}</h3>
+                  <p className="text-3xl font-black text-red-600 transition-transform group-hover:scale-110">{item.price}</p>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
       </section>
 
       {/* Audio Production Packages */}
-      <section id="packages" className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl">
-              Production <span className="text-primary">Packages</span>
-            </h2>
+      <section id="packages" className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Production Packages</h2>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Structured tiers for every stage of your project.</p>
           </FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <StaggerContainer className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 mb-20">
             {[
               {
                 name: "Starter Recording",
@@ -311,7 +308,7 @@ const AudioProduction = () => {
               },
               {
                 name: "Artist Development",
-                price: "R5000 - R8000",
+                price: "R5000",
                 features: [
                   "3 songs (Recording+Mix+Master)",
                   "Creative production direction",
@@ -322,76 +319,78 @@ const AudioProduction = () => {
                 highlighted: false,
               },
             ].map((tier) => (
-              <StaggerScaleItem key={tier.name}>
-                <Card
-                  className={`flex flex-col h-full shadow-lg ${tier.highlighted
-                    ? "border-2 border-primary"
-                    : "border-primary/20"
-                    }`}
-                >
-                  <CardHeader className="text-center">
-                    {tier.highlighted && (
-                      <span className="mx-auto mb-2 inline-block rounded-full bg-primary px-3 py-0.5 text-xs font-bold text-primary-foreground">
-                        Most Popular
-                      </span>
-                    )}
-                    <CardTitle className="text-xl">{tier.name}</CardTitle>
-                    <p className="mt-2 text-3xl font-black text-primary">
-                      {tier.price}
-                    </p>
-                  </CardHeader>
-                  <CardContent className="flex-1 flex flex-col">
-                    <ul className="space-y-3 mb-8">
-                      {tier.features.map((f) => (
-                        <li key={f} className="flex items-center gap-3 text-sm">
-                          <CheckCircle className="h-4 w-4 shrink-0 text-primary" />
-                          {f}
-                        </li>
-                      ))}
-                    </ul>
-                    <Button
-                      onClick={() => openBooking({
-                        service: "Audio Production",
-                        package: tier.name,
-                        price: parseInt(tier.price.replace(/[^\d]/g, "")) || 350
-                      })}
-                      size="lg"
-                      className="mt-auto w-full cursor-pointer"
-                      variant={tier.highlighted ? "default" : "outline"}
-                    >
-                      Book Your Session
-                    </Button>
-                  </CardContent>
-                </Card>
-              </StaggerScaleItem>
+              <StaggerItem key={tier.name}>
+                <div className={`premium-card h-full flex flex-col ${tier.highlighted ? 'border-red-600/50 relative' : ''}`}>
+                  {tier.highlighted && (
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-red-600 rounded-full">
+                      <span className="text-[8px] font-black uppercase tracking-widest text-white">Most Popular</span>
+                    </div>
+                  )}
+                  <h3 className="text-2xl font-black text-foreground mb-4 uppercase tracking-tight">{tier.name}</h3>
+                  <p className="text-4xl font-black text-red-600 mb-10">{tier.price}</p>
+                  <div className="space-y-6 mb-16 flex-grow">
+                    {tier.features.map(f => (
+                      <div key={f} className="flex items-center gap-5 text-[11px] font-black uppercase tracking-widest text-foreground/80">
+                        <CheckCircle className="h-4 w-4 text-red-600 shrink-0" />
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button
+                    onClick={() => openBooking({
+                      service: "Audio Production",
+                      package: tier.name,
+                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 350
+                    })}
+                    className="w-full h-14 btn-secondary font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer border-0"
+                  >
+                    Book Your Session
+                  </Button>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
+
+          <div className="text-center">
+            <p className="hidden md:block text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 mt-12">
+              Click on a package card to start your booking process.
+            </p>
+            <p className="md:hidden text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40 mt-12">
+              Tap a package card to start your booking process.
+            </p>
+          </div>
         </div>
       </section>
 
 
       {/* Final CTA */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Ready to Create Professional{" "}
-              <span className="text-primary">Audio?</span>
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
+        <div className="content-width relative z-10">
+          <HeroSection>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Ready to Create<br />Elite Audio?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          </HeroSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">
               Book your session and let us manage the recording and production process from start to finish.
             </p>
-            <Button
-              onClick={() => openBooking({
-                service: "Audio Production",
-                package: "General Inquiry",
-                price: 0
-              })}
-              size="lg"
-              className="mt-8 gap-2 cursor-pointer"
-            >
-              Book Your Session <ArrowRight className="h-4 w-4" />
-            </Button>
+          </FadeInSection>
+          <FadeInSection delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-8">
+              <Button
+                onClick={() => openBooking({
+                  service: "Audio Production",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+              >
+                Book Your Session <ArrowRight className="h-4 w-4 ml-4" />
+              </Button>
+            </div>
           </FadeInSection>
         </div>
       </section>

@@ -59,161 +59,171 @@ const SocialMediaManagement = () => {
 
   return (
     <div className="pt-20">
-      <section className="relative overflow-hidden bg-background py-20 md:py-28">
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+      <section className="relative overflow-hidden section-padding pb-32">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+        </div>
+        
+        <div className="content-width relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
+              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
                 <Share2 className="h-4 w-4" /> Social Media Management
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
-              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl text-white">
-                Professional <span className="text-primary">Social Media Management</span> for Growing Brands
+              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12">
+                Dominate <span className="text-gradient">Social Media</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-6 text-lg text-muted-foreground">
-                We help businesses build a strong and consistent social media presence through strategy, content creation, and audience engagement.
+              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
+                We help brands build elite visibility and engagement through strategic content and data-driven management.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <Button
-                onClick={() => openBooking({
-                  service: "Social Media Management",
-                  package: "General Inquiry",
-                  price: 0
-                })}
-                size="lg"
-                className="mt-8 gap-2 cursor-pointer"
-              >
-                Get Started <ArrowRight className="h-4 w-4" />
-              </Button>
+              <div className="flex flex-wrap justify-center gap-6 mt-16">
+                <Button
+                  onClick={() => openBooking({
+                    service: "Social Media Management",
+                    package: "General Inquiry",
+                    price: 0
+                  })}
+                  size="lg"
+                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                >
+                  Start Your Growth <ArrowRight className="h-4 w-4 ml-4" />
+                </Button>
+              </div>
             </HeroSection>
           </div>
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white">The <span className="text-primary">Problem</span></h2>
-            <div className="mx-auto mt-8 max-w-3xl rounded-2xl bg-background p-8 border border-border">
-              <div className="flex justify-center mb-6">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary"><Zap className="h-6 w-6" /></div>
+      <section className="section-padding bg-alternate border-y border-foreground/5 relative overflow-hidden">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center">
+            <h2 className="mb-12 text-gradient">The Performance Gap</h2>
+            <div className="premium-card p-12 text-center group bg-background/50">
+              <div className="flex justify-center mb-10">
+                <div className="flex h-20 w-20 items-center justify-center rounded-[2rem] bg-red-600/10 text-red-600 group-hover:rotate-12 transition-transform duration-500"><Zap className="h-10 w-10" /></div>
               </div>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Many businesses struggle with inconsistent posting, low engagement, and unclear content strategy. Without a structured approach, social media becomes time-consuming and ineffective.
+              <p className="text-2xl text-foreground font-medium leading-relaxed italic">
+                "Many businesses struggle with inconsistent posting and stagnant engagement. Without a structured content strategy, social media becomes a burden rather than a growth engine."
               </p>
             </div>
           </FadeInSection>
         </div>
       </section>
 
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-12">What <span className="text-primary">We Do</span></h2>
+      <section className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Comprehensive Solutions</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">End-to-end management for total brand control.</p>
           </FadeInSection>
-          <StaggerContainer className="mx-auto max-w-2xl">
-            <div className="grid gap-4">
-              {whatWeDo.map((item) => (
-                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border">
-                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-white font-medium">{item}</span>
-                </StaggerItem>
-              ))}
-            </div>
+          <StaggerContainer className="mx-auto max-w-3xl grid gap-4">
+            {whatWeDo.map((item) => (
+              <StaggerItem key={item} className="flex items-center gap-6 p-6 rounded-2xl bg-alternate border border-foreground/5 group hover:border-red-600/30 transition-colors">
+                <div className="bg-red-600/10 p-3 rounded-xl group-hover:scale-110 transition-transform">
+                  <CheckCircle className="h-6 w-6 text-red-600 shrink-0" />
+                </div>
+                <span className="text-foreground text-xl font-bold tracking-tight">{item}</span>
+              </StaggerItem>
+            ))}
           </StaggerContainer>
         </div>
       </section>
 
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-6">
-              Platforms We <span className="text-primary">Manage</span>
-            </h2>
+      <section className="section-padding bg-alternate border-y border-foreground/5 relative">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center">
+            <h2 className="mb-12 text-gradient">Platforms We Manage</h2>
           </FadeInSection>
-          <StaggerContainer className="mt-6 flex flex-wrap justify-center gap-4">
+          <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-6">
             {platforms.map((platform) => (
               <StaggerItem key={platform}>
-                <div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">
-                  {platform}
+                <div className="rounded-full border border-foreground/10 bg-background px-10 py-4 text-sm font-black uppercase tracking-[0.3em] text-foreground hover:border-red-600 group transition-all cursor-default">
+                  <span className="group-hover:text-red-600 transition-colors">{platform}</span>
                 </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
           <FadeInSection delay={0.1}>
-            <p className="mt-8 text-center text-sm text-muted-foreground">
-              We help businesses build consistent and professional visibility across the platforms where their audience already spends time.
+            <p className="mt-16 text-center text-lg text-foreground/40 font-medium uppercase tracking-widest max-w-2xl mx-auto">
+              We build professional visibility where your audience already spends their time.
             </p>
           </FadeInSection>
         </div>
       </section>
 
-      <section className="bg-background py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-4">
-              Facebook <span className="text-primary">Page Management</span>
-            </h2>
-            <p className="mx-auto mb-12 max-w-3xl text-lg text-muted-foreground text-center">
-              Some businesses only need support with one platform. Our Facebook management services help businesses maintain a professional, consistent, and engaging presence on Facebook.
-            </p>
+      <section className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Facebook Page Management</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Dedicated support for the world's largest platform.</p>
           </FadeInSection>
+          
+          <div className="mb-12 text-center md:hidden">
+            <p className="text-xs font-black uppercase tracking-widest text-red-600 animate-pulse">
+              Swipe to view packages
+            </p>
+          </div>
+          <div className="mb-12 text-center hidden md:block">
+            <p className="text-xs font-black uppercase tracking-widest text-foreground/30">
+              Click/Tap on a package card to start booking
+            </p>
+          </div>
+
           <StaggerContainer className="grid gap-8 md:grid-cols-3">
             {facebookTiers.map((tier) => (
-              <StaggerScaleItem key={tier.name}>
-                <Card className="flex flex-col items-center p-8 text-center bg-muted border-border h-full">
-                  <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                  <div className="mb-4 flex flex-col items-center">
-                    <span className="text-3xl font-black text-primary">{tier.price}</span>
-                    <span className="text-sm text-muted-foreground">{tier.period}</span>
+              <StaggerItem key={tier.name}>
+                <div 
+                  onClick={() => openBooking({
+                    service: "Social Media Management",
+                    package: tier.name,
+                    price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                  })}
+                  className="premium-card p-10 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2"
+                >
+                  <h3 className="text-2xl font-black text-foreground mb-6 uppercase tracking-tighter">{tier.name}</h3>
+                  <div className="mb-8 flex flex-col items-center p-6 bg-foreground/5 rounded-3xl w-full group-hover:bg-red-600/5 transition-colors">
+                    <span className="text-4xl font-black text-red-600">{tier.price}</span>
+                    <span className="text-xs font-black text-foreground/40 mt-1 uppercase tracking-widest">{tier.period}</span>
                   </div>
-                  <p className="mb-6 text-sm text-muted-foreground">
+                  <p className="mb-8 text-sm text-foreground/50 font-medium leading-relaxed uppercase tracking-tight">
                     {tier.description}
                   </p>
-                  <ul className="mb-8 space-y-3 text-left w-full">
+                  <ul className="mb-10 space-y-4 text-left w-full border-t border-foreground/5 pt-8">
                     {tier.features.map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary" /> {item}
+                      <li key={item} className="flex items-center gap-3 text-xs font-bold text-foreground/70 uppercase tracking-tight">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-red-600" /> {item}
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Social Media Management",
-                      package: tier.name,
-                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
-                    })}
-                    className="mt-auto w-full cursor-pointer"
-                  >
+                  <Button className="mt-auto w-full btn-secondary h-14 font-black uppercase tracking-[0.2em] group-hover:bg-red-600 transition-colors">
                     Get Started
                   </Button>
-                </Card>
-              </StaggerScaleItem>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
-          <p className="mt-8 text-center text-sm text-muted-foreground">
-            Ideal for businesses that want focused support on a single platform.
-          </p>
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">
-              Our <span className="text-primary">Social Media Process</span>
-            </h2>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Our Strategic Process</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Engineered for absolute growth and consistency.</p>
           </FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-5">
+          <StaggerContainer className="grid gap-12 md:grid-cols-5">
             {processSteps.map((step) => (
-              <StaggerItem key={step.step} className="relative text-center">
-                <div className="mb-4 text-4xl font-black text-primary/10">{step.step}</div>
-                <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
+              <StaggerItem key={step.step} className="relative text-center group">
+                <div className="mb-8 text-6xl font-black text-foreground/5 group-hover:text-red-600/10 transition-colors">{step.step}</div>
+                <h3 className="text-xl font-black text-foreground mb-4 uppercase tracking-tighter">{step.title}</h3>
+                <p className="text-sm font-medium text-foreground/40 leading-relaxed uppercase tracking-tight">{step.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -239,50 +249,54 @@ const SocialMediaManagement = () => {
         </div>
       </section>
 
-      <section className="bg-muted py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-12">
-              Flexible <span className="text-primary">Social Media Packages</span>
-            </h2>
+      <section className="section-padding bg-background relative overflow-hidden">
+        <div className="content-width">
+          <FadeInSection className="max-w-5xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Elite Scaling Packages</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Multi-platform management for maximum impact.</p>
           </FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-3">
+
+          <StaggerContainer className="grid gap-10 md:grid-cols-3">
             {pricing.map((tier) => (
-              <StaggerScaleItem key={tier.name}>
-                <Card
-                  className={`relative flex flex-col items-center p-8 text-center bg-background h-full ${tier.highlighted ? "border-primary border-2" : "border-border"
-                    }`}
+              <StaggerItem key={tier.name}>
+                <div
+                  onClick={() => openBooking({
+                    service: "Social Media Management",
+                    package: tier.name,
+                    price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
+                  })}
+                  className={`premium-card p-12 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 ${
+                    tier.highlighted ? "border-red-600 border-2" : ""
+                  }`}
                 >
                   {tier.highlighted && (
-                    <span className="absolute -top-4 rounded-full bg-primary px-4 py-1 text-xs font-bold uppercase tracking-wider text-white">
-                      Most Popular
-                    </span>
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+                      <span className="bg-red-600 text-white px-8 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-xl">
+                        Most Popular
+                      </span>
+                    </div>
                   )}
-                  <h3 className="text-2xl font-bold text-white mb-2">{tier.name}</h3>
-                  <div className="mb-6 flex flex-col items-center">
-                    <span className="text-4xl font-black text-primary">{tier.price}</span>
-                    <span className="text-sm text-muted-foreground">{tier.period}</span>
+                  <h3 className="text-3xl font-black text-foreground mb-8 uppercase tracking-tighter">{tier.name}</h3>
+                  <div className={`mb-10 flex flex-col items-center p-8 rounded-[2.5rem] w-full transition-colors ${
+                    tier.highlighted ? "bg-red-600/10" : "bg-foreground/5 group-hover:bg-red-600/5"
+                  }`}>
+                    <span className="text-5xl font-black text-red-600">{tier.price}</span>
+                    <span className="text-xs font-black text-foreground/40 mt-1 uppercase tracking-widest">{tier.period}</span>
                   </div>
-                  <ul className="mb-8 space-y-4 text-left w-full">
+                  <ul className="mb-12 space-y-5 text-left w-full border-t border-foreground/5 pt-10">
                     {tier.features.map((f) => (
-                      <li key={f} className="flex items-center gap-3 text-sm text-muted-foreground">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-primary" /> {f}
+                      <li key={f} className="flex items-center gap-4 text-xs font-black text-foreground/80 uppercase tracking-tight">
+                        <CheckCircle className="h-5 w-5 shrink-0 text-red-600" /> {f}
                       </li>
                     ))}
                   </ul>
-                  <Button
-                    onClick={() => openBooking({
-                      service: "Social Media Management",
-                      package: tier.name,
-                      price: parseInt(tier.price.replace(/[^\d]/g, "")) || 0
-                    })}
-                    className="mt-auto w-full cursor-pointer"
-                    variant={tier.highlighted ? "default" : "outline"}
-                  >
+                  <Button className={`mt-auto w-full h-16 transition-all font-black uppercase tracking-[0.3em] ${
+                    tier.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
+                  }`}>
                     Get Started
                   </Button>
-                </Card>
-              </StaggerScaleItem>
+                </div>
+              </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
@@ -320,24 +334,33 @@ const SocialMediaManagement = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-background text-center">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Ready to Build Your Presence?</h2>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
+        <div className="content-width relative z-10">
+          <HeroSection>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Ready to Build<br />Your Presence?
+            </h2>
+          </HeroSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
               Let&apos;s turn your social media into a powerful tool for visibility, engagement, and brand growth.
             </p>
-            <Button
-              onClick={() => openBooking({
-                service: "Social Media Management",
-                package: "General Inquiry",
-                price: 0
-              })}
-              size="lg"
-              className="px-10 h-14 text-lg cursor-pointer"
-            >
-              Get Started
-            </Button>
+          </FadeInSection>
+          <FadeInSection delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-8">
+              <Button
+                onClick={() => openBooking({
+                  service: "Social Media Management",
+                  package: "General Inquiry",
+                  price: 0
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+              >
+                Launch Your Strategy <ArrowRight className="h-4 w-4 ml-4" />
+              </Button>
+            </div>
           </FadeInSection>
         </div>
       </section>

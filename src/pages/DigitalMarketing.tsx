@@ -84,30 +84,31 @@ const DigitalMarketing = () => {
   return (
     <div>
       {/* Hero */}
-      <section className="relative overflow-hidden bg-background py-28 md:py-36">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent" />
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto max-w-3xl text-center">
+      <section className="relative overflow-hidden section-padding pb-32">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+        </div>
+        
+        <div className="content-width relative z-10">
+          <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary">
-                <Globe className="h-4 w-4" />
-                Digital Media Solutions
+              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
+                <Globe className="h-4 w-4" /> Digital Media Solutions
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
-              <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl">
-                Digital Strategy That Grows Your{" "}
-                <span className="text-primary">Brand Online</span>
+              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12">
+                Digital Strategy <span className="text-gradient">For Growth</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-                We build and manage your digital presence with purposeful content,
-                targeted campaigns, and clear reporting — so you see real results.
+              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
+                We build and manage your digital presence with purposeful content, targeted campaigns, and clear reporting.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
-              <div className="mt-8 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <div className="flex flex-wrap justify-center gap-6 mt-16">
                 <Button
                   onClick={() => openBooking({
                     service: "Digital Marketing",
@@ -115,12 +116,12 @@ const DigitalMarketing = () => {
                     price: 0
                   })}
                   size="lg"
-                  className="gap-2 cursor-pointer"
+                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
                 >
-                  Get Started <ArrowRight className="h-4 w-4" />
+                  Start Your Journey <ArrowRight className="h-4 w-4 ml-4" />
                 </Button>
-                <Button asChild size="lg" variant="outline" className="gap-2">
-                  <a href="#packages">View Plans</a>
+                <Button asChild className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer btn-secondary">
+                  <a href="#packages">View Services</a>
                 </Button>
               </div>
             </HeroSection>
@@ -129,20 +130,22 @@ const DigitalMarketing = () => {
       </section>
 
       {/* Authority Section */}
-      <section className="bg-muted/30 py-16">
-        <div className="container mx-auto px-4">
-          <FadeInSection className="flex flex-col items-center justify-between gap-8 md:flex-row">
-            <div className="max-w-md">
-              <h2 className="text-3xl font-bold md:text-4xl text-white">Why Businesses Work With <span className="text-primary">KMP</span></h2>
-              <p className="mt-4 text-muted-foreground">
-                We are more than just a service provider; we are your strategic digital partner.
+      <section className="section-padding bg-alternate border-y border-foreground/5 relative overflow-hidden">
+        <div className="content-width">
+          <FadeInSection className="flex flex-col items-center justify-between gap-12 lg:flex-row">
+            <div className="max-w-xl">
+              <h2 className="mb-8 text-gradient">Why Elite Brands Work With KMP</h2>
+              <p className="text-xl text-foreground/50 font-medium leading-relaxed">
+                We are more than just a service provider; we are your strategic digital partner, ensuring your ecosystem is optimized for conversion.
               </p>
             </div>
-            <div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
+            <div className="grid w-full max-w-2xl gap-6 sm:grid-cols-2">
               {authorityPoints.map((point) => (
-                <div key={point} className="flex items-center gap-3 rounded-lg border border-primary/10 bg-background/50 p-4">
-                  <CheckCircle className="h-5 w-5 shrink-0 text-primary" />
-                  <span className="font-medium text-white">{point}</span>
+                <div key={point} className="flex items-center gap-4 p-6 rounded-2xl bg-background border border-foreground/5 group hover:border-red-600/30 transition-colors">
+                  <div className="bg-red-600/10 p-2 rounded-lg group-hover:scale-110 transition-transform">
+                    <CheckCircle className="h-6 w-6 text-red-600" />
+                  </div>
+                  <span className="text-foreground font-black uppercase tracking-tight text-sm">{point}</span>
                 </div>
               ))}
             </div>
@@ -168,24 +171,23 @@ const DigitalMarketing = () => {
       </section>
 
       {/* Our Process */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl">
-              How We <span className="text-primary">Work</span>
-            </h2>
+      <section className="section-padding bg-alternate border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-32">
+            <h2 className="mb-8 text-gradient">Our Strategic Process</h2>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Engineered for absolute growth and consistency.</p>
           </FadeInSection>
-          <StaggerContainer className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          <StaggerContainer className="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
             {processSteps.map((step, i) => (
-              <StaggerItem key={step.title} className="text-center">
-                <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10">
-                  <step.icon className="h-6 w-6 text-primary" />
+              <StaggerItem key={step.title} className="text-center group">
+                <div className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-[2.5rem] bg-foreground/5 border border-foreground/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
+                  <step.icon className="h-8 w-8 text-red-600" />
                 </div>
-                <span className="mb-2 block text-sm font-bold text-primary">
-                  Step {i + 1}
-                </span>
-                <h3 className="text-lg font-semibold">{step.title}</h3>
-                <p className="mt-2 text-sm text-muted-foreground">{step.desc}</p>
+                <div className="mb-4">
+                  <span className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600">Step 0{i + 1}</span>
+                </div>
+                <h3 className="text-2xl font-bold mb-4 uppercase tracking-tighter">{step.title}</h3>
+                <p className="text-base text-foreground/40 leading-relaxed font-medium">{step.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -193,32 +195,44 @@ const DigitalMarketing = () => {
       </section>
 
       {/* Our Services */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection className="mb-12 text-center">
-            <h2 className="text-3xl font-bold md:text-4xl text-white">
-              Our Digital <span className="text-primary">Services</span>
+      <section id="packages" className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="mb-24 text-center">
+            <h2 className="mb-10 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Our Digital Ecosystem
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
-              Explore our specialized digital solutions designed to scale your brand.
+            <p className="mx-auto text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl">
+              Explore specialized solutions designed to scale your brand effectively.
             </p>
           </FadeInSection>
-          <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div className="mb-12 text-center md:hidden">
+            <p className="text-xs font-black uppercase tracking-widest text-red-600 animate-pulse">
+              Swipe to view services
+            </p>
+          </div>
+          <div className="mb-12 text-center hidden md:block">
+            <p className="text-xs font-black uppercase tracking-widest text-foreground/30">
+              Click/Tap on a service card to learn more
+            </p>
+          </div>
+
+          <StaggerContainer className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s) => (
               <StaggerItem key={s.title}>
-                <Card className="group relative overflow-hidden border-border bg-muted transition-all hover:border-primary/50 hover:shadow-2xl">
+                <div className="premium-card group relative overflow-hidden bg-background cursor-pointer hover:-translate-y-2 transition-all duration-500">
                   <Link to={s.link} className="absolute inset-0 z-10" />
-                  <CardContent className="p-8">
-                    <div className="mb-6 inline-flex rounded-full bg-primary/10 p-4 transition-colors group-hover:bg-primary/20">
-                      <s.icon className="h-8 w-8 text-primary" />
+                  <div className="p-10">
+                    <div className="mb-10 inline-flex rounded-3xl bg-foreground/5 p-6 transition-colors group-hover:bg-red-600 group-hover:text-white">
+                      <s.icon className="h-10 w-10 text-red-600 transition-colors group-hover:text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-white transition-colors group-hover:text-primary">{s.title}</h3>
-                    <p className="mt-3 text-muted-foreground">{s.desc}</p>
-                    <div className="mt-6 flex items-center gap-2 font-bold text-primary opacity-0 transition-all group-hover:opacity-100">
+                    <h3 className="text-2xl font-black text-foreground transition-colors group-hover:text-red-600 uppercase tracking-tighter mb-4">{s.title}</h3>
+                    <p className="text-base text-foreground/40 font-medium leading-relaxed uppercase tracking-tight">{s.desc}</p>
+                    <div className="mt-10 flex items-center gap-3 font-black text-[10px] uppercase tracking-[0.3em] text-red-600 opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-2">
                       View Service <ArrowRight className="h-4 w-4" />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -228,27 +242,33 @@ const DigitalMarketing = () => {
 
 
       {/* Final CTA */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl">
-              Ready to Take Your Brand{" "}
-              <span className="text-primary">Digital?</span>
+      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
+        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
+        <div className="content-width relative z-10">
+          <HeroSection>
+            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
+              Ready to Take Your<br />Brand Digital?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
+          </HeroSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
               Let's build a digital strategy that drives real engagement, growth, and results for your business.
             </p>
-            <Button
-              onClick={() => openBooking({
-                service: "Digital Marketing",
-                package: "Strategic Consultation",
-                price: 0
-              })}
-              size="lg"
-              className="mt-8 gap-2 cursor-pointer"
-            >
-              Start Your Digital Journey <ArrowRight className="h-4 w-4" />
-            </Button>
+          </FadeInSection>
+          <FadeInSection delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-8">
+              <Button
+                onClick={() => openBooking({
+                  service: "Digital Marketing",
+                  package: "Strategic Consultation",
+                  price: 0
+                })}
+                size="lg"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+              >
+                Start Your Digital Journey <ArrowRight className="h-4 w-4 ml-4" />
+              </Button>
+            </div>
           </FadeInSection>
         </div>
       </section>

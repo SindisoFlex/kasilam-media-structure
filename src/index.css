@@ -5,34 +5,34 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
+    --foreground: 0 0% 3%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
+    --card: 0 0% 97%;
+    --card-foreground: 0 0% 3%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --popover-foreground: 0 0% 3%;
 
     --primary: 0 84% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
+    --secondary: 0 0% 94%;
     --secondary-foreground: 0 0% 10%;
 
-    --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 0 0% 96%;
+    --accent: 0 0% 94%;
     --accent-foreground: 0 0% 10%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 90%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
     --ring: 0 84% 60%;
 
-    --radius: 1rem;
+    --radius: 1.5rem;
   }
 
   .dark {
@@ -114,17 +114,37 @@
   }
 
   .premium-card {
-    @apply relative flex flex-col min-h-0 overflow-hidden bg-card border border-white/5 rounded-[2rem] p-6 md:p-10 transition-all duration-700 hover:border-primary/30 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] hover:-translate-y-2 active:scale-[0.98];
+    @apply relative flex flex-col min-h-0 overflow-hidden bg-card border border-foreground rounded-[2.5rem] p-6 md:p-10 transition-all duration-700 hover:border-primary shadow-[0_10px_30px_-5px_rgba(0,0,0,0.2)] hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.25)] hover:-translate-y-2 active:scale-[0.98];
     transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   .dark .premium-card {
-    @apply border-white/5 hover:bg-card/80;
-    box-shadow: none;
+    @apply border border-white/10 hover:border-primary/40 hover:bg-card/80;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   }
 
   .dark .premium-card:hover {
-    box-shadow: 0 0 0 1px rgba(255, 107, 107, 0.05);
+    @apply shadow-[0_40px_80px_-20px_rgba(0,0,0,0.6)];
+  }
+
+  .btn-primary {
+    @apply bg-red-600 text-white hover:bg-red-700 transition-all;
+  }
+
+  .btn-secondary {
+    @apply bg-black text-white hover:bg-zinc-900 transition-all;
+  }
+
+  .dark .btn-secondary {
+    @apply bg-zinc-800 hover:bg-zinc-700;
+  }
+
+  .accent-line-top {
+    @apply before:absolute before:top-0 before:left-0 before:right-0 before:h-1 before:bg-primary;
+  }
+
+  .accent-line-left {
+    @apply before:absolute before:top-0 before:left-0 before:bottom-0 before:w-1 before:bg-primary;
   }
 
   .flexible-card {
@@ -140,7 +160,7 @@
   }
 
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-foreground/40;
+    @apply bg-clip-text text-transparent bg-gradient-to-b from-foreground via-foreground to-foreground/70;
   }
 
   .red-glow {
@@ -148,7 +168,15 @@
   }
 
   .tech-border {
-    @apply border border-white/5 bg-white/[0.02] backdrop-blur-md;
+    @apply border border-foreground/10 bg-foreground/[0.02] backdrop-blur-md;
+  }
+
+  .dark .tech-border {
+    @apply border-white/5 bg-white/[0.02];
+  }
+
+  .bg-alternate {
+    @apply bg-muted/20;
   }
 
   .mesh-bg {
