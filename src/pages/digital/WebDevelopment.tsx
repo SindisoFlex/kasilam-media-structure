@@ -6,8 +6,28 @@ import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScale
 
 const WebDevelopment = () => {
   const startupFeatures = ["1 professional landing page", "mobile responsive design", "contact form integration", "basic SEO setup", "fast loading optimization"];
-  const businessFeatures = ["5–10 pages (SME Growth)", "responsive design", "contact forms", "SEO setup", "Google Analytics integration", "Optional Hosting & Maintenance add-on"];
+  const businessFeatures = ["5–10 pages", "responsive design", "contact forms", "SEO setup", "Google Analytics integration"];
   const appExamples = ["booking systems", "client portals", "dashboards", "custom web applications"];
+  const whyInvest = [
+    "build trust with potential clients",
+    "generate leads and inquiries",
+    "showcase products and services professionally",
+    "automate bookings and business processes",
+    "expand their reach beyond physical locations",
+  ];
+  const technologies = [
+    "React & modern front-end frameworks",
+    "responsive mobile-first design",
+    "SEO optimized structure",
+    "secure and scalable architecture",
+  ];
+  const developmentProcess = [
+    { step: "01", title: "Discovery & Planning", desc: "Understanding your business, audience, and project goals." },
+    { step: "02", title: "Design & User Experience", desc: "Creating intuitive layouts and user-focused design." },
+    { step: "03", title: "Development", desc: "Building the website or application with modern technologies." },
+    { step: "04", title: "Testing & Optimization", desc: "Ensuring performance, speed, and compatibility." },
+    { step: "05", title: "Launch & Support", desc: "Deploying your project and providing ongoing support if needed." },
+  ];
   const hostingPackages = [
     { name: "Basic Hosting", price: "R300", desc: "Perfect for starting fresh.", features: ["Hosting", "1 email account", "Daily backups"], icon: Server },
     { name: "Standard Hosting", price: "R550", desc: "The standard for growing SMEs.", features: ["Hosting", "5 email accounts", "Daily backups", "SSL Certificate"], icon: ShieldCheck, highlighted: true },
@@ -26,16 +46,46 @@ const WebDevelopment = () => {
             </HeroSection>
             <HeroSection delay={0.1}>
               <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl text-white">
-                Websites & Apps for <span className="text-primary">SMEs, Startups, and Growing Businesses</span>
+                Modern Websites & Web Applications Built for <span className="text-primary">Business Growth</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-6 text-lg text-muted-foreground">We build high-performance, responsive digital assets tailored to the South African market.</p>
+              <p className="mt-6 text-lg text-muted-foreground">
+                We design and develop high-performance websites and web applications that help startups, SMEs, and growing businesses build credibility, generate leads, and scale their digital presence.
+              </p>
             </HeroSection>
             <HeroSection delay={0.3}>
               <Button asChild size="lg" className="mt-8 gap-2"><Link to="/booking">Discuss Your Project <ArrowRight className="h-4 w-4" /></Link></Button>
             </HeroSection>
           </div>
+        </div>
+      </section>
+
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
+              Why Businesses Invest in <span className="text-primary">Professional Websites</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              A professional website is more than just an online presence. It is a digital asset that helps businesses:
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="mx-auto mt-12 max-w-3xl">
+            <div className="grid gap-4">
+              {whyInvest.map((item) => (
+                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border">
+                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-white font-medium">{item}</span>
+                </StaggerItem>
+              ))}
+            </div>
+          </StaggerContainer>
+          <FadeInSection delay={0.2} className="mx-auto mt-10 max-w-3xl text-center">
+            <p className="text-lg text-muted-foreground">
+              Our goal is to create websites and applications that support real business growth.
+            </p>
+          </FadeInSection>
         </div>
       </section>
 
@@ -95,6 +145,9 @@ const WebDevelopment = () => {
                       </li>
                     ))}
                   </ul>
+                  <p className="mb-8 text-xs text-muted-foreground italic leading-relaxed">
+                    Optional Hosting &amp; Maintenance add-on available.
+                  </p>
                   <Button className="mt-auto w-full h-12" asChild><Link to="/booking">Get Started</Link></Button>
                 </CardContent>
               </Card>
@@ -132,11 +185,60 @@ const WebDevelopment = () => {
         </div>
       </section>
 
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="mx-auto max-w-3xl text-center mb-12">
+            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
+              Technologies <span className="text-primary">We Use</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Our projects are built using modern and scalable technologies.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="mx-auto max-w-3xl">
+            <div className="grid gap-4">
+              {technologies.map((item) => (
+                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border">
+                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                  <span className="text-white font-medium">{item}</span>
+                </StaggerItem>
+              ))}
+            </div>
+          </StaggerContainer>
+          <FadeInSection delay={0.2} className="mx-auto mt-10 max-w-3xl text-center">
+            <p className="text-lg text-muted-foreground">
+              Our focus is building fast, reliable, and future-ready digital products.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
+      <section className="bg-card py-20">
+        <div className="container mx-auto px-4">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">
+              Our <span className="text-primary">Development Process</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-8 md:grid-cols-5">
+            {developmentProcess.map((p) => (
+              <StaggerItem key={p.step} className="relative text-center">
+                <div className="mb-4 text-6xl font-black text-primary/10">{p.step}</div>
+                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
+                <p className="text-sm text-muted-foreground">{p.desc}</p>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
       <section className="py-24 bg-background">
         <div className="container mx-auto px-4">
           <FadeInSection className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">Website Hosting & <span className="text-primary">Maintenance</span></h2>
-            <p className="text-lg text-muted-foreground">An all-in-one solution for SMEs.</p>
+            <p className="text-lg text-muted-foreground">
+              Reliable hosting and ongoing support for businesses that want a hands-off experience.
+            </p>
           </FadeInSection>
           <StaggerContainer className="grid gap-8 md:grid-cols-3">
             {hostingPackages.map((pkg) => (
@@ -164,13 +266,13 @@ const WebDevelopment = () => {
 
       <section className="py-20 bg-muted text-center">
         <div className="container mx-auto px-4">
-          <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white mb-12">Scalable <span className="text-primary">Architecture</span></h2></FadeInSection>
+          <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white mb-12">Built for <span className="text-primary">Performance</span></h2></FadeInSection>
           <StaggerContainer className="grid gap-8 md:grid-cols-4">
             {[
-              { icon: Zap, title: "Performance First", desc: "Optimized for speed and SEO out of the box." },
-              { icon: Search, title: "SEO Integrated", desc: "Structured data and meta setups included." },
-              { icon: MousePointer2, title: "Modern Designs", desc: "High-end UI/UX focus for better metrics." },
-              { icon: LineChart, title: "Growth Ready", desc: "Built to scale as your business expands." }
+              { icon: Zap, title: "Scalable Architecture", desc: "Optimized for speed and SEO." },
+              { icon: Search, title: "SEO Integrated", desc: "Structured data and search optimization included." },
+              { icon: MousePointer2, title: "Modern UI/UX", desc: "Professional designs focused on usability." },
+              { icon: LineChart, title: "Growth Ready", desc: "Built to support business expansion." }
             ].map((item) => (
               <StaggerItem key={item.title} className="space-y-3">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 text-primary border border-primary/10"><item.icon className="h-6 w-6" /></div>
@@ -185,8 +287,10 @@ const WebDevelopment = () => {
       <section className="py-20 bg-primary text-white text-center rounded-t-[3rem] mt-20">
         <div className="container mx-auto px-4">
           <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">Let's Build Your Digital Asset.</h2>
-            <p className="mx-auto mb-10 max-w-2xl text-lg opacity-90 font-medium">Contact us today for a free consultation.</p>
+            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">Let&apos;s Build Your Digital Asset</h2>
+            <p className="mx-auto mb-10 max-w-2xl text-lg opacity-90 font-medium">
+              Whether you need a professional website or a custom web application, we help businesses turn ideas into powerful digital platforms.
+            </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Button asChild size="lg" className="px-10 h-16 text-lg bg-white text-primary hover:bg-zinc-100 font-black uppercase tracking-widest shadow-2xl"><Link to="/booking">Start Your Project</Link></Button>
               <Button asChild variant="outline" size="lg" className="px-10 h-16 text-lg border-white text-white hover:bg-white/10 font-bold uppercase tracking-widest"><Link to="/contact">Contact Support</Link></Button>

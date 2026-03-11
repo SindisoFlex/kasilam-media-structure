@@ -5,27 +5,69 @@ import { Megaphone, CheckCircle, ArrowRight, Target, Search, Zap, BarChart, Mous
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const PaidAdvertising = () => {
-  const problems = ["Wasting budget on the wrong audience", "Low click-through rates (CTR)", "Ads not converting into customers", "Difficulty tracking ROI on spend"];
+  const problems = ["Wasting budget on the wrong audience", "Low click-through rates (CTR)", "Ads not converting into customers", "Difficulty tracking ROI"];
   const services = [
-    { icon: Target, title: "Audience Targeting", desc: "Finding the people most likely to buy from you." },
-    { icon: Megaphone, title: "Campaign Management", desc: "Expert setup and monitoring of your ad spend." },
-    { icon: MousePointer2, title: "Ad Creative", desc: "High-converting visuals and copy for your ads." },
-    { icon: Search, title: "Keyword Research", desc: "Finding the right terms to win on Google Search." },
-    { icon: BarChart, title: "A/B Testing", desc: "Scaling what works and cutting what doesn't." },
-    { icon: PieChart, title: "Detailed Reporting", desc: "Clear insights into your cost per acquisition." },
+    { icon: Target, title: "Audience Targeting", desc: "Finding the people most likely to buy from your business." },
+    { icon: Megaphone, title: "Campaign Management", desc: "Professional setup, monitoring, and optimization of advertising campaigns." },
+    { icon: MousePointer2, title: "Ad Creative", desc: "High-converting visuals and persuasive ad copy." },
+    { icon: Search, title: "Keyword Research", desc: "Identifying high-value search terms to compete on Google." },
+    { icon: BarChart, title: "A/B Testing", desc: "Testing multiple variations to identify the best-performing ads." },
+    { icon: PieChart, title: "Detailed Reporting", desc: "Clear insights into campaign performance and cost per acquisition." },
   ];
   const process = [
     { step: "1", title: "Audience & Market Research", desc: "Identifying your ideal customers and their behaviors." },
-    { step: "2", title: "Ad Strategy & Design", desc: "Creating the campaigns and creative assets." },
-    { step: "3", title: "Launch & Monitoring", desc: "Going live and watching the data closely." },
-    { step: "4", title: "Scale & Optimize", desc: "Improving performance to lower your acquisition cost." },
+    { step: "2", title: "Ad Strategy & Design", desc: "Creating the campaign structure and creative assets." },
+    { step: "3", title: "Launch & Monitoring", desc: "Launching campaigns and monitoring performance." },
+    { step: "4", title: "Scale & Optimize", desc: "Improving campaigns to reduce cost per acquisition and increase return." },
   ];
   const pricing = [
-    { name: "Starter Ads", price: "R1,500", period: "/ month + ad spend", features: ["1 platform (Meta or Google)", "Basic ad creative", "Campaign setup", "Monthly report"], highlighted: false },
-    { name: "Multi-Channel", price: "R3,500", period: "/ month + ad spend", features: ["2 platforms", "A/B testing", "Retargeting campaigns", "Weekly optimizations", "Bi-weekly reports"], highlighted: true },
-    { name: "Scale Plan", price: "R6,000+", period: "/ month + ad spend", features: ["Unlimited platforms", "Advanced conversion tracking", "Creative production", "Dedicated ad manager", "Weekly reports"], highlighted: false },
+    {
+      name: "Starter Ads",
+      price: "R1500",
+      period: "/ month + ad spend",
+      features: [
+        "1 advertising platform (Meta or Google)",
+        "Campaign setup",
+        "Basic ad creative",
+        "Audience targeting",
+        "Monthly performance report",
+      ],
+      highlighted: false,
+    },
+    {
+      name: "Multi-Channel",
+      price: "R3500",
+      period: "/ month + ad spend",
+      features: [
+        "2 advertising platforms",
+        "A/B testing campaigns",
+        "Retargeting ads",
+        "Weekly campaign optimization",
+        "Bi-weekly reports",
+      ],
+      highlighted: true,
+    },
+    {
+      name: "Scale Plan",
+      price: "R6000+",
+      period: "/ month + ad spend",
+      features: [
+        "Unlimited platforms",
+        "Advanced conversion tracking",
+        "Creative production support",
+        "Dedicated campaign management",
+        "Weekly reporting",
+      ],
+      highlighted: false,
+    },
   ];
-  const targetAudience = ["E-commerce stores needing sales", "Local businesses wanting leads", "Service providers booking appointments", "Events looking for attendees", "Apps seeking more downloads"];
+  const targetAudience = [
+    "E-commerce stores needing more sales",
+    "Local businesses wanting leads",
+    "Service providers booking appointments",
+    "Events looking for attendees",
+    "Apps seeking more downloads",
+  ];
 
   return (
     <div className="pt-20">
@@ -39,11 +81,13 @@ const PaidAdvertising = () => {
             </HeroSection>
             <HeroSection delay={0.1}>
               <h1 className="text-4xl font-black leading-tight md:text-5xl lg:text-6xl text-white">
-                Target The Right Audience & <span className="text-primary">Drive Results</span>
+                Performance Advertising That <span className="text-primary">Turns Clicks Into Customers</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-6 text-lg text-muted-foreground">Don't just spend money on ads — invest in campaigns that convert.</p>
+              <p className="mt-6 text-lg text-muted-foreground">
+                Strategic paid advertising campaigns designed to generate leads, sales, and measurable growth for businesses.
+              </p>
             </HeroSection>
             <HeroSection delay={0.3}>
               <Button asChild size="lg" className="mt-8 gap-2">
@@ -58,7 +102,9 @@ const PaidAdvertising = () => {
         <div className="container mx-auto px-4 text-center">
           <FadeInSection>
             <h2 className="text-3xl font-bold md:text-4xl text-white">The <span className="text-primary">Problem</span></h2>
-            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">Many businesses find paid ads confusing or expensive because they aren't optimized.</p>
+            <p className="mx-auto mt-4 max-w-2xl text-muted-foreground">
+              Many businesses find paid ads confusing or expensive because campaigns are poorly targeted or not optimized.
+            </p>
           </FadeInSection>
           <StaggerContainer className="mt-12 grid gap-6 sm:grid-cols-2">
             {problems.map((p) => (
@@ -69,7 +115,9 @@ const PaidAdvertising = () => {
             ))}
           </StaggerContainer>
           <FadeInSection delay={0.2}>
-            <p className="mt-10 text-lg font-medium text-primary uppercase tracking-wider">We help businesses turn ad spend into a predictable revenue generator.</p>
+            <p className="mt-10 text-lg font-medium text-primary uppercase tracking-wider">
+              We help businesses turn advertising spend into a predictable growth engine.
+            </p>
           </FadeInSection>
         </div>
       </section>
@@ -83,6 +131,31 @@ const PaidAdvertising = () => {
                 <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary/10"><s.icon className="h-7 w-7 text-primary" /></div>
                 <h3 className="text-xl font-bold text-white mb-2">{s.title}</h3>
                 <p className="text-muted-foreground">{s.desc}</p>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="bg-card py-20">
+        <div className="container mx-auto px-4">
+          <FadeInSection>
+            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-8">
+              Platforms We <span className="text-primary">Advertise On</span>
+            </h2>
+          </FadeInSection>
+          <StaggerContainer className="mt-6 flex flex-wrap justify-center gap-4">
+            {[
+              "Facebook & Instagram Ads",
+              "Google Search Ads",
+              "Google Display Ads",
+              "YouTube Ads",
+              "Retargeting Campaigns",
+            ].map((platform) => (
+              <StaggerItem key={platform}>
+                <div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">
+                  {platform}
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -135,6 +208,9 @@ const PaidAdvertising = () => {
               </StaggerScaleItem>
             ))}
           </StaggerContainer>
+          <p className="mt-8 text-center text-sm text-muted-foreground">
+            Advertising budget is paid directly to the advertising platform.
+          </p>
         </div>
       </section>
 
@@ -142,8 +218,12 @@ const PaidAdvertising = () => {
         <div className="container mx-auto px-4">
           <FadeInSection>
             <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Ready to Drive Measurable Results?</h2>
-            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">Let's build a campaign that reaches your ideal customers.</p>
-            <Button asChild size="lg" className="px-10 h-14 text-lg"><Link to="/booking">Book an Ad Strategy Session</Link></Button>
+            <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
+              Let&apos;s build a campaign that reaches your ideal audience and turns clicks into customers.
+            </p>
+            <Button asChild size="lg" className="px-10 h-14 text-lg">
+              <Link to="/booking">Book an Ad Strategy Session</Link>
+            </Button>
           </FadeInSection>
         </div>
       </section>

@@ -13,7 +13,7 @@ const Footer = () => {
               <img src={logo} alt="KMP Logo" className="h-14 w-auto" />
             </Link>
             <p className="max-w-md text-base leading-relaxed font-semibold text-muted-foreground uppercase tracking-widest opacity-60">
-              Creative solutions for real people, real stories, and growing businesses.
+              Creative media solutions for real stories, bold creators, and growing brands.
             </p>
           </div>
 
