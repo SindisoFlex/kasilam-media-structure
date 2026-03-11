@@ -2,8 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Music, CheckCircle, ArrowRight } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const MusicProduction = () => {
+    const { openBooking } = useBooking();
+
+    const handleBook = () => openBooking({
+        serviceName: "Music Production",
+        packageName: "Beat Sourcing & Production Management",
+        mediaType: "none",
+        basePrice: 800,
+        eventType: "Music Production",
+    });
+
     return (
         <div className="min-h-screen bg-background">
             <section className="relative py-24 md:py-32 overflow-hidden">
@@ -26,8 +37,8 @@ const MusicProduction = () => {
                         </p>
                     </HeroSection>
                     <HeroSection delay={0.3}>
-                        <Button asChild size="lg" className="px-8">
-                            <Link to="/booking">Start Your Project</Link>
+                        <Button onClick={handleBook} size="lg" className="px-8">
+                            Start Your Project
                         </Button>
                     </HeroSection>
                 </div>
@@ -39,7 +50,7 @@ const MusicProduction = () => {
                         <h2 className="text-3xl font-bold mb-8 text-center">About This Service</h2>
                         <div className="space-y-6 text-lg text-muted-foreground leading-relaxed text-center">
                             <p>Not every artist works with the same producer or sound style. Our music production management service helps connect artists with the right producers and beats for their project.</p>
-                            <p>Instead of limiting you to one sound, we source beats from trusted producers, present the best options to you, and coordinate the production process. This approach ensures you find the sound that truly fits your music while keeping the process smooth and professional.</p>
+                            <p>Instead of limiting you to one sound, we source beats from trusted producers, present the best options to you, and coordinate the production process.</p>
                         </div>
                     </FadeInSection>
                 </div>
@@ -65,8 +76,8 @@ const MusicProduction = () => {
                                 ))}
                             </ul>
                         </StaggerContainer>
-                        <Button size="lg" asChild className="w-full">
-                            <Link to="/booking">Inquire About Management</Link>
+                        <Button size="lg" className="w-full" onClick={handleBook}>
+                            Inquire About Management
                         </Button>
                     </FadeInSection>
                 </div>
@@ -79,10 +90,8 @@ const MusicProduction = () => {
                         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
                             Let us manage the production ecosystem while you focus on the music.
                         </p>
-                        <Button asChild size="lg" className="gap-2">
-                            <Link to="/booking">
-                                Start Your Music Production Project <ArrowRight className="h-4 w-4" />
-                            </Link>
+                        <Button onClick={handleBook} size="lg" className="gap-2">
+                            Start Your Music Production Project <ArrowRight className="h-4 w-4" />
                         </Button>
                     </FadeInSection>
                 </div>

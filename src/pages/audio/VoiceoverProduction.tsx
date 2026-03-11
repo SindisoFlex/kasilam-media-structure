@@ -2,8 +2,16 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Mic, CheckCircle, ArrowRight } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
+import { useBooking } from "@/contexts/BookingContext";
 
 const VoiceoverProduction = () => {
+    const { openBooking } = useBooking();
+
+    const tiers = [
+        { name: "Basic Voice-Over", price: 500, priceLabel: "R500 / session", features: ["Studio recording", "Basic audio cleanup", "MP3 delivery"] },
+        { name: "Professional Voice-Over", price: 1200, priceLabel: "R1200 / session", highlighted: true, features: ["Extended recording session", "Multiple takes", "Audio editing & cleanup", "WAV + MP3 delivery", "Revision included"] }
+    ];
+
     return (
         <div className="min-h-screen bg-background">
             <section className="relative py-24 md:py-32 overflow-hidden">
@@ -26,8 +34,8 @@ const VoiceoverProduction = () => {
                         </p>
                     </HeroSection>
                     <HeroSection delay={0.3}>
-                        <Button asChild size="lg" className="px-8">
-                            <Link to="/booking">Record Your Voice-Over</Link>
+                        <Button onClick={() => openBooking({ serviceName: "Voice-Over Production", packageName: "Voice-Over Session", mediaType: "none", basePrice: 500, eventType: "Voice-Over Recording" })} size="lg" className="px-8">
+                            Record Your Voice-Over
                         </Button>
                     </HeroSection>
                 </div>
@@ -39,7 +47,7 @@ const VoiceoverProduction = () => {
                         <h2 className="text-3xl font-bold mb-8 text-center">About This Service</h2>
                         <div className="space-y-6 text-lg text-muted-foreground leading-relaxed text-center">
                             <p>Voice-over audio is used in commercials, corporate videos, social media ads, and digital media.</p>
-                            <p>Our voice-over production service ensures your voice recordings sound clear, polished, and ready for professional use. We provide a focused recording environment and technical setup designed to capture voice audio with clarity and consistency.</p>
+                            <p>Our voice-over production service ensures your voice recordings sound clear, polished, and ready for professional use.</p>
                         </div>
                     </FadeInSection>
                 </div>
@@ -53,9 +61,7 @@ const VoiceoverProduction = () => {
                     <StaggerContainer className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
                         {["Commercial Advertisements", "Corporate Videos", "Documentary Narration", "Online Content", "Social Media Ads"].map((item) => (
                             <StaggerItem key={item}>
-                                <span className="rounded-full border border-border bg-muted px-6 py-3 text-sm font-medium inline-block">
-                                    {item}
-                                </span>
+                                <span className="rounded-full border border-border bg-muted px-6 py-3 text-sm font-medium inline-block">{item}</span>
                             </StaggerItem>
                         ))}
                     </StaggerContainer>
@@ -68,14 +74,11 @@ const VoiceoverProduction = () => {
                         <h2 className="text-3xl font-bold mb-12">Voice-Over <span className="text-primary">Packages</span></h2>
                     </FadeInSection>
                     <StaggerContainer className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                        {[
-                            { name: "Basic Voice-Over", price: "R500 / session", features: ["Studio recording", "Basic audio cleanup", "MP3 delivery"] },
-                            { name: "Professional Voice-Over", price: "R1200 / session", highlighted: true, features: ["Extended recording session", "Multiple takes", "Audio editing & cleanup", "WAV + MP3 delivery", "Revision included"] }
-                        ].map((tier, i) => (
+                        {tiers.map((tier, i) => (
                             <StaggerScaleItem key={i}>
                                 <div className={`p-8 rounded-2xl border flex flex-col h-full ${tier.highlighted ? 'border-primary bg-primary/5 shadow-xl' : 'border-border bg-background'}`}>
                                     <h3 className="text-xl font-bold mb-2">{tier.name}</h3>
-                                    <p className="text-2xl font-black text-primary mb-6">{tier.price}</p>
+                                    <p className="text-2xl font-black text-primary mb-6">{tier.priceLabel}</p>
                                     <ul className="text-left space-y-3 mb-8 flex-1">
                                         {tier.features.map(f => (
                                             <li key={f} className="flex items-center gap-2 text-sm">
@@ -84,8 +87,12 @@ const VoiceoverProduction = () => {
                                             </li>
                                         ))}
                                     </ul>
-                                    <Button variant={tier.highlighted ? "default" : "outline"} asChild className="w-full">
-                                        <Link to="/booking">Book Now</Link>
+                                    <Button
+                                        variant={tier.highlighted ? "default" : "outline"}
+                                        className="w-full"
+                                        onClick={() => openBooking({ serviceName: "Voice-Over Production", packageName: tier.name, mediaType: "none", basePrice: tier.price, eventType: "Voice-Over Recording" })}
+                                    >
+                                        Book Now
                                     </Button>
                                 </div>
                             </StaggerScaleItem>
@@ -101,10 +108,8 @@ const VoiceoverProduction = () => {
                         <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
                             Get clear, professional voice recordings for your brand and media projects.
                         </p>
-                        <Button asChild size="lg" className="gap-2">
-                            <Link to="/booking">
-                                Start Your Voice-Over <ArrowRight className="h-4 w-4" />
-                            </Link>
+                        <Button onClick={() => openBooking({ serviceName: "Voice-Over Production", packageName: "Voice-Over Session", mediaType: "none", basePrice: 500, eventType: "Voice-Over Recording" })} size="lg" className="gap-2">
+                            Start Your Voice-Over <ArrowRight className="h-4 w-4" />
                         </Button>
                     </FadeInSection>
                 </div>

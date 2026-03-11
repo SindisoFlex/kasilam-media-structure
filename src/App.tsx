@@ -12,7 +12,6 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
-import Booking from "./pages/Booking";
 import AudioProduction from "./pages/AudioProduction";
 import VisualProduction from "./pages/VisualProduction";
 import DigitalMarketing from "./pages/DigitalMarketing";
@@ -24,6 +23,8 @@ import StudioRecording from "./pages/audio/StudioRecording";
 import PodcastRecording from "./pages/audio/PodcastRecording";
 import VoiceOverProduction from "./pages/audio/VoiceoverProduction";
 import MixingMastering from "./pages/audio/MixingMastering";
+import MixingCoordination from "./pages/audio/MixingCoordination";
+import ProductionManagement from "./pages/audio/ProductionManagement";
 import MusicProduction from "./pages/audio/MusicProduction";
 
 // Digital Sub-pages
@@ -58,7 +59,6 @@ const App = () => (
                 <Route path="/about" element={<About />} />
                 <Route path="/services" element={<Services />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/booking" element={<Booking />} />
                 <Route path="/services/audio-production" element={<AudioProduction />} />
                 <Route path="/services/visual-production" element={<VisualProduction />} />
                 <Route path="/services/digital-marketing" element={<DigitalMarketing />} />
@@ -67,8 +67,10 @@ const App = () => (
                 <Route path="/services/audio-production/studio-recording" element={<StudioRecording />} />
                 <Route path="/services/audio-production/podcast-recording" element={<PodcastRecording />} />
                 <Route path="/services/audio-production/voiceover-production" element={<VoiceOverProduction />} />
-                <Route path="/services/audio-production/mixing-coordination" element={<MixingMastering />} />
-                <Route path="/services/audio-production/production-management" element={<MusicProduction />} />
+                <Route path="/services/audio-production/mixing-coordination" element={<MixingCoordination />} />
+                <Route path="/services/audio-production/mixing-mastering" element={<MixingMastering />} />
+                <Route path="/services/audio-production/production-management" element={<ProductionManagement />} />
+                <Route path="/services/audio-production/music-production" element={<MusicProduction />} />
 
                 {/* Digital Sub-routes */}
                 <Route path="/services/social-media-management" element={<SocialMediaManagement />} />
