@@ -6,6 +6,7 @@ export interface BookingInfo {
   mediaType: "photography" | "videography" | "combo" | "none";
   basePrice: number;
   hours?: number;
+  eventType?: string;
 }
 
 interface BookingContextValue {
