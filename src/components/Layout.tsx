@@ -5,7 +5,7 @@ import PageTransition from "./PageTransition";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { pathname } = useLocation();
-  const isDemoRoute = /^\/portfolio\/.+-demo\/?$/.test(pathname);
+  const isDemoRoute = /^\/portfolio\/.+-demo\/?$/.test(pathname) || pathname === "/portfolio/funeral-photography";
 
   if (isDemoRoute) {
     return <div className="min-h-screen">{children}</div>;

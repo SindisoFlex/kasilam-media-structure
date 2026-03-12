@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Hammer, HardHat, Shield, PhoneCall, Mail, MapPin } from "lucide-react";
+import { Hammer, HardHat, Shield, PhoneCall, Mail, MapPin, Menu, X } from "lucide-react";
 
-const ConstructionDemo = () => (
-  <main className="min-h-screen bg-[#f3f5f8] text-[#0b1b2d]">
-    <header className="border-b border-[#cfd6de] bg-white/90 backdrop-blur">
-      <div className="content-width flex items-center justify-between py-5">
+const ConstructionDemo = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <main className="min-h-screen bg-[#f3f5f8] text-[#0b1b2d]">
+      <header className="sticky top-0 z-50 border-b border-[#cfd6de] bg-white/95 backdrop-blur">
+        <div className="content-width flex items-center justify-between py-5">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.4em] text-[#0b1b2d]">PrimeBuild Construction</p>
           <p className="text-sm text-[#4b5b6a]">Licensed & Insured</p>
@@ -17,10 +21,47 @@ const ConstructionDemo = () => (
           <a href="#about" className="hover:text-[#f97316]">About</a>
           <a href="#contact" className="hover:text-[#f97316]">Contact</a>
         </nav>
-        <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#0b1b2d] text-white hover:bg-[#132a45]">
-          <Link to="/services/web-development">Back to KMP</Link>
-        </Button>
+        <div className="hidden items-center gap-3 md:flex">
+          <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#0b1b2d] text-white hover:bg-[#132a45]">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+        </div>
+        <div className="flex items-center gap-3 md:hidden">
+          <Button asChild className="h-9 px-4 text-[10px] font-black uppercase tracking-[0.3em] bg-[#0b1b2d] text-white hover:bg-[#132a45]">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+          <button
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#cfd6de] bg-white text-[#0b1b2d] shadow-sm"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <div className="border-t border-[#cfd6de] bg-white md:hidden">
+          <nav className="content-width flex flex-col gap-4 py-4 text-xs font-black uppercase tracking-[0.3em] text-[#4b5b6a]">
+            {[
+              { href: "#home", label: "Home" },
+              { href: "#services", label: "Services" },
+              { href: "#projects", label: "Projects" },
+              { href: "#about", label: "About" },
+              { href: "#contact", label: "Contact" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#f97316]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
 
     <section className="border-b border-[#cfd6de] bg-white">
@@ -34,7 +75,7 @@ const ConstructionDemo = () => (
       </div>
     </section>
 
-    <section id="home" className="relative overflow-hidden bg-[#0b1b2d] text-white">
+    <section id="home" className="relative overflow-hidden bg-[#0b1b2d] text-white scroll-mt-24">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center opacity-40" />
       <div className="content-width relative z-10 py-24">
         <p className="text-xs font-black uppercase tracking-[0.4em] text-[#f97316]">Strong. Reliable. On-Time.</p>
@@ -61,7 +102,7 @@ const ConstructionDemo = () => (
       </div>
     </section>
 
-    <section id="services" className="section-padding bg-[#f3f5f8]">
+    <section id="services" className="section-padding bg-[#f3f5f8] scroll-mt-24">
       <div className="content-width space-y-10">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.4em] text-[#f97316]">Services</p>
@@ -83,7 +124,7 @@ const ConstructionDemo = () => (
       </div>
     </section>
 
-    <section id="projects" className="section-padding bg-white">
+    <section id="projects" className="section-padding bg-white scroll-mt-24">
       <div className="content-width">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -102,7 +143,7 @@ const ConstructionDemo = () => (
       </div>
     </section>
 
-    <section id="about" className="section-padding bg-[#e8edf2]">
+    <section id="about" className="section-padding bg-[#e8edf2] scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.4em] text-[#f97316]">About PrimeBuild</p>
@@ -125,7 +166,7 @@ const ConstructionDemo = () => (
       </div>
     </section>
 
-    <section id="contact" className="section-padding bg-white">
+    <section id="contact" className="section-padding bg-white scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <p className="text-xs font-black uppercase tracking-[0.3em] text-[#f97316]">Contact</p>
@@ -166,7 +207,8 @@ const ConstructionDemo = () => (
         </div>
       </div>
     </footer>
-  </main>
-);
+    </main>
+  );
+};
 
 export default ConstructionDemo;

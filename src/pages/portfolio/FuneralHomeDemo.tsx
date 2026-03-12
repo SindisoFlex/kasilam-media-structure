@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, PhoneCall, Mail, MapPin } from "lucide-react";
+import { CheckCircle, PhoneCall, Mail, MapPin, Menu, X } from "lucide-react";
 
-const FuneralHomeDemo = () => (
-  <main className="min-h-screen bg-[#f7f4f3] text-[#2b1f1f]">
-    <header className="border-b border-[#e4d9d5] bg-[#f7f4f3]/90 backdrop-blur">
-      <div className="content-width flex items-center justify-between py-5">
+const FuneralHomeDemo = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <main className="min-h-screen bg-[#f7f4f3] text-[#2b1f1f]">
+      <header className="sticky top-0 z-50 border-b border-[#e4d9d5] bg-[#f7f4f3]/95 backdrop-blur">
+        <div className="content-width flex items-center justify-between py-5">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#7a1f2b]">Eternal Peace</p>
           <p className="text-lg font-black text-[#2b1f1f]">Funeral Services</p>
@@ -17,10 +21,47 @@ const FuneralHomeDemo = () => (
           <a href="#obituaries" className="hover:text-[#7a1f2b]">Obituaries</a>
           <a href="#contact" className="hover:text-[#7a1f2b]">Contact</a>
         </nav>
-        <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#7a1f2b] hover:bg-[#641a23] text-white">
-          <Link to="/services/web-development">Back to KMP</Link>
-        </Button>
+        <div className="hidden items-center gap-3 md:flex">
+          <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#7a1f2b] hover:bg-[#641a23] text-white">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+        </div>
+        <div className="flex items-center gap-3 md:hidden">
+          <Button asChild className="h-9 px-4 text-[10px] font-black uppercase tracking-[0.3em] bg-[#7a1f2b] hover:bg-[#641a23] text-white">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+          <button
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#dbcfc7] bg-white text-[#7a1f2b] shadow-sm"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <div className="border-t border-[#e4d9d5] bg-[#f7f4f3] md:hidden">
+          <nav className="content-width flex flex-col gap-4 py-4 text-xs font-black uppercase tracking-[0.3em] text-[#5b4a4a]">
+            {[
+              { href: "#home", label: "Home" },
+              { href: "#services", label: "Services" },
+              { href: "#packages", label: "Funeral Packages" },
+              { href: "#obituaries", label: "Obituaries" },
+              { href: "#contact", label: "Contact" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#7a1f2b]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
 
     <section className="border-b border-[#e4d9d5] bg-white">
@@ -34,7 +75,7 @@ const FuneralHomeDemo = () => (
       </div>
     </section>
 
-    <section id="home" className="relative overflow-hidden">
+    <section id="home" className="relative overflow-hidden scroll-mt-24">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
       <div className="content-width relative z-10 py-28 text-white">
@@ -81,7 +122,7 @@ const FuneralHomeDemo = () => (
       </div>
     </section>
 
-    <section id="services" className="section-padding bg-[#efe9e7]">
+    <section id="services" className="section-padding bg-[#efe9e7] scroll-mt-24">
       <div className="content-width space-y-10">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#7a1f2b]">Services</p>
@@ -103,7 +144,7 @@ const FuneralHomeDemo = () => (
       </div>
     </section>
 
-    <section id="packages" className="section-padding bg-[#f7f4f3]">
+    <section id="packages" className="section-padding bg-[#f7f4f3] scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#7a1f2b]">Funeral Packages</p>
@@ -124,7 +165,7 @@ const FuneralHomeDemo = () => (
       </div>
     </section>
 
-    <section id="obituaries" className="section-padding bg-[#efe9e7]">
+    <section id="obituaries" className="section-padding bg-[#efe9e7] scroll-mt-24">
       <div className="content-width">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
@@ -145,7 +186,7 @@ const FuneralHomeDemo = () => (
       </div>
     </section>
 
-    <section id="contact" className="section-padding bg-[#f7f4f3]">
+    <section id="contact" className="section-padding bg-[#f7f4f3] scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#7a1f2b]">Contact</p>
@@ -186,7 +227,8 @@ const FuneralHomeDemo = () => (
         </div>
       </div>
     </footer>
-  </main>
-);
+    </main>
+  );
+};
 
 export default FuneralHomeDemo;

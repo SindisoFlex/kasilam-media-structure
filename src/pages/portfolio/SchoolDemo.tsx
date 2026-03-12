@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CalendarDays, Star, BookOpen, PhoneCall, Mail, MapPin } from "lucide-react";
+import { CalendarDays, Star, BookOpen, PhoneCall, Mail, MapPin, Menu, X } from "lucide-react";
 
-const SchoolDemo = () => (
-  <main className="min-h-screen bg-[#f6f7f5] text-[#1d2b22]">
-    <header className="border-b border-[#d8ddd7] bg-white/90 backdrop-blur">
-      <div className="content-width flex items-center justify-between py-5">
+const SchoolDemo = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <main className="min-h-screen bg-[#f6f7f5] text-[#1d2b22]">
+      <header className="sticky top-0 z-50 border-b border-[#d8ddd7] bg-white/95 backdrop-blur">
+        <div className="content-width flex items-center justify-between py-5">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#2f6b4f]">Riverside Community School</p>
           <p className="text-lg font-black text-[#1d2b22]">Learning With Purpose</p>
@@ -17,10 +21,47 @@ const SchoolDemo = () => (
           <a href="#admissions" className="hover:text-[#2f6b4f]">Admissions</a>
           <a href="#contact" className="hover:text-[#2f6b4f]">Contact</a>
         </nav>
-        <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#2f6b4f] hover:bg-[#25573f] text-white">
-          <Link to="/services/web-development">Back to KMP</Link>
-        </Button>
+        <div className="hidden items-center gap-3 md:flex">
+          <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-[#2f6b4f] hover:bg-[#25573f] text-white">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+        </div>
+        <div className="flex items-center gap-3 md:hidden">
+          <Button asChild className="h-9 px-4 text-[10px] font-black uppercase tracking-[0.3em] bg-[#2f6b4f] hover:bg-[#25573f] text-white">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+          <button
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#d5ddd3] bg-white text-[#2f6b4f] shadow-sm"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <div className="border-t border-[#d8ddd7] bg-white md:hidden">
+          <nav className="content-width flex flex-col gap-4 py-4 text-xs font-black uppercase tracking-[0.3em] text-[#4c5a52]">
+            {[
+              { href: "#home", label: "Home" },
+              { href: "#about", label: "About School" },
+              { href: "#programs", label: "Programs" },
+              { href: "#admissions", label: "Admissions" },
+              { href: "#contact", label: "Contact" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-[#2f6b4f]"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
 
     <section className="border-b border-[#d8ddd7] bg-white">
@@ -34,7 +75,7 @@ const SchoolDemo = () => (
       </div>
     </section>
 
-    <section id="home" className="relative overflow-hidden bg-[#1d2b22] text-white">
+    <section id="home" className="relative overflow-hidden bg-[#1d2b22] text-white scroll-mt-24">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center opacity-40" />
       <div className="content-width relative z-10 py-24">
         <p className="text-xs font-bold uppercase tracking-[0.4em] text-[#f4d58d]">Community Focused</p>
@@ -62,7 +103,7 @@ const SchoolDemo = () => (
       </div>
     </section>
 
-    <section id="about" className="section-padding bg-white">
+    <section id="about" className="section-padding bg-white scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="space-y-5">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#2f6b4f]">About Riverside</p>
@@ -86,7 +127,7 @@ const SchoolDemo = () => (
       </div>
     </section>
 
-    <section id="programs" className="section-padding bg-[#eef1ea]">
+    <section id="programs" className="section-padding bg-[#eef1ea] scroll-mt-24">
       <div className="content-width space-y-10">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#2f6b4f]">Programs</p>
@@ -135,7 +176,7 @@ const SchoolDemo = () => (
       </div>
     </section>
 
-    <section id="admissions" className="section-padding bg-[#2f6b4f] text-white">
+    <section id="admissions" className="section-padding bg-[#2f6b4f] text-white scroll-mt-24">
       <div className="content-width grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#f4d58d]">Admissions</p>
@@ -154,7 +195,7 @@ const SchoolDemo = () => (
       </div>
     </section>
 
-    <section id="contact" className="section-padding bg-white">
+    <section id="contact" className="section-padding bg-white scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-6">
           <p className="text-xs font-bold uppercase tracking-[0.3em] text-[#2f6b4f]">Contact</p>
@@ -195,7 +236,8 @@ const SchoolDemo = () => (
         </div>
       </div>
     </footer>
-  </main>
-);
+    </main>
+  );
+};
 
 export default SchoolDemo;

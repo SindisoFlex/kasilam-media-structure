@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChefHat, Clock, MapPin } from "lucide-react";
+import { ChefHat, Clock, MapPin, Menu, X } from "lucide-react";
 
-const RestaurantDemo = () => (
-  <main className="min-h-screen bg-white text-black">
-    <header className="border-b border-black/10 bg-white/95 backdrop-blur">
-      <div className="content-width flex items-center justify-between py-5">
+const RestaurantDemo = () => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  return (
+    <main className="min-h-screen bg-white text-black">
+      <header className="sticky top-0 z-50 border-b border-black/10 bg-white/95 backdrop-blur">
+        <div className="content-width flex items-center justify-between py-5">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.4em] text-black">Urban Table Grill</p>
           <p className="text-sm text-black/60">Modern Dining</p>
@@ -17,10 +21,47 @@ const RestaurantDemo = () => (
           <a href="#reservations" className="hover:text-black">Reservations</a>
           <a href="#contact" className="hover:text-black">Contact</a>
         </nav>
-        <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-black text-white hover:bg-black/80">
-          <Link to="/services/web-development">Back to KMP</Link>
-        </Button>
+        <div className="hidden items-center gap-3 md:flex">
+          <Button asChild className="h-10 px-5 text-[10px] font-black uppercase tracking-[0.3em] bg-black text-white hover:bg-black/80">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+        </div>
+        <div className="flex items-center gap-3 md:hidden">
+          <Button asChild className="h-9 px-4 text-[10px] font-black uppercase tracking-[0.3em] bg-black text-white hover:bg-black/80">
+            <Link to="/services/web-development">Back to KMP</Link>
+          </Button>
+          <button
+            type="button"
+            aria-label="Toggle navigation"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black shadow-sm"
+          >
+            {menuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <div className="border-t border-black/10 bg-white md:hidden">
+          <nav className="content-width flex flex-col gap-4 py-4 text-xs font-black uppercase tracking-[0.3em] text-black/70">
+            {[
+              { href: "#home", label: "Home" },
+              { href: "#menu", label: "Menu" },
+              { href: "#chef", label: "Chef" },
+              { href: "#reservations", label: "Reservations" },
+              { href: "#contact", label: "Contact" },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-black"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      )}
     </header>
 
     <section className="border-b border-black/10 bg-white">
@@ -34,7 +75,7 @@ const RestaurantDemo = () => (
       </div>
     </section>
 
-    <section id="home" className="relative overflow-hidden">
+    <section id="home" className="relative overflow-hidden scroll-mt-24">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=80')] bg-cover bg-center" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/10" />
       <div className="content-width relative z-10 py-28 text-white">
@@ -50,7 +91,7 @@ const RestaurantDemo = () => (
       </div>
     </section>
 
-    <section id="menu" className="section-padding bg-white">
+    <section id="menu" className="section-padding bg-white scroll-mt-24">
       <div className="content-width">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
@@ -94,7 +135,7 @@ const RestaurantDemo = () => (
       </div>
     </section>
 
-    <section id="chef" className="section-padding bg-white">
+    <section id="chef" className="section-padding bg-white scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="rounded-3xl bg-black text-white p-8">
           <ChefHat className="h-8 w-8" />
@@ -112,7 +153,7 @@ const RestaurantDemo = () => (
       </div>
     </section>
 
-    <section id="reservations" className="section-padding bg-[#f5f5f5]">
+    <section id="reservations" className="section-padding bg-[#f5f5f5] scroll-mt-24">
       <div className="content-width grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.4em] text-black/70">Reservations</p>
@@ -132,7 +173,7 @@ const RestaurantDemo = () => (
       </div>
     </section>
 
-    <section id="contact" className="section-padding bg-white">
+    <section id="contact" className="section-padding bg-white scroll-mt-24">
       <div className="content-width grid gap-8 md:grid-cols-3">
         <div className="rounded-3xl border border-black/10 p-6">
           <p className="text-xs font-black uppercase tracking-[0.4em] text-black/70">Contact</p>
@@ -156,7 +197,8 @@ const RestaurantDemo = () => (
         <span>Open Tue-Sun. Reservations recommended.</span>
       </div>
     </footer>
-  </main>
-);
+    </main>
+  );
+};
 
 export default RestaurantDemo;

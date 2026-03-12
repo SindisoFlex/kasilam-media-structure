@@ -1,15 +1,31 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Camera, Video, Globe, ArrowRight, Play, ExternalLink } from "lucide-react";
+import { Camera, Video, Globe, ExternalLink } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 
-const portfolioItems = [
-    { id: 1, title: "Lakeside Wedding", type: "Photography", category: "Community", image: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&q=80" },
-    { id: 2, title: "Urban Beats MV", type: "Videography", category: "Music", image: "https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80" },
-    { id: 3, title: "Fintech Rebrand", type: "Digital", category: "Corporate", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80" },
-    { id: 4, title: "Heritage Festival", type: "Photography", category: "Event", image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80" },
-    { id: 5, title: "Corporate Gala", type: "Videography", category: "Corporate", image: "https://images.unsplash.com/photo-1511795409834-ef04bbd61622?auto=format&fit=crop&q=80" },
-    { id: 6, title: "E-Commerce Suite", type: "Digital", category: "Startup", image: "https://images.unsplash.com/photo-1523474253046-2cd2c78b6814?auto=format&fit=crop&q=80" },
+const categories = [
+    {
+        title: "Web Development",
+        description: "Industry demos and real web projects built to convert.",
+        icon: Globe,
+        to: "#web-development",
+        button: "View Demos",
+    },
+    {
+        title: "Photography",
+        description: "Real client photography with premium presentation.",
+        icon: Camera,
+        to: "/portfolio/funeral-photography",
+        button: "View Portfolio",
+    },
+    {
+        title: "Videography",
+        description: "Coming soon.",
+        icon: Video,
+        to: "",
+        button: "Coming Soon",
+        disabled: true,
+    },
 ];
 
 const demoProjects = [
@@ -60,40 +76,34 @@ const Portfolio = () => {
                 </div>
             </section>
 
-            {/* Filter / Category Navigation - Minimal */}
-            <section className="py-16 bg-zinc-950/50 backdrop-blur-md border-y border-white/5 sticky top-[72px] z-40">
-                <div className="content-width flex flex-wrap justify-center gap-6">
-                    {["All Work", "Photography", "Videography", "Digital Solutions"].map((cat) => (
-                        <button key={cat} className="px-8 py-3 rounded-full border border-white/5 hover:border-red-600 transition-all text-[10px] font-black uppercase tracking-[0.3em] bg-white/5 backdrop-blur-xl hover:bg-white/10 active:scale-95">
-                            {cat}
-                        </button>
-                    ))}
-                </div>
-            </section>
-
-            {/* Grid */}
             <section className="section-padding bg-background relative">
                 <div className="content-width">
-                    <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-                        {portfolioItems.map((item) => (
-                            <div key={item.id} className="group relative overflow-hidden rounded-[2.5rem] aspect-[4/5] bg-zinc-900 border border-white/5 hover:border-red-600/30 transition-all duration-700">
-                                <img
-                                    src={item.image}
-                                    alt={item.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-40 group-hover:opacity-60"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent opacity-90" />
-
-                                <div className="absolute bottom-0 left-0 w-full p-10 translate-y-6 group-hover:translate-y-0 transition-all duration-700">
-                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4 block">{item.type} â€¢ {item.category}</span>
-                                    <h3 className="text-3xl font-black text-white mb-10 leading-none tracking-tighter uppercase">{item.title}</h3>
-                                    <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-all duration-700 delay-100">
-                                        <Button variant="outline" size="sm" className="h-12 px-8 rounded-full border-white/10 bg-white/5 backdrop-blur-xl text-white hover:bg-red-600 hover:border-red-600 transition-all text-[10px] font-black uppercase tracking-widest">
-                                            {item.type === "Videography" ? <Play className="h-3.5 w-3.5 mr-3 fill-current" /> : <ExternalLink className="h-3.5 w-3.5 mr-3" />}
-                                            View Project
-                                        </Button>
-                                    </div>
+                    <div className="mb-12 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4">Portfolio Categories</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-white">Explore Our Work</h2>
+                        <p className="mt-4 text-white/50 text-lg font-semibold">Web development, photography, and upcoming videography work.</p>
+                    </div>
+                    <div className="grid gap-8 md:grid-cols-3">
+                        {categories.map((category) => (
+                            <div key={category.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 flex flex-col gap-4">
+                                <div className="flex items-center gap-3">
+                                    <category.icon className="h-5 w-5 text-red-600" />
+                                    <h3 className="text-lg font-black text-white">{category.title}</h3>
                                 </div>
+                                <p className="text-sm text-white/50">{category.description}</p>
+                                {category.disabled ? (
+                                    <Button disabled className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary opacity-50">
+                                        {category.button}
+                                    </Button>
+                                ) : (
+                                    <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
+                                        {category.to.startsWith("#") ? (
+                                            <a href={category.to}>{category.button}</a>
+                                        ) : (
+                                            <Link to={category.to}>{category.button}</Link>
+                                        )}
+                                    </Button>
+                                )}
                             </div>
                         ))}
                     </div>
@@ -103,8 +113,32 @@ const Portfolio = () => {
             <section className="section-padding bg-card/40 border-y border-white/5">
                 <div className="content-width">
                     <div className="mb-12 text-center">
-                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4">Website Demo Projects</p>
-                        <h2 className="text-4xl md:text-6xl font-black text-white">Live Website Demonstrations</h2>
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4">Real Client Work</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-white">Websites We’ve Built</h2>
+                        <p className="mt-4 text-white/50 text-lg font-semibold">Live projects delivered for real businesses.</p>
+                    </div>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                        <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 flex flex-col gap-4">
+                            <div>
+                                <h3 className="text-lg font-black text-white">Mpongoshe Security Services</h3>
+                                <p className="text-sm text-white/50 mt-3">Professional security company website designed for service visibility and lead generation.</p>
+                            </div>
+                            <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
+                                <a href="https://mpongoshe-security-services.vercel.app/" target="_blank" rel="noreferrer">
+                                    <ExternalLink className="h-3.5 w-3.5 mr-3" />
+                                    Visit Website
+                                </a>
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="web-development" className="section-padding bg-card/40 border-y border-white/5 scroll-mt-24">
+                <div className="content-width">
+                    <div className="mb-12 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4">Web Development</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-white">Website Demo Projects</h2>
                         <p className="mt-4 text-white/50 text-lg font-semibold">Explore sample client websites built for different industries.</p>
                     </div>
                     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
@@ -130,13 +164,13 @@ const Portfolio = () => {
                     <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">Your Story<br />is Next.</h2>
                     <p className="mx-auto max-w-4xl text-xl md:text-2xl text-white/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">Ready to produce elite visuals or build your digital legacy?</p>
                     <div className="flex justify-center flex-wrap gap-8">
-                        <Button 
+                        <Button
                             onClick={() => openBooking({
                                 service: "Portfolio Strategy",
                                 package: "General Inquiry",
                                 price: 0
                             })}
-                            size="lg" 
+                            size="lg"
                             className="h-20 px-16 text-xs font-black bg-red-600 hover:bg-red-700 text-white border-0 rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer"
                         >
                             Start Your Project
