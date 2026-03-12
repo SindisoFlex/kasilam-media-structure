@@ -147,8 +147,8 @@ export const AboutSection = ({
       </div>
     </div>
   </section>
-  );
-};
+  )
+);
 
 export const ServicesSection = ({
   theme,
