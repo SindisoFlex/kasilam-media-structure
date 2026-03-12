@@ -12,6 +12,29 @@ const portfolioItems = [
     { id: 6, title: "E-Commerce Suite", type: "Digital", category: "Startup", image: "https://images.unsplash.com/photo-1523474253046-2cd2c78b6814?auto=format&fit=crop&q=80" },
 ];
 
+const demoProjects = [
+    {
+        title: "Funeral Parlour Website Demo",
+        description: "A respectful, calm site with service details and family support focus.",
+        to: "/portfolio/funeral-home-demo",
+    },
+    {
+        title: "School Website Demo",
+        description: "Community-focused education site with programs, admissions, and updates.",
+        to: "/portfolio/school-demo",
+    },
+    {
+        title: "Restaurant Website Demo",
+        description: "Minimalist dining brand with menu highlights and reservations.",
+        to: "/portfolio/restaurant-demo",
+    },
+    {
+        title: "Construction Company Website Demo",
+        description: "Strong, reliable contractor site with services and project highlights.",
+        to: "/portfolio/construction-demo",
+    },
+];
+
 const Portfolio = () => {
     const { openBooking } = useBooking();
     return (
@@ -71,6 +94,29 @@ const Portfolio = () => {
                                         </Button>
                                     </div>
                                 </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="section-padding bg-card/40 border-y border-white/5">
+                <div className="content-width">
+                    <div className="mb-12 text-center">
+                        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-red-600 mb-4">Website Demo Projects</p>
+                        <h2 className="text-4xl md:text-6xl font-black text-white">Live Website Demonstrations</h2>
+                        <p className="mt-4 text-white/50 text-lg font-semibold">Explore sample client websites built for different industries.</p>
+                    </div>
+                    <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+                        {demoProjects.map((demo) => (
+                            <div key={demo.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 flex flex-col gap-4">
+                                <div>
+                                    <h3 className="text-lg font-black text-white">{demo.title}</h3>
+                                    <p className="text-sm text-white/50 mt-3">{demo.description}</p>
+                                </div>
+                                <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
+                                    <Link to={demo.to}>View Demo</Link>
+                                </Button>
                             </div>
                         ))}
                     </div>

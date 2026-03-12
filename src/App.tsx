@@ -17,6 +17,10 @@ import VisualProduction from "./pages/VisualProduction";
 import DigitalMarketing from "./pages/DigitalMarketing";
 import Portfolio from "./pages/Portfolio";
 import NotFound from "./pages/NotFound";
+import FuneralHomeDemo from "./pages/portfolio/FuneralHomeDemo";
+import SchoolDemo from "./pages/portfolio/SchoolDemo";
+import RestaurantDemo from "./pages/portfolio/RestaurantDemo";
+import ConstructionDemo from "./pages/portfolio/ConstructionDemo";
 
 // Audio Sub-pages
 import StudioRecording from "./pages/audio/StudioRecording";
@@ -87,6 +91,10 @@ const App = () => (
                 <Route path="/services/visual-production/funeral-coverage" element={<FuneralCoverage />} />
 
                 <Route path="/portfolio" element={<Portfolio />} />
+                <Route path="/portfolio/funeral-home-demo" element={<FuneralHomeDemo />} />
+                <Route path="/portfolio/school-demo" element={<SchoolDemo />} />
+                <Route path="/portfolio/restaurant-demo" element={<RestaurantDemo />} />
+                <Route path="/portfolio/construction-demo" element={<ConstructionDemo />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Layout>

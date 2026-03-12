@@ -23,6 +23,28 @@ const WebDevelopment = () => {
     "SEO optimized structure",
     "secure and scalable architecture",
   ];
+  const demoWebsites = [
+    {
+      title: "Funeral Parlour Website Demo",
+      description: "A calm, respectful layout with services, memorial planning, and support.",
+      to: "/portfolio/funeral-home-demo",
+    },
+    {
+      title: "School Website Demo",
+      description: "Community-driven education site with programs and admissions info.",
+      to: "/portfolio/school-demo",
+    },
+    {
+      title: "Restaurant Website Demo",
+      description: "Minimalist dining brand with menu highlights and reservations.",
+      to: "/portfolio/restaurant-demo",
+    },
+    {
+      title: "Construction Company Website Demo",
+      description: "Strong, professional layout with services and project highlights.",
+      to: "/portfolio/construction-demo",
+    },
+  ];
   const developmentProcess = [
     { step: "01", title: "Discovery & Planning", desc: "Understanding your business, audience, and project goals." },
     { step: "02", title: "Design & User Experience", desc: "Creating intuitive layouts and user-focused design." },
@@ -105,6 +127,34 @@ const WebDevelopment = () => {
               Our goal is to create websites and applications that support real business growth.
             </p>
           </FadeInSection>
+        </div>
+      </section>
+
+      <section className="section-padding bg-card/40 border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
+            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">
+              Example <span className="text-primary">Websites We Can Build</span>
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              See live demos of the styles we can build for different industries.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+            {demoWebsites.map((demo) => (
+              <StaggerItem key={demo.title}>
+                <div className="premium-card p-6 flex flex-col gap-4">
+                  <div>
+                    <h3 className="text-lg font-black text-foreground">{demo.title}</h3>
+                    <p className="mt-3 text-sm text-foreground/60">{demo.description}</p>
+                  </div>
+                  <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
+                    <Link to={demo.to}>View Demo</Link>
+                  </Button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         </div>
       </section>
 
