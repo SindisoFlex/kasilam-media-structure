@@ -102,6 +102,7 @@ export const HeroSection = ({
     </div>
   </section>
 );
+};
 
 type SectionHeaderProps = {
   theme: DemoTheme;
@@ -146,8 +147,7 @@ export const AboutSection = ({
       </div>
     </div>
   </section>
-  );
-};
+);
 
 export const ServicesSection = ({
   theme,
