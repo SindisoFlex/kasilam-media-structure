@@ -1,8 +1,16 @@
+import { useLocation } from "react-router-dom";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import PageTransition from "./PageTransition";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
+  const { pathname } = useLocation();
+  const isDemoRoute = /^\/portfolio\/.+-demo\/?$/.test(pathname);
+
+  if (isDemoRoute) {
+    return <div className="min-h-screen">{children}</div>;
+  }
+
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />

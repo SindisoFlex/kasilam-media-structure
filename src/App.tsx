@@ -81,6 +81,7 @@ const App = () => (
                 <Route path="/services/paid-advertising" element={<PaidAdvertising />} />
                 <Route path="/services/content-creation" element={<ContentCreation />} />
                 <Route path="/services/web-app-development" element={<WebDevelopment />} />
+                <Route path="/services/web-development" element={<WebDevelopment />} />
                 <Route path="/services/analytics-reporting" element={<AnalyticsReporting />} />
 
                 {/* Visual Sub-routes */}

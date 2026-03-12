@@ -23,26 +23,37 @@ const WebDevelopment = () => {
     "SEO optimized structure",
     "secure and scalable architecture",
   ];
-  const demoWebsites = [
+  const websitesBuilt = [
     {
-      title: "Funeral Parlour Website Demo",
+      title: "Mpongoshe Security Services Website",
+      description: "Professional security company website designed for service visibility and lead generation.",
+      href: "https://mpongoshe-security-services.vercel.app/",
+      button: "Visit Website",
+      external: true,
+    },
+    {
+      title: "Funeral Home Demo",
       description: "A calm, respectful layout with services, memorial planning, and support.",
-      to: "/portfolio/funeral-home-demo",
+      href: "/portfolio/funeral-home-demo",
+      button: "View Demo",
     },
     {
       title: "School Website Demo",
       description: "Community-driven education site with programs and admissions info.",
-      to: "/portfolio/school-demo",
+      href: "/portfolio/school-demo",
+      button: "View Demo",
     },
     {
       title: "Restaurant Website Demo",
       description: "Minimalist dining brand with menu highlights and reservations.",
-      to: "/portfolio/restaurant-demo",
+      href: "/portfolio/restaurant-demo",
+      button: "View Demo",
     },
     {
       title: "Construction Company Website Demo",
       description: "Strong, professional layout with services and project highlights.",
-      to: "/portfolio/construction-demo",
+      href: "/portfolio/construction-demo",
+      button: "View Demo",
     },
   ];
   const developmentProcess = [
@@ -134,22 +145,28 @@ const WebDevelopment = () => {
         <div className="content-width">
           <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
             <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">
-              Example <span className="text-primary">Websites We Can Build</span>
+              Websites <span className="text-primary">We’ve Built</span>
             </h2>
             <p className="text-lg text-muted-foreground">
-              See live demos of the styles we can build for different industries.
+              A mix of live projects and industry demos to showcase real client-ready work.
             </p>
           </FadeInSection>
-          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {demoWebsites.map((demo) => (
-              <StaggerItem key={demo.title}>
+          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {websitesBuilt.map((site) => (
+              <StaggerItem key={site.title}>
                 <div className="premium-card p-6 flex flex-col gap-4">
                   <div>
-                    <h3 className="text-lg font-black text-foreground">{demo.title}</h3>
-                    <p className="mt-3 text-sm text-foreground/60">{demo.description}</p>
+                    <h3 className="text-lg font-black text-foreground">{site.title}</h3>
+                    <p className="mt-3 text-sm text-foreground/60">{site.description}</p>
                   </div>
                   <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
-                    <Link to={demo.to}>View Demo</Link>
+                    {site.external ? (
+                      <a href={site.href} target="_blank" rel="noreferrer">
+                        {site.button}
+                      </a>
+                    ) : (
+                      <Link to={site.href}>{site.button}</Link>
+                    )}
                   </Button>
                 </div>
               </StaggerItem>
