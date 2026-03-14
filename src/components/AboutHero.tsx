@@ -55,13 +55,12 @@ const AboutHero = () => {
           <g className="handshake-group">
             {/* Left Hand */}
             <path
-              className="hand-left"
+              className="hand-left text-primary"
               d="M40 100C40 100 60 80 80 85C100 90 110 105 110 105L100 125L60 120L40 100Z"
               stroke="currentColor"
               strokeWidth="4"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="text-primary"
             />
             {/* Right Hand */}
             <path
