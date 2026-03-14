@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { BarChart3, CheckCircle, ArrowRight, LineChart, PieChart, Search, Trophy, Settings, FileText, Zap, MousePointerClick } from "lucide-react";
+import { BarChart3, CheckCircle, ArrowRight, LineChart, PieChart, Search, Trophy, Settings, FileText, Zap, MousePointerClick, Target, TrendingUp } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 import { useBooking } from "@/contexts/BookingContext";
 
@@ -68,7 +68,12 @@ const AnalyticsReporting = () => {
     <div className="pt-20">
       <section className="relative overflow-hidden section-padding pb-32">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/80 to-background z-10" />
+          <img
+            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=2400"
+            alt="Analytics dashboards and performance metrics"
+            className="h-full w-full object-cover opacity-40 grayscale"
+          />
           <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
         </div>
         
@@ -111,8 +116,11 @@ const AnalyticsReporting = () => {
       <section className="section-padding bg-alternate border-y border-foreground/5">
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">The Clarity Problem</h2>
-            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Most businesses stay surrounded by data but lack the clarity to use it effectively.</p>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <PieChart className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-gradient">The Clarity Problem</h2>
+            </div>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/60">Most businesses stay surrounded by data but lack the clarity to use it effectively.</p>
           </FadeInSection>
           <StaggerContainer className="grid gap-8 sm:grid-cols-2">
             {problems.map((p) => (
@@ -137,7 +145,10 @@ const AnalyticsReporting = () => {
       <section className="section-padding bg-background">
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">Data Services</h2>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <LineChart className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-gradient">Data Services</h2>
+            </div>
           </FadeInSection>
           <StaggerContainer className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
             {services.map((s) => (
@@ -156,23 +167,26 @@ const AnalyticsReporting = () => {
       <section className="bg-background py-20">
         <div className="container mx-auto px-4 text-center">
           <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">From Data to <span className="text-primary">Decisions</span></h2>
-            <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Target className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-3xl font-black md:text-4xl text-foreground">From Data to <span className="text-red-600">Decisions</span></h2>
+            </div>
+            <p className="mx-auto max-w-3xl text-lg text-foreground/70">
               Our analytics services focus on answering the questions that matter most to businesses:
             </p>
           </FadeInSection>
           <StaggerContainer className="mx-auto mt-12 max-w-3xl">
             <div className="grid gap-4">
               {learnings.map((item) => (
-                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border text-left">
-                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-white font-medium">{item}</span>
+                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-foreground/5 border border-foreground/10 text-left">
+                  <CheckCircle className="h-5 w-5 text-red-600 shrink-0" />
+                  <span className="text-foreground font-medium">{item}</span>
                 </StaggerItem>
               ))}
             </div>
           </StaggerContainer>
           <FadeInSection delay={0.2}>
-            <p className="mx-auto mt-10 max-w-3xl text-lg text-muted-foreground">
+            <p className="mx-auto mt-10 max-w-3xl text-lg text-foreground/60">
               Instead of overwhelming you with numbers, we focus on delivering insights that help guide smarter decisions.
             </p>
           </FadeInSection>
@@ -181,13 +195,18 @@ const AnalyticsReporting = () => {
 
       <section className="bg-card py-20">
         <div className="container mx-auto px-4">
-          <FadeInSection><h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">Our <span className="text-primary">Process</span></h2></FadeInSection>
+          <FadeInSection>
+            <div className="mb-16 flex items-center justify-center gap-3">
+              <TrendingUp className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-center text-3xl font-black md:text-4xl text-foreground">Our <span className="text-red-600">Process</span></h2>
+            </div>
+          </FadeInSection>
           <StaggerContainer className="grid gap-8 md:grid-cols-4">
             {process.map((p) => (
               <StaggerItem key={p.step} className="relative text-center">
-                <div className="mb-4 text-6xl font-black text-primary/10">{p.step}</div>
-                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground">{p.desc}</p>
+                <div className="mb-4 text-6xl font-black text-foreground/10">{p.step}</div>
+                <h3 className="text-lg font-black text-foreground mb-2">{p.title}</h3>
+                <p className="text-sm text-foreground/60">{p.desc}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
@@ -196,10 +215,15 @@ const AnalyticsReporting = () => {
 
       <section className="py-20">
         <div className="container mx-auto px-4 text-center">
-          <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white">Who This Service Is <span className="text-primary">For</span></h2></FadeInSection>
+          <FadeInSection>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <BarChart3 className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-3xl font-black md:text-4xl text-foreground">Who This Service Is <span className="text-red-600">For</span></h2>
+            </div>
+          </FadeInSection>
           <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-4">
             {targetAudience.map((item) => (
-              <StaggerItem key={item}><div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">{item}</div></StaggerItem>
+              <StaggerItem key={item}><div className="rounded-full border border-foreground/10 bg-foreground/5 px-6 py-2 text-sm font-medium text-foreground">{item}</div></StaggerItem>
             ))}
           </StaggerContainer>
         </div>
@@ -274,12 +298,15 @@ const AnalyticsReporting = () => {
       <section className="py-20 bg-card text-center">
         <div className="container mx-auto px-4">
           <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Insights That Lead to Better <span className="text-primary">Growth Decisions</span></h2>
-            <p className="mx-auto mb-8 max-w-3xl text-lg text-muted-foreground">
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <FileText className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-3xl font-black md:text-4xl text-foreground">Insights That Lead to Better <span className="text-red-600">Growth Decisions</span></h2>
+            </div>
+            <p className="mx-auto mb-8 max-w-3xl text-lg text-foreground/70">
               When businesses understand their data clearly, they gain a powerful competitive advantage.
             </p>
-            <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
-              Our goal is not simply to deliver reports — it is to provide clarity that helps you invest your time, budget, and marketing efforts where they matter most.
+            <p className="mx-auto max-w-3xl text-lg text-foreground/60">
+              Our goal is not simply to deliver reports - it is to provide clarity that helps you invest your time, budget, and marketing efforts where they matter most.
               <br />
               Better insights lead to better strategies.
             </p>
@@ -322,3 +349,4 @@ const AnalyticsReporting = () => {
 };
 
 export default AnalyticsReporting;
+
