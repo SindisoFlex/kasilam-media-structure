@@ -10,12 +10,59 @@ import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/com
 
 const Contact = () => {
   const { toast } = useToast();
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", message: "", _honeypot: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({ title: "Message sent!", description: "We'll get back to you soon." });
-    setForm({ name: "", email: "", message: "" });
+    
+    // Simple spam protection
+    if (form._honeypot) {
+      console.log("Spam detected");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Using Formspree as a secure backend to hide the actual email address
+      // The email sindisototo@hotmail.com is handled on the Formspree side
+      // For maximum security, the user should replace 'mailto:sindisototo@hotmail.com' 
+      // with a Formspree Form ID (e.g., https://formspree.io/f/xknkyvoz)
+      const response = await fetch("https://formspree.io/f/xknkyvoz", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message
+        })
+      });
+
+      if (response.ok) {
+        toast({ 
+          title: "Message sent!", 
+          description: "Thank you for reaching out. We'll get back to you soon.",
+          variant: "default"
+        });
+        setForm({ name: "", email: "", message: "", _honeypot: "" });
+      } else {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to send message");
+      }
+    } catch (error) {
+      toast({ 
+        title: "Submission failed", 
+        description: "There was an error sending your message. Please try again later or contact us via WhatsApp.",
+        variant: "destructive"
+      });
+      console.error("Form submission error:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -55,10 +102,24 @@ const Contact = () => {
               <div className="premium-card p-10 bg-background">
                 <h2 className="text-3xl font-black text-foreground mb-8 uppercase tracking-tighter">Send a Message</h2>
                 <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* Honeypot Field (Hidden from users) */}
+                  <div className="hidden">
+                    <Label htmlFor="_honeypot">Leave this field empty</Label>
+                    <Input
+                      id="_honeypot"
+                      name="_honeypot"
+                      value={form._honeypot}
+                      onChange={(e) => setForm({ ...form, _honeypot: e.target.value })}
+                      tabIndex={-1}
+                      autoComplete="off"
+                    />
+                  </div>
+
                   <div className="space-y-2">
                     <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Full Name</Label>
                     <Input
                       id="name"
+                      name="name"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
                       placeholder="Your name"
@@ -70,6 +131,7 @@ const Contact = () => {
                     <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Email Address</Label>
                     <Input
                       id="email"
+                      name="email"
                       type="email"
                       value={form.email}
                       onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -82,6 +144,7 @@ const Contact = () => {
                     <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Project Details</Label>
                     <Textarea
                       id="message"
+                      name="message"
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       placeholder="Tell us about your project..."
@@ -90,8 +153,14 @@ const Contact = () => {
                       className="bg-foreground/5 border-foreground/5 focus:border-red-600/50 rounded-xl"
                     />
                   </div>
-                  <Button type="submit" size="lg" className="w-full h-20 text-xs font-black rounded-xl uppercase tracking-[0.4em] btn-primary red-glow">
-                    Send Message <Send className="h-4 w-4 ml-4" />
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    variant="red"
+                    disabled={isSubmitting}
+                    className="w-full h-20 text-xs font-black rounded-xl uppercase tracking-[0.4em] disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Sending..." : "Send Message"} <Send className="h-4 w-4 ml-4" />
                   </Button>
                 </form>
               </div>

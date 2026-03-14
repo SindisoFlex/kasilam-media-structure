@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { PenTool, CheckCircle, ArrowRight, Camera, Video, Type, Palette, Lightbulb, Zap, Image as ImageIcon } from "lucide-react";
+import { PenTool, CheckCircle, ArrowRight, Camera, Video, Type, Palette, Lightbulb, Zap, Image as ImageIcon, BarChart3 } from "lucide-react";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 import { useBooking } from "@/contexts/BookingContext";
 
@@ -31,10 +31,10 @@ const ContentCreation = () => {
     "advertising creatives",
   ];
   const process = [
-    { step: "01", title: "Brand Discovery", desc: "Understanding your voice, brand identity, and audience." },
-    { step: "02", title: "Creative Concepting", desc: "Developing visual themes and storytelling ideas." },
-    { step: "03", title: "Production & Design", desc: "Creating graphics, videos, and written content." },
-    { step: "04", title: "Review & Refine", desc: "Ensuring every piece of content meets professional standards." },
+    { step: "01", title: "Brand Discovery", desc: "Understanding your voice, brand identity, and audience.", icon: Lightbulb },
+    { step: "02", title: "Creative Concepting", desc: "Developing visual themes and storytelling ideas.", icon: PenTool },
+    { step: "03", title: "Production & Design", desc: "Creating graphics, videos, and written content.", icon: Video },
+    { step: "04", title: "Review & Refine", desc: "Ensuring every piece of content meets professional standards.", icon: Camera },
   ];
   const pricing = [
     {
@@ -65,7 +65,12 @@ const ContentCreation = () => {
     <div className="pt-20">
       <section className="relative overflow-hidden section-padding pb-32">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/80 to-background z-10" />
+          <img
+            src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&q=80&w=2400"
+            alt="Modern content creation studio in Port Elizabeth"
+            className="h-full w-full object-cover opacity-40 grayscale"
+          />
           <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
         </div>
         
@@ -78,12 +83,15 @@ const ContentCreation = () => {
             </HeroSection>
             <HeroSection delay={0.1}>
               <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12 uppercase">
-                Design That <span className="text-gradient">Engages</span>
+                Content Creation <span className="text-gradient">Services</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
-                We create the graphics, videos, and copy that help your brand stand out and connect with your audience.
+              <p className="mt-8 text-xl md:text-2xl text-foreground/60 font-black uppercase tracking-widest leading-relaxed max-w-4xl mx-auto">
+                Professional content creation services for businesses in Port Elizabeth, the Eastern Cape, and across South Africa.
+              </p>
+              <p className="mt-6 text-lg md:text-xl text-foreground/50 font-medium tracking-wide leading-relaxed max-w-4xl mx-auto">
+                We design graphics, produce videos, and craft messaging that helps brands stand out online and connect with their audience.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
@@ -108,8 +116,13 @@ const ContentCreation = () => {
       <section className="section-padding bg-alternate border-y border-foreground/5">
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">The Quality Gap</h2>
-            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">In a visual-first world, poor quality content reflects directly on your business credibility.</p>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Lightbulb className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-gradient">The Quality Gap</h2>
+            </div>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">
+              In a visual-first world, poor quality content reflects directly on your business credibility.
+            </p>
           </FadeInSection>
           <StaggerContainer className="grid gap-8 sm:grid-cols-2">
             {problems.map((p) => (
@@ -125,107 +138,7 @@ const ContentCreation = () => {
           </StaggerContainer>
           <FadeInSection delay={0.2} className="mt-20 text-center">
             <p className="text-lg font-black text-red-600 uppercase tracking-[0.3em]">
-              We help you present yourself as professionally as the services you provide.
-            </p>
-          </FadeInSection>
-        </div>
-      </section>
-
-      <section className="section-padding bg-background">
-        <div className="content-width">
-          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">Creative Capabilities</h2>
-          </FadeInSection>
-          <StaggerContainer className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
-            {services.map((s) => (
-              <StaggerItem key={s.title} className="text-center group">
-                <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 border border-foreground/5 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
-                  <s.icon className="h-8 w-8 text-red-600 group-hover:text-white" />
-                </div>
-                <h3 className="text-xl font-black text-foreground mb-4 uppercase tracking-tighter">{s.title}</h3>
-                <p className="text-sm text-foreground/50 font-medium uppercase tracking-tight leading-relaxed">{s.desc}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white">Content We <span className="text-primary">Produce</span></h2>
-          </FadeInSection>
-          <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-4">
-            {contentWeProduce.map((item) => (
-              <StaggerItem key={item}>
-                <div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">
-                  {item}
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-          <FadeInSection delay={0.2}>
-            <p className="mt-8 text-sm text-muted-foreground">
-              Content optimized for the platforms where your audience spends time.
-            </p>
-          </FadeInSection>
-        </div>
-      </section>
-
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
-          <FadeInSection><h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">Our <span className="text-primary">Process</span></h2></FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-4">
-            {process.map((p) => (
-              <StaggerItem key={p.step} className="relative text-center">
-                <div className="mb-4 text-6xl font-black text-primary/10">{p.step}</div>
-                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground">{p.desc}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white">Who This Service Is <span className="text-primary">For</span></h2></FadeInSection>
-          <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-4">
-            {targetAudience.map((item) => (
-              <StaggerItem key={item}><div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">{item}</div></StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="bg-background py-20">
-        <div className="container mx-auto px-4 text-center">
-          <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Content That <span className="text-primary">Drives Results</span></h2>
-            <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
-              Great content does more than look good — it helps your brand connect with the right audience and grow its visibility online.
-            </p>
-          </FadeInSection>
-          <FadeInSection delay={0.1} className="mx-auto mt-10 max-w-3xl">
-            <p className="text-sm text-muted-foreground mb-6">Our content strategies focus on creating visuals and messaging that attract attention and encourage engagement.</p>
-            <StaggerContainer className="mt-6 flex flex-wrap justify-center gap-4">
-              {[
-                "stronger brand recognition",
-                "increased social media engagement",
-                "more consistent brand identity",
-                "higher quality perception from customers",
-              ].map((item) => (
-                <StaggerItem key={item}>
-                  <div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">
-                    {item}
-                  </div>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-          </FadeInSection>
-          <FadeInSection delay={0.2}>
-            <p className="mx-auto mt-10 max-w-3xl text-lg text-muted-foreground">
-              Professional content helps position your business as credible, trustworthy, and worth paying attention to.
+              We help you present yourself as professionally as the services you provide, with content creators Eastern Cape teams trust.
             </p>
           </FadeInSection>
         </div>
@@ -234,10 +147,15 @@ const ContentCreation = () => {
       <section id="packages" className="section-padding bg-alternate border-y border-foreground/5">
         <div className="content-width">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient leading-[0.85] tracking-[-0.06em]">
-              Creative Subscriptions
-            </h2>
-            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">High-volume production for high-growth brands.</p>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <PenTool className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-gradient leading-[0.85] tracking-[-0.06em]">
+                Creative Subscriptions
+              </h2>
+            </div>
+            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">
+              High-volume production for high-growth brands that need consistent output.
+            </p>
           </FadeInSection>
 
           <div className="mb-12 text-center md:hidden">
@@ -297,12 +215,150 @@ const ContentCreation = () => {
         </div>
       </section>
 
+      <section className="section-padding bg-background">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Palette className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-gradient">Creative Capabilities</h2>
+            </div>
+            <p className="text-base font-bold uppercase tracking-widest text-foreground/50">
+              Graphic design services Gqeberha brands request, plus strategy, video, and copy built for growth.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {services.map((s) => (
+              <StaggerItem key={s.title} className="text-center group">
+                <div className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 border border-foreground/5 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
+                  <s.icon className="h-8 w-8 text-red-600 group-hover:text-white" />
+                </div>
+                <h3 className="text-xl font-black text-foreground mb-4 uppercase tracking-tighter">{s.title}</h3>
+                <p className="text-sm text-foreground/50 font-medium uppercase tracking-tight leading-relaxed">{s.desc}</p>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="bg-background py-20">
+        <div className="content-width text-center">
+          <FadeInSection>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Camera className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-3xl font-black md:text-4xl text-foreground">Content We <span className="text-red-600">Produce</span></h2>
+            </div>
+          </FadeInSection>
+          <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-4">
+            {contentWeProduce.map((item) => (
+              <StaggerItem key={item}>
+                <div className="rounded-full border border-foreground/10 bg-foreground/5 px-6 py-2 text-sm font-bold uppercase tracking-wider text-foreground">
+                  {item}
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <FadeInSection delay={0.2}>
+            <p className="mt-8 text-sm text-foreground/50 font-medium uppercase tracking-widest">
+              Content optimized for the platforms where your audience spends time.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
+      <section className="bg-alternate py-20 border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection>
+            <div className="mb-16 flex items-center justify-center gap-3">
+              <Video className="h-6 w-6 text-red-600/60" />
+              <h2 className="text-center text-3xl font-black md:text-4xl text-foreground">Our <span className="text-red-600">Process</span></h2>
+            </div>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-8 md:grid-cols-4">
+            {process.map((p) => (
+              <StaggerItem key={p.step} className="relative text-center">
+                <div className="mb-5 flex items-center justify-center">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 border border-foreground/10">
+                    <p.icon className="h-6 w-6 text-red-600/70" />
+                  </div>
+                </div>
+                <div className="mb-3 text-4xl font-black text-foreground/10">{p.step}</div>
+                <h3 className="text-lg font-black text-foreground mb-2 uppercase tracking-tight">{p.title}</h3>
+                <p className="text-sm text-foreground/60 font-medium uppercase tracking-tight">{p.desc}</p>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="py-20">
+        <div className="container mx-auto px-4 text-center">
+          <FadeInSection>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Lightbulb className="h-6 w-6 text-primary/70" />
+              <h2 className="text-3xl font-bold md:text-4xl text-white">Who This Service Is <span className="text-primary">For</span></h2>
+            </div>
+          </FadeInSection>
+          <p className="text-sm text-muted-foreground">
+            Built for content creators Eastern Cape businesses collaborate with for consistent visibility.
+          </p>
+          <StaggerContainer className="mt-12 flex flex-wrap justify-center gap-4">
+            {targetAudience.map((item) => (
+              <StaggerItem key={item}><div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">{item}</div></StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="bg-background py-20">
+        <div className="container mx-auto px-4 text-center">
+          <FadeInSection>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <BarChart3 className="h-6 w-6 text-primary/70" />
+              <h2 className="text-3xl font-bold md:text-4xl text-white">
+                Content That <span className="text-primary">Drives Results</span>
+              </h2>
+            </div>
+            <p className="mx-auto max-w-3xl text-lg text-muted-foreground">
+              Great content does more than look good - it helps your brand connect with the right audience and grow its visibility online.
+            </p>
+          </FadeInSection>
+          <FadeInSection delay={0.1} className="mx-auto mt-10 max-w-3xl">
+            <p className="text-sm text-muted-foreground mb-6">Our content strategies focus on creating visuals and messaging that attract attention and encourage engagement.</p>
+            <StaggerContainer className="mt-6 flex flex-wrap justify-center gap-4">
+              {[
+                "stronger brand recognition",
+                "increased social media engagement",
+                "more consistent brand identity",
+                "higher quality perception from customers",
+              ].map((item) => (
+                <StaggerItem key={item}>
+                  <div className="rounded-full border border-primary/20 bg-primary/5 px-6 py-2 text-sm font-medium text-white">
+                    {item}
+                  </div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </FadeInSection>
+          <FadeInSection delay={0.2}>
+            <p className="mx-auto mt-10 max-w-3xl text-lg text-muted-foreground">
+              Professional content helps position your business as credible, trustworthy, and worth paying attention to.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
       <section className="py-20 bg-card text-center">
         <div className="container mx-auto px-4">
           <FadeInSection>
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">Recent <span className="text-primary">Creative Work</span></h2>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Camera className="h-6 w-6 text-primary/70" />
+              <h2 className="text-3xl font-bold md:text-4xl text-white">Recent <span className="text-primary">Creative Work</span></h2>
+            </div>
             <p className="mx-auto mb-10 max-w-2xl text-lg text-muted-foreground">
               Explore examples of graphics, videos, and visual content created for brands, creators, and businesses.
+            </p>
+            <p className="mx-auto mb-8 max-w-3xl text-sm text-muted-foreground">
+              Video content production Port Elizabeth teams use for launches, campaigns, and consistent online engagement.
             </p>
             <div className="mx-auto mb-10 max-w-3xl">
               <ul className="grid gap-3 text-left sm:grid-cols-2">
@@ -329,15 +385,18 @@ const ContentCreation = () => {
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-12">
-              Trusted by <span className="text-primary">Growing Brands</span>
-            </h2>
+            <div className="mb-12 flex items-center justify-center gap-3">
+              <CheckCircle className="h-6 w-6 text-primary/70" />
+              <h2 className="text-center text-3xl font-bold md:text-4xl text-white">
+                Client <span className="text-primary">Testimonials</span>
+              </h2>
+            </div>
           </FadeInSection>
           <StaggerContainer className="grid gap-8 md:grid-cols-3">
             {[
-              "“Kasilam Media completely transformed our online presence. Our content now looks professional and our engagement has improved significantly.”",
-              "“The team understands branding and storytelling. The visuals they created elevated the way our brand is perceived.”",
-              "“Working with Kasilam Media helped us maintain consistent and professional content across our platforms.”",
+              "Kasilam Media completely transformed our online presence. Our content now looks professional and our engagement has improved significantly.",
+              "The team understands branding and storytelling. The visuals they created elevated the way our brand is perceived.",
+              "Working with Kasilam Media helped us maintain consistent and professional content across our platforms.",
             ].map((quote) => (
               <StaggerScaleItem key={quote}>
                 <Card className="h-full border-border bg-muted p-8">
@@ -352,9 +411,12 @@ const ContentCreation = () => {
       <section className="py-20 bg-muted">
         <div className="container mx-auto px-4">
           <FadeInSection className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
-              Our <span className="text-primary">Commitment</span>
-            </h2>
+            <div className="mb-6 flex items-center justify-center gap-3">
+              <Lightbulb className="h-6 w-6 text-primary/70" />
+              <h2 className="text-3xl font-bold md:text-4xl text-white">
+                Our <span className="text-primary">Commitment</span>
+              </h2>
+            </div>
             <p className="text-lg text-muted-foreground">
               At Kasilam Media Productions, we believe every brand deserves content that reflects its true value.
             </p>
@@ -392,7 +454,7 @@ const ContentCreation = () => {
           </HeroSection>
           <FadeInSection delay={0.2}>
             <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
-              Great content does more than look good — it helps your brand connect with the right audience and grow its visibility online.
+              Great content does more than look good - it helps your brand connect with the right audience and grow its visibility online.
             </p>
           </FadeInSection>
           <FadeInSection delay={0.3}>
@@ -417,3 +479,5 @@ const ContentCreation = () => {
 };
 
 export default ContentCreation;
+
+

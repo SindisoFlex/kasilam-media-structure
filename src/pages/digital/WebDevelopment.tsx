@@ -1,14 +1,14 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, CheckCircle, ArrowRight, Code, MousePointer2, Layout, Zap, Smartphone, Search, LineChart, Server, ShieldCheck } from "lucide-react";
+import { Globe, CheckCircle, ArrowRight, Code, MousePointer2, Layout, Zap, Smartphone, Search, LineChart, Server, ShieldCheck, GraduationCap, UtensilsCrossed, HardHat, HeartHandshake } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
 
 const WebDevelopment = () => {
   const { openBooking } = useBooking();
   const startupFeatures = ["1 professional landing page", "mobile responsive design", "contact form integration", "basic SEO setup", "fast loading optimization"];
-  const businessFeatures = ["5–10 pages", "responsive design", "contact forms", "SEO setup", "Google Analytics integration"];
+  const businessFeatures = ["5-10 pages", "responsive design", "contact forms", "SEO setup", "Google Analytics integration"];
   const appExamples = ["booking systems", "client portals", "dashboards", "custom web applications"];
   const whyInvest = [
     "build trust with potential clients",
@@ -22,6 +22,32 @@ const WebDevelopment = () => {
     "responsive mobile-first design",
     "SEO optimized structure",
     "secure and scalable architecture",
+  ];
+  const techPillars = [
+    {
+      title: "Front-End Development",
+      desc: "Modern frameworks and responsive design systems powering fast and intuitive user experiences.",
+      items: ["React-based development", "responsive mobile-first layouts", "component-based architecture"],
+      icon: Code,
+    },
+    {
+      title: "Performance & SEO Optimization",
+      desc: "Websites engineered for speed, visibility, and search performance.",
+      items: ["optimized page structure", "SEO-ready code architecture", "fast-loading assets and images"],
+      icon: Zap,
+    },
+    {
+      title: "Security & Infrastructure",
+      desc: "Reliable systems protecting business data and ensuring website uptime.",
+      items: ["SSL encryption", "secure hosting environments", "daily backups and monitoring"],
+      icon: ShieldCheck,
+    },
+    {
+      title: "Scalable Architecture",
+      desc: "Web platforms built to grow with the business.",
+      items: ["modular development structure", "API-ready integrations", "expandable architecture for future features"],
+      icon: Server,
+    },
   ];
   const websitesBuilt = [
     {
@@ -56,6 +82,47 @@ const WebDevelopment = () => {
       button: "View Demo",
     },
   ];
+  const industryFocus = [
+    {
+      title: "Security Companies",
+      desc: "Professional service websites designed to showcase services, certifications, and client trust.",
+      icon: ShieldCheck,
+    },
+    {
+      title: "Funeral Homes",
+      desc: "Respectful and calm website layouts with service details and memorial planning information.",
+      icon: HeartHandshake,
+    },
+    {
+      title: "Schools & Education",
+      desc: "Structured websites for programs, admissions, announcements, and community communication.",
+      icon: GraduationCap,
+    },
+    {
+      title: "Restaurants",
+      desc: "Modern dining websites with menu highlights, reservations, and location visibility.",
+      icon: UtensilsCrossed,
+    },
+    {
+      title: "Construction & Contractors",
+      desc: "Professional websites with project galleries, service descriptions, and quote request forms.",
+      icon: HardHat,
+    },
+  ];
+  const projectQuestions = [
+    {
+      question: "What type of website or application do you need?",
+      options: ["Landing page", "Business website", "Online store", "Booking system", "Custom web application"],
+    },
+    {
+      question: "What stage are you at?",
+      options: ["Just exploring ideas", "Planning to build soon", "Redesigning an existing website", "Expanding an existing platform"],
+    },
+    {
+      question: "What is your estimated budget range?",
+      options: ["R3000 – R8000", "R8000 – R15000", "R15000 – R30000", "R30000+"],
+    },
+  ];
   const developmentProcess = [
     { step: "01", title: "Discovery & Planning", desc: "Understanding your business, audience, and project goals." },
     { step: "02", title: "Design & User Experience", desc: "Creating intuitive layouts and user-focused design." },
@@ -73,7 +140,12 @@ const WebDevelopment = () => {
     <div className="pt-20">
       <section className="relative overflow-hidden section-padding pb-32">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/80 to-background z-10" />
+          <img
+            src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=2400"
+            alt="Modern web development workstation with code and UI layouts"
+            className="h-full w-full object-cover opacity-40 grayscale"
+          />
           <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
         </div>
         
@@ -145,7 +217,7 @@ const WebDevelopment = () => {
         <div className="content-width">
           <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
             <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">
-              Websites <span className="text-primary">We’ve Built</span>
+              Websites <span className="text-primary">We've Built</span>
             </h2>
             <p className="text-lg text-muted-foreground">
               A mix of live projects and industry demos to showcase real client-ready work.
@@ -168,6 +240,32 @@ const WebDevelopment = () => {
                       <Link to={site.href}>{site.button}</Link>
                     )}
                   </Button>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="section-padding bg-background border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
+            <h2 className="text-3xl font-black md:text-5xl text-foreground mb-6">
+              Websites Built for <span className="text-red-600">Real Businesses</span>
+            </h2>
+            <p className="text-lg font-medium text-foreground/60">
+              We design websites tailored for the industries that drive local business growth. Our solutions are built to help organizations present their services professionally and generate real client inquiries across Port Elizabeth, the Eastern Cape, and South Africa.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {industryFocus.map((industry) => (
+              <StaggerItem key={industry.title}>
+                <div className="premium-card p-8 h-full border border-foreground/10 bg-background">
+                  <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 text-red-600">
+                    <industry.icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-black text-foreground mb-3 uppercase tracking-tight">{industry.title}</h3>
+                  <p className="text-sm text-foreground/60 font-medium leading-relaxed">{industry.desc}</p>
                 </div>
               </StaggerItem>
             ))}
@@ -277,8 +375,12 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="relative overflow-hidden py-20 bg-background">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <FadeInSection className="mx-auto max-w-3xl text-center mb-12">
             <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
               Technologies <span className="text-primary">We Use</span>
@@ -305,8 +407,43 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-4">
+      <section className="section-padding bg-background border-y border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="max-w-4xl mx-auto text-center mb-20">
+            <h2 className="mb-6 text-gradient">Technology Stack & Performance Infrastructure</h2>
+            <p className="text-lg font-bold uppercase tracking-widest text-foreground/50">
+              Our websites and applications are built using modern development tools, optimized performance strategies, and secure hosting infrastructure designed to support real business growth.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="grid gap-8 md:grid-cols-2">
+            {techPillars.map((pillar) => (
+              <StaggerItem key={pillar.title}>
+                <div className="premium-card p-8 h-full border border-foreground/10 bg-background/80">
+                  <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 text-red-600">
+                    <pillar.icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{pillar.title}</h3>
+                  <p className="text-sm text-foreground/60 font-medium uppercase tracking-tight mb-6">{pillar.desc}</p>
+                  <ul className="space-y-3">
+                    {pillar.items.map((item) => (
+                      <li key={item} className="flex items-center gap-3 text-xs font-bold text-foreground/70 uppercase tracking-tight">
+                        <CheckCircle className="h-4 w-4 shrink-0 text-red-600" /> {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-card py-20">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <FadeInSection>
             <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">
               Our <span className="text-primary">Development Process</span>
@@ -324,8 +461,12 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="section-padding bg-background border-y border-foreground/5">
-        <div className="content-width">
+      <section className="relative overflow-hidden section-padding bg-background border-y border-foreground/5">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
+        </div>
+        <div className="content-width relative z-10">
           <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
             <h2 className="mb-8 text-gradient">Elite Hosting Infrastructure</h2>
             <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Reliable performance and absolute security.</p>
@@ -375,8 +516,12 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      <section className="py-20 bg-muted text-center">
-        <div className="container mx-auto px-4">
+      <section className="relative overflow-hidden py-20 bg-muted text-center">
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
+        </div>
+        <div className="container mx-auto px-4 relative z-10">
           <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white mb-12">Built for <span className="text-primary">Performance</span></h2></FadeInSection>
           <StaggerContainer className="grid gap-8 md:grid-cols-4">
             {[
@@ -392,6 +537,38 @@ const WebDevelopment = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
+        </div>
+      </section>
+
+      <section className="section-padding bg-background border-t border-foreground/5">
+        <div className="content-width">
+          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
+            <h2 className="text-3xl font-black md:text-5xl text-foreground mb-6">
+              Start Your Website Project
+            </h2>
+            <p className="text-lg font-medium text-foreground/60">
+              Answer a few quick questions so we can understand your business goals and recommend the best development solution for your needs.
+            </p>
+          </FadeInSection>
+          <div className="grid gap-8 md:grid-cols-3">
+            {projectQuestions.map((block) => (
+              <div key={block.question} className="premium-card p-8 border border-foreground/10 bg-background">
+                <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6">{block.question}</h3>
+                <div className="grid gap-3">
+                  {block.options.map((option) => (
+                    <div key={option} className="rounded-xl border border-foreground/10 bg-foreground/5 px-4 py-3 text-xs font-black uppercase tracking-wider text-foreground/70">
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-12 flex justify-center">
+            <Button asChild size="lg" className="h-16 px-12 text-xs font-black uppercase tracking-[0.4em] btn-primary">
+              <Link to="/contact">Get Project Recommendation</Link>
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -433,3 +610,4 @@ const WebDevelopment = () => {
 };
 
 export default WebDevelopment;
+

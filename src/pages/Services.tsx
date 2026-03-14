@@ -32,7 +32,7 @@ const services = [
 const Services = () => {
   const { openBooking } = useBooking();
   return (
-    <div className="bg-black text-white min-h-screen">
+    <div className="bg-background text-foreground min-h-screen">
       <section className="relative section-padding pb-32 overflow-hidden border-b border-foreground/5">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
@@ -76,9 +76,9 @@ const Services = () => {
                   </div>
                   <h2 className="text-3xl font-black text-foreground mb-6 group-hover:text-red-600 transition-colors uppercase tracking-tighter">{s.title}</h2>
                   <p className="text-foreground/50 leading-relaxed font-bold uppercase tracking-tight text-sm flex-1 mb-10">{s.desc}</p>
-                  <Button asChild className="w-full h-16 font-black uppercase tracking-[0.3em] transition-all btn-secondary group-hover:bg-red-600 group-hover:text-white">
-                    <Link to={s.link} className="flex items-center justify-center gap-4">
-                      Explore Service <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-3" />
+                  <Button asChild variant="black" className="w-full h-16 font-black uppercase tracking-[0.3em] transition-all">
+                    <Link to={s.link} className="flex items-center justify-center gap-4 group/btn">
+                      Explore Service <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-3" />
                     </Link>
                   </Button>
                 </div>
@@ -143,12 +143,13 @@ const Services = () => {
                   package: "Initial Consultation",
                   price: 0
                 })}
+                variant="red"
                 size="lg"
-                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 Book a Strategy Call <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
-              <Button asChild className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer btn-secondary">
+              <Button asChild variant="black" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer">
                 <Link to="/contact">Contact Support</Link>
               </Button>
             </div>

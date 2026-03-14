@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
+import AboutHero from "@/components/AboutHero";
+
 const timeline = [
   { year: "2015", title: "Formal Filmmaking Studies", desc: "Establishing a technical foundation in visual storytelling and disciplined production." },
   { year: "2016", title: "Infrastructure Investment", desc: "Direct investment in recording infrastructure and strategic collaboration with emerging artists." },
@@ -21,25 +23,9 @@ const principles = [
 const About = () => {
   const { openBooking } = useBooking();
   return (
-    <div className="flex flex-col min-h-screen pt-20">
+    <div className="flex flex-col min-h-screen">
       {/* 1. Hero Section - Brand Story */}
-      <section className="relative py-24 md:py-32 flex items-center justify-center overflow-hidden bg-background">
-        <div className="content-width relative z-20 text-center">
-          <h1 className="animate-fade-in text-balance mb-10 relative inline-block">
-            Built From Experience.<br />
-            <span className="text-primary">Structured for Growth.</span>
-            <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-primary rounded-full opacity-80" />
-          </h1>
-          <div className="max-w-4xl mx-auto space-y-10">
-            <p className="animate-fade-in text-xl md:text-2xl font-semibold text-balance leading-relaxed" style={{ animationDelay: "150ms" }}>
-              Kasilam Media Production is a multidisciplinary creative studio operating at the intersection of media, technology, and strategic brand visibility.
-            </p>
-            <p className="animate-fade-in text-lg text-muted-foreground leading-relaxed max-w-3xl mx-auto" style={{ animationDelay: "300ms" }}>
-              Built from lived experience — from understanding what it means to have talent and ambition, but limited access to professional tools and visibility. Today, that gap is the problem we solve.
-            </p>
-          </div>
-        </div>
-      </section>
+      <AboutHero />
 
       {/* 2. Why We Exist */}
       <section className="section-padding bg-muted/20 border-y border-border/40">
@@ -180,12 +166,13 @@ const About = () => {
                 package: "General Inquiry",
                 price: 0
               })}
+              variant="red"
               size="lg" 
               className="h-14 px-12 text-base font-bold shadow-2xl hover:translate-y-[-2px] transition-transform cursor-pointer"
             >
               Start Your Project
             </Button>
-            <Button asChild variant="outline" size="lg" className="h-14 px-12 text-base font-bold border-primary/20">
+            <Button asChild variant="black" size="lg" className="h-14 px-12 text-base font-bold">
               <Link to="/services">View Our Work</Link>
             </Button>
           </div>

@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight } from "lucide-react";
+import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight, MapPin, LineChart } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import heroBg from "@/images/hero-bg.png";
+import { useEffect } from "react";
 
 const steps = [
   { num: "01", title: "Consult", desc: "We understand your goals, vision, and expectations." },
@@ -13,6 +14,15 @@ const steps = [
 
 const Index = () => {
   const { openBooking } = useBooking();
+
+  useEffect(() => {
+    document.title = "KMP | Kasilam Media Productions – Photography, Video, Audio & Web Design in Port Elizabeth";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Kasilam Media Productions (KMP) is a creative production company in Port Elizabeth (Gqeberha), Eastern Cape providing photography, videography, audio production, and website development services for businesses and creators across South Africa.");
+    }
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* 1. Hero Section - Cinematic & Professional */}
@@ -38,9 +48,11 @@ const Index = () => {
             className="mx-auto mt-8 max-w-3xl animate-fade-in text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-foreground/80"
             style={{ animationDelay: "150ms" }}
           >
-            Professional media that makes brands look world-class. Powerful visuals, cinematic storytelling, and digital
-            innovation designed to elevate growing businesses and bold creators.
+            Kasilam Media Productions (KMP) is a creative media production company based in Port Elizabeth (Gqeberha), Eastern Cape, offering professional photography, videography, audio production, and digital media services for clients across South Africa.
           </p>
+          <div className="mt-8 animate-fade-in text-xs font-black uppercase tracking-[0.4em] text-primary/60" style={{ animationDelay: "200ms" }}>
+            KMP | Kasilam Media Productions - Port Elizabeth, Eastern Cape & South Africa
+          </div>
           <div className="mt-16 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
             <Button
               onClick={() => openBooking({
@@ -48,19 +60,87 @@ const Index = () => {
                 package: "Project Kickoff",
                 price: 0
               })}
+              variant="red"
               size="lg"
-              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95 red-glow pointer-events-auto cursor-pointer btn-primary"
+              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer"
             >
               Start Your Project <ArrowRight className="h-4 w-4 ml-3" />
             </Button>
             <Button
               asChild
-              variant="outline"
+              variant="black"
               size="lg"
-              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full hover:border-red-600 transition-all btn-secondary border-0"
+              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95"
             >
               <Link to="/services">View Our Work</Link>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Proven Creative & Digital Solutions */}
+      <section className="section-padding bg-background border-b border-foreground/5">
+        <div className="content-width">
+          <div className="max-w-4xl mx-auto text-center mb-16">
+            <h2 className="mb-6 text-gradient">Proven Creative &amp; Digital Solutions</h2>
+            <p className="text-lg text-foreground/60 font-medium leading-relaxed">
+              We build professional websites, create powerful visual content, and develop digital systems that help businesses grow, attract customers, and present themselves with confidence.
+            </p>
+          </div>
+          <div className="grid gap-8 lg:grid-cols-3">
+            {[
+              {
+                icon: Globe,
+                title: "Web Development",
+                desc: "Professional websites and digital platforms designed for performance and business growth.",
+                items: ["business websites", "service company websites", "portfolio websites", "custom web applications"],
+              },
+              {
+                icon: Camera,
+                title: "Content & Media Production",
+                desc: "Professional visual content designed to strengthen brand identity and engagement.",
+                items: ["brand videos", "social media visuals", "product photography", "short-form video content"],
+              },
+              {
+                icon: LineChart,
+                title: "Digital Growth Solutions",
+                desc: "Tools and services that help businesses improve visibility and attract clients online.",
+                items: ["social media management", "brand identity design", "SEO-ready website development", "marketing visuals"],
+              },
+            ].map((item) => (
+              <div key={item.title} className="premium-card p-8 h-full">
+                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 border border-foreground/10">
+                  <item.icon className="h-6 w-6 text-red-600" />
+                </div>
+                <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{item.title}</h3>
+                <p className="text-sm text-foreground/60 font-medium leading-relaxed mb-6">{item.desc}</p>
+                <ul className="space-y-3">
+                  {item.items.map((entry) => (
+                    <li key={entry} className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-foreground/70">
+                      <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+                      {entry}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Local SEO Section */}
+      <section className="py-24 bg-background relative overflow-hidden border-b border-foreground/5">
+        <div className="content-width">
+          <div className="flex flex-col md:flex-row items-center gap-12 bg-foreground/5 dark:bg-white/5 p-12 rounded-[3rem] border border-foreground/10">
+            <div className="h-20 w-20 rounded-3xl bg-primary/10 flex items-center justify-center shrink-0">
+              <MapPin className="h-10 w-10 text-primary" />
+            </div>
+            <div>
+              <h2 className="text-3xl font-black mb-6 uppercase tracking-tight">Serving Port Elizabeth, Eastern Cape & South Africa</h2>
+              <p className="text-xl text-foreground/60 leading-relaxed font-medium">
+                Kasilam Media Productions (KMP) is proudly based in Port Elizabeth (Gqeberha) in the Eastern Cape. We collaborate with artists, businesses, and organizations across South Africa to produce professional photography, video, audio, and digital media content.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -295,6 +375,41 @@ const Index = () => {
         </div>
       </section>
 
+      {/* SEO FAQ Section */}
+      <section className="section-padding bg-alternate/30 border-y border-foreground/5">
+        <div className="content-width">
+          <div className="max-w-4xl mx-auto text-center mb-24">
+            <h2 className="mb-8 text-gradient">Frequently Asked Questions</h2>
+            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">Learn more about our services and coverage.</p>
+          </div>
+          <div className="max-w-3xl mx-auto space-y-8">
+            {[
+              {
+                q: "What is KMP Media?",
+                a: "KMP Media refers to Kasilam Media Productions (KMP), a creative media production company based in Port Elizabeth offering photography, videography, audio production, and web development services."
+              },
+              {
+                q: "Where is KMP based?",
+                a: "Kasilam Media Productions (KMP) is based in Port Elizabeth (Gqeberha) in the Eastern Cape and works with clients across South Africa."
+              },
+              {
+                q: "Can clients from outside the Eastern Cape work with KMP?",
+                a: "Yes. Kasilam Media Productions (KMP) collaborates with artists, creators, and businesses across South Africa."
+              }
+            ].map((faq, i) => (
+              <div key={i} className="premium-card p-8 group">
+                <h3 className="text-xl font-black mb-4 uppercase tracking-tight text-foreground/80 group-hover:text-primary transition-colors">
+                  {faq.q}
+                </h3>
+                <p className="text-base text-foreground/50 leading-relaxed font-medium">
+                  {faq.a}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* 8. Final CTA Section - Cinematic & Minimal */}
       <section className="section-padding relative overflow-hidden bg-alternate border-t border-foreground/5">
         <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
@@ -314,16 +429,17 @@ const Index = () => {
                 package: "Project Kickoff",
                 price: 0
               })}
+              variant="red"
               size="lg"
-              className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow pointer-events-auto cursor-pointer btn-primary"
+              className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer"
             >
               Start Your Project
             </Button>
             <Button
               asChild
-              variant="outline"
+              variant="black"
               size="lg"
-              className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] hover:bg-foreground/5 hover:border-red-600/50 transition-all btn-secondary border-0"
+              className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95"
             >
               <Link to="/contact">Request Consultation</Link>
             </Button>

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
+import { useEffect } from "react";
 
 const processSteps = [
   {
@@ -81,6 +82,15 @@ const authorityPoints = [
 
 const DigitalMarketing = () => {
   const { openBooking } = useBooking();
+
+  useEffect(() => {
+    document.title = "KMP | Professional Website Design & Digital Media in Port Elizabeth";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Kasilam Media Productions (KMP) provides professional website development in Port Elizabeth, business website design Eastern Cape, and digital media solutions across South Africa.");
+    }
+  }, []);
+
   return (
     <div>
       {/* Hero */}
@@ -94,17 +104,17 @@ const DigitalMarketing = () => {
           <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
               <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
-                <Globe className="h-4 w-4" /> Digital Media Solutions
+                <Globe className="h-4 w-4" /> KMP Digital Media Solutions
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
               <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12">
-                Digital Strategy <span className="text-gradient">For Growth</span>
+                KMP Digital <span className="text-gradient">For Growth</span>
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
               <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
-                We build and manage your digital presence with purposeful content, targeted campaigns, and clear reporting.
+                Kasilam Media Productions (KMP) builds and manages your digital presence with purposeful content, targeted campaigns, and clear reporting in Port Elizabeth and across South Africa.
               </p>
             </HeroSection>
             <HeroSection delay={0.3}>
@@ -115,17 +125,27 @@ const DigitalMarketing = () => {
                     package: "Digital Inquiry",
                     price: 0
                   })}
+                  variant="red"
                   size="lg"
-                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   Start Your Journey <ArrowRight className="h-4 w-4 ml-4" />
                 </Button>
-                <Button asChild className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer btn-secondary">
+                <Button asChild variant="black" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer">
                   <a href="#packages">View Services</a>
                 </Button>
               </div>
             </HeroSection>
           </div>
+        </div>
+      </section>
+
+      {/* Local SEO Context */}
+      <section className="py-12 bg-background border-b border-foreground/5">
+        <div className="content-width">
+          <p className="text-center text-foreground/40 text-sm font-medium leading-relaxed max-w-4xl mx-auto uppercase tracking-wider">
+            Kasilam Media Productions is your partner for <strong>website development Port Elizabeth</strong> and <strong>business website design Eastern Cape</strong>. We provide <strong>professional websites South Africa</strong> wide, helping local businesses compete on a national stage.
+          </p>
         </div>
       </section>
 
@@ -157,7 +177,7 @@ const DigitalMarketing = () => {
       <section className="py-20">
         <div className="container mx-auto px-4">
           <FadeInSection className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl text-white">
+            <h2 className="text-3xl font-bold md:text-4xl text-foreground">
               Your Digital <span className="text-primary">Growth Partner</span>
             </h2>
             <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -263,8 +283,9 @@ const DigitalMarketing = () => {
                   package: "Strategic Consultation",
                   price: 0
                 })}
+                variant="red"
                 size="lg"
-                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 Start Your Digital Journey <ArrowRight className="h-4 w-4 ml-4" />
               </Button>

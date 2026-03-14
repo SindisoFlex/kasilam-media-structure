@@ -20,6 +20,8 @@ import {
 import { useBooking } from "@/contexts/BookingContext";
 import heroImage from "@/images/hero-bg.png";
 import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, ScaleIn } from "@/components/animations";
+import { useEffect, useRef } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
 
 const photographyServices = [
   "Weddings & Traditional Ceremonies",
@@ -42,6 +44,78 @@ const videographyServices = [
   "Music Videos",
   "Social Media Content Creation",
 ];
+
+const StudioVisuals = () => {
+  const ref = useRef(null);
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, 150]);
+
+  return (
+    <div ref={ref} className="absolute inset-0 z-0 overflow-hidden bg-[#050505]">
+      {/* Cinematic Background Image with Parallax */}
+      <motion.div 
+        style={{ y }}
+        className="absolute inset-0 z-0 opacity-40 scale-110"
+      >
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1533750516457-a7f992034fec?auto=format&fit=crop&w=1920&q=80')`,
+          }}
+        />
+      </motion.div>
+      
+      {/* Cinematic Overlays */}
+      <div className="absolute inset-0 z-10 bg-gradient-to-b from-background/10 via-background/70 to-background" />
+      
+      {/* Studio Lighting Highlights (Neon & Warm) */}
+      <div className="absolute inset-0 z-11">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_15%_25%,rgba(220,38,38,0.12),transparent_40%)]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_85%_15%,rgba(30,64,175,0.1),transparent_45%)]" />
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_40%,rgba(251,191,36,0.03),transparent_50%)]" />
+      </div>
+      
+      {/* Subtle Floating Particles */}
+      <div className="absolute inset-0 z-12 pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-[2px] h-[2px] bg-white/30 rounded-full"
+            initial={{ 
+              x: Math.random() * 100 + "%", 
+              y: Math.random() * 100 + "%",
+              opacity: 0
+            }}
+            animate={{
+              y: ["0%", "-20%"],
+              opacity: [0, 0.4, 0],
+            }}
+            transition={{
+              duration: 15 + Math.random() * 10,
+              repeat: Infinity,
+              ease: "linear",
+              delay: Math.random() * 10
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Dynamic Lighting Glow */}
+      <motion.div 
+        className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-red-600/5 blur-[150px] rounded-full z-11"
+        animate={{
+          opacity: [0.2, 0.4, 0.2],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    </div>
+  );
+};
 
 const productionTypes = [
   {
@@ -148,38 +222,38 @@ const processSteps = [
 
 const VisualProduction = () => {
   const { openBooking } = useBooking();
+
+  useEffect(() => {
+    document.title = "KMP | Professional Visual Production in Port Elizabeth | Videography & Photography";
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute("content", "Kasilam Media Productions (KMP) provides professional videography and photography in Port Elizabeth (Gqeberha), Eastern Cape. Cinematic event coverage, corporate video production, and wedding documentation across South Africa.");
+    }
+  }, []);
+
   return (
-    <div className="bg-background text-white min-h-screen">
+    <div className="bg-background text-foreground min-h-screen">
       {/* 1. Hero Section */}
       <section className="relative flex min-h-screen items-center justify-center overflow-hidden pt-20">
-        <div
-          className="absolute inset-0 z-0 scale-105 animate-subtle-zoom opacity-70"
-          style={{
-            backgroundImage: `url(${heroImage})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-        <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 z-11 mesh-bg opacity-20" />
+        <StudioVisuals />
 
         <div className="content-width relative z-20 text-center">
           <HeroSection className="mb-10 flex justify-center">
-            <div className="px-6 py-2 rounded-full bg-white/5 border border-white/10 red-glow backdrop-blur-xl">
+            <div className="px-6 py-2 rounded-full bg-foreground/5 border border-foreground/10 red-glow backdrop-blur-xl dark:bg-white/5 dark:border-white/10">
               <span className="text-red-500 text-[10px] font-black uppercase tracking-[0.4em]">
-                Visual Production
+                KMP Visual Production
               </span>
             </div>
           </HeroSection>
           <HeroSection delay={0.1}>
             <h1 className="mb-8 text-gradient">
-              Professional Visual Production<br />
-              <span className="text-primary italic">For Gqeberha's Moments.</span>
+              KMP Visual Production<br />
+              <span className="text-primary italic">For Port Elizabeth's Moments.</span>
             </h1>
           </HeroSection>
           <HeroSection delay={0.2}>
             <p className="mx-auto mt-8 max-w-3xl text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-foreground/60 leading-relaxed">
-              Capturing the heart of our community — from weddings and graduations to respectful funeral coverage and local celebrations.
+              Capturing the heart of Gqeberha and South Africa with Kasilam Media Productions (KMP) — from cinematic videography and event coverage to professional photography and storytelling.
             </p>
           </HeroSection>
           <HeroSection delay={0.35}>
@@ -190,16 +264,26 @@ const VisualProduction = () => {
                   package: "General Shoot",
                   price: 1500
                 })}
+                variant="red"
                 size="lg"
-                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 Book a Shoot <ArrowRight className="h-4 w-4 ml-4" />
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all btn-secondary border-0">
+              <Button asChild variant="black" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all">
                 <a href="#production-types">View Packages</a>
               </Button>
             </div>
           </HeroSection>
+        </div>
+      </section>
+
+      {/* Local Context Section */}
+      <section className="py-12 bg-background relative overflow-hidden border-b border-foreground/5">
+        <div className="content-width">
+          <p className="text-center text-foreground/40 text-sm font-medium leading-relaxed max-w-4xl mx-auto">
+            Kasilam Media Productions is a leading choice for <strong>videography Port Elizabeth</strong> and <strong>video production Eastern Cape</strong>. We specialize in <strong>corporate video South Africa</strong> and <strong>event videography Gqeberha</strong>, ensuring every project meets global standards while serving our local community.
+          </p>
         </div>
       </section>
 
@@ -229,7 +313,7 @@ const VisualProduction = () => {
                       </div>
                     ))}
                   </div>
-                  <Button asChild className="w-full h-14 btn-secondary font-black transition-all uppercase tracking-widest text-[10px] rounded-full border-0">
+                  <Button asChild variant="black" className="w-full h-14 font-black transition-all uppercase tracking-widest text-[10px] rounded-full">
                     <Link to={type.link}>{type.buttonText}</Link>
                   </Button>
                 </div>
@@ -265,8 +349,8 @@ const VisualProduction = () => {
                 </StaggerContainer>
               </div>
             </FadeInSection>
-            <FadeInSection delay={0.2} className="aspect-square bg-white/5 rounded-[3rem] border border-white/5 overflow-hidden flex items-center justify-center relative group">
-              <Camera className="h-32 w-32 text-white/5 group-hover:text-red-600/10 transition-all duration-1000 scale-90 group-hover:scale-110" />
+            <FadeInSection delay={0.2} className="aspect-square bg-foreground/5 rounded-[3rem] border border-foreground/5 overflow-hidden flex items-center justify-center relative group dark:bg-white/5 dark:border-white/5">
+              <Camera className="h-32 w-32 text-foreground/5 group-hover:text-red-600/10 transition-all duration-1000 scale-90 group-hover:scale-110 dark:text-white/5" />
               <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
             </FadeInSection>
           </div>
@@ -377,7 +461,8 @@ const VisualProduction = () => {
                       package: pkg.time,
                       price: pkg.time.includes("2") ? 1500 : pkg.time.includes("4") ? 2800 : 4000
                     })}
-                    className="w-full h-14 btn-secondary font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer border-0"
+                    variant="black"
+                    className="w-full h-14 font-black transition-all uppercase tracking-widest text-[10px] rounded-full cursor-pointer"
                   >
                     Inquire Now
                   </Button>
@@ -475,12 +560,13 @@ const VisualProduction = () => {
                   package: "General Inquiry",
                   price: 0
                 })}
+                variant="red"
                 size="lg"
-                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer"
               >
                 Book a Shoot
               </Button>
-              <Button asChild variant="outline" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all btn-secondary border-0">
+              <Button asChild variant="black" size="lg" className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all">
                 <Link to="/contact">Request Consultation</Link>
               </Button>
             </div>

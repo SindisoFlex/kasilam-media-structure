@@ -4,7 +4,7 @@ import logo from "@/images/kmp.svg";
 
 const Footer = () => {
   return (
-    <footer className="border-t border-white/5 bg-background py-32">
+    <footer className="border-t border-foreground/5 bg-background py-32">
       <div className="content-width">
         <div className="grid gap-20 lg:grid-cols-4">
           {/* Brand */}
@@ -55,7 +55,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-32 pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.4em] text-white/20">
+        <div className="mt-32 pt-12 border-t border-foreground/5 flex flex-col md:flex-row justify-between items-center gap-8 text-[10px] font-black uppercase tracking-[0.4em] text-foreground/20">
           <div>© {new Date().getFullYear()} Kasilam Media Productions</div>
           <div className="flex gap-10">
             <Link to="/privacy" className="hover:text-red-600 transition-colors">Privacy Policy</Link>

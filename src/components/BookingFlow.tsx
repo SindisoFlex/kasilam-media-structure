@@ -263,7 +263,7 @@ const BookingFlow = () => {
 
   return (
     <Sheet open={isOpen} onOpenChange={handleClose}>
-      <SheetContent className="w-full sm:max-w-[450px] bg-[#0A0A0A] border-white/5 p-0 overflow-y-auto scrollbar-hide">
+      <SheetContent className="w-full sm:max-w-[450px] bg-background border-foreground/5 p-0 overflow-y-auto scrollbar-hide">
         <div className="flex flex-col h-full">
           {/* Header */}
           <div className="p-8 pb-4 space-y-4">
@@ -274,18 +274,18 @@ const BookingFlow = () => {
                     <div className="h-1.5 w-8 bg-red-600 rounded-full" />
                     <span className="text-[10px] font-black text-red-600 uppercase tracking-[0.3em]">Official Booking</span>
                   </div>
-                  <SheetTitle className="text-3xl font-black text-white uppercase tracking-tighter">
+                  <SheetTitle className="text-3xl font-black text-foreground uppercase tracking-tighter dark:text-white">
                     {confirmed ? "Booking Confirmed" : `Step ${step} of 6`}
                   </SheetTitle>
                 </div>
                 {!confirmed && (
-                  <div className="bg-white/5 rounded-full px-3 py-1 border border-white/10 uppercase text-[9px] font-bold text-white/40 tracking-widest">
+                  <div className="bg-foreground/5 rounded-full px-3 py-1 border border-foreground/10 uppercase text-[9px] font-bold text-foreground/40 tracking-widest dark:bg-white/5 dark:border-white/10 dark:text-white/40">
                     {category} Production
                   </div>
                 )}
               </div>
               {!confirmed && (
-                <SheetDescription className="text-white/40 text-xs font-bold uppercase tracking-widest pt-2">
+                <SheetDescription className="text-foreground/40 text-xs font-bold uppercase tracking-widest pt-2 dark:text-white/40">
                   Kasilam Media Production Standard Flow
                 </SheetDescription>
               )}
@@ -295,7 +295,7 @@ const BookingFlow = () => {
             {!confirmed && (
               <div className="grid grid-cols-6 gap-2 pt-4">
                 {[1, 2, 3, 4, 5, 6].map((i) => (
-                  <div key={i} className={cn("h-1 rounded-full transition-all duration-500", i <= step ? "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-white/10")} />
+                  <div key={i} className={cn("h-1 rounded-full transition-all duration-500", i <= step ? "bg-red-600 shadow-[0_0_10px_rgba(220,38,38,0.5)]" : "bg-foreground/10 dark:bg-white/10")} />
                 ))}
               </div>
             )}
@@ -306,29 +306,29 @@ const BookingFlow = () => {
             {step === 1 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">Confirm Service</h3>
-                  <p className="text-white/50 text-sm font-medium">Please review the selected production service and starting investment.</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Confirm Service</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">Please review the selected production service and starting investment.</p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-4">
+                <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-6 space-y-4 dark:border-white/10 dark:bg-white/[0.02]">
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Production Package</p>
-                      <p className="text-lg font-black text-white uppercase leading-tight">{bookingInfo?.package}</p>
+                      <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest mb-1 dark:text-white/30">Production Package</p>
+                      <p className="text-lg font-black text-foreground uppercase leading-tight dark:text-white">{bookingInfo?.package}</p>
                       <p className="text-xs font-bold text-red-500 uppercase mt-1">{bookingInfo?.service}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-[10px] font-black text-white/30 uppercase tracking-widest mb-1">Starting From</p>
-                      <p className="text-xl font-black text-white">{formatZAR(basePrice)}</p>
+                      <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest mb-1 dark:text-white/30">Starting From</p>
+                      <p className="text-xl font-black text-foreground dark:text-white">{formatZAR(basePrice)}</p>
                     </div>
                   </div>
-                  <div className="pt-4 border-t border-white/5">
-                    <div className="flex items-center gap-3 text-white/40 text-[10px] font-bold uppercase tracking-widest">
-                      <div className="p-2 rounded-lg bg-white/5"><CheckCircle className="h-3 w-3 text-red-600" /></div>
+                  <div className="pt-4 border-t border-foreground/5 dark:border-white/5">
+                    <div className="flex items-center gap-3 text-foreground/40 text-[10px] font-bold uppercase tracking-widest dark:text-white/40">
+                      <div className="p-2 rounded-lg bg-foreground/5 dark:bg-white/5"><CheckCircle className="h-3 w-3 text-red-600" /></div>
                       Standard Production Quality Guaranteed
                     </div>
                   </div>
                 </div>
-                <Button onClick={() => setStep(2)} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group">
+                <Button variant="red" onClick={() => setStep(2)} className="w-full h-14 font-black uppercase tracking-widest text-xs group">
                   EXPLORE ADD-ONS <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
@@ -338,8 +338,8 @@ const BookingFlow = () => {
             {step === 2 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">Production Add-ons</h3>
-                  <p className="text-white/50 text-sm font-medium">Enhance your production with these optional extras.</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Production Add-ons</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">Enhance your production with these optional extras.</p>
                 </div>
                 <div className="grid gap-3">
                   {currentAddOns.map((addon) => (
@@ -348,26 +348,26 @@ const BookingFlow = () => {
                       onClick={() => toggleAddOn(addon.id)}
                       className={cn(
                         "p-4 rounded-xl border transition-all duration-300 cursor-pointer flex justify-between items-center group",
-                        selectedAddOns.includes(addon.id) ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-white/[0.02] border-white/5 hover:border-white/20"
+                        selectedAddOns.includes(addon.id) ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-foreground/[0.02] border-foreground/5 hover:border-foreground/20 dark:bg-white/[0.02] dark:border-white/5 dark:hover:border-white/20"
                       )}
                     >
                       <div className="flex items-center gap-4">
-                        <div className={cn("h-5 w-5 rounded-md border flex items-center justify-center transition-colors", selectedAddOns.includes(addon.id) ? "bg-red-600 border-red-600" : "border-white/20 bg-black/40")}>
+                        <div className={cn("h-5 w-5 rounded-md border flex items-center justify-center transition-colors", selectedAddOns.includes(addon.id) ? "bg-red-600 border-red-600" : "border-foreground/20 bg-foreground/5 dark:border-white/20 dark:bg-black/40")}>
                           {selectedAddOns.includes(addon.id) && <CheckCircle className="h-3 w-3 text-white" />}
                         </div>
                         <div>
-                          <p className="text-xs font-black text-white uppercase tracking-wider">{addon.name}</p>
-                          <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5">{formatZAR(addon.price)}</p>
+                          <p className="text-xs font-black text-foreground uppercase tracking-wider dark:text-white">{addon.name}</p>
+                          <p className="text-[10px] font-bold text-foreground/30 uppercase mt-0.5 dark:text-white/30">{formatZAR(addon.price)}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button onClick={() => setStep(3)} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group">
+                  <Button variant="red" onClick={() => setStep(3)} className="w-full h-14 font-black uppercase tracking-widest text-xs group">
                     SET LOCATION <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                  <Button variant="ghost" onClick={() => setStep(1)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                  <Button variant="ghost" onClick={() => setStep(1)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO SERVICE
                   </Button>
                 </div>
@@ -378,44 +378,44 @@ const BookingFlow = () => {
             {step === 3 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">Production Location</h3>
-                  <p className="text-white/50 text-sm font-medium">Where will the production take place?</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Production Location</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">Where will the production take place?</p>
                 </div>
                 <div className="space-y-4">
                   <div 
                     onClick={() => setLocation("KMP Studio - Gqeberha")}
                     className={cn(
                       "p-5 rounded-2xl border transition-all duration-300 cursor-pointer group",
-                      location === "KMP Studio - Gqeberha" ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-white/[0.02] border-white/5 hover:border-white/20"
+                      location === "KMP Studio - Gqeberha" ? "bg-red-600/10 border-red-600 shadow-[0_0_15px_rgba(220,38,38,0.1)]" : "bg-foreground/[0.02] border-foreground/5 hover:border-foreground/20 dark:bg-white/[0.02] dark:border-white/5 dark:hover:border-white/20"
                     )}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="p-3 rounded-xl bg-white/5">
+                      <div className="p-3 rounded-xl bg-foreground/5 dark:bg-white/5">
                         <MapPin className="h-5 w-5 text-red-600" />
                       </div>
                       <div>
-                        <p className="text-sm font-black text-white uppercase tracking-wider text-left">KMP Studio - Gqeberha</p>
-                        <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5 text-left text-wrap">6034 NTONGELA STREET, KWAZAKHELE, PORT ELIZABETH</p>
+                        <p className="text-sm font-black text-foreground uppercase tracking-wider text-left dark:text-white">KMP Studio - Gqeberha</p>
+                        <p className="text-[10px] font-bold text-foreground/30 uppercase mt-0.5 text-left text-wrap dark:text-white/30">6034 NTONGELA STREET, KWAZAKHELE, PORT ELIZABETH</p>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3 pt-2">
-                    <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black">Mobile Production Site</Label>
+                    <Label className="text-foreground/40 uppercase tracking-widest text-[10px] font-black dark:text-white/40">Mobile Production Site</Label>
                     <div className="relative group">
                       <Input 
                         value={location === "KMP Studio - Gqeberha" ? "" : location} 
                         onChange={(e) => setLocation(e.target.value)} 
                         placeholder="Enter full address or site name" 
-                        className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl pr-12 focus:border-red-600/50"
+                        className="h-14 bg-foreground/[0.02] border-foreground/10 text-foreground placeholder:text-foreground/20 rounded-xl pr-12 focus:border-red-600/50 dark:bg-white/[0.02] dark:border-white/10 dark:text-white dark:placeholder:text-white/20"
                       />
-                      <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/20 group-focus-within:text-red-600 transition-colors" />
+                      <MapPin className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/20 group-focus-within:text-red-600 transition-colors dark:text-white/20" />
                     </div>
                     <Button 
-                      variant="outline" 
+                      variant="black" 
                       onClick={useMyLocation} 
                       disabled={locatingUser}
-                      className="w-full h-12 border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-2"
+                      className="w-full h-12 flex items-center justify-center gap-2"
                     >
                       <Navigation className={cn("h-3 w-3", locatingUser && "animate-pulse")} />
                       {locatingUser ? "LOCATING..." : "USE CURRENT DEVICE LOCATION"}
@@ -423,10 +423,10 @@ const BookingFlow = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button onClick={() => setStep(4)} disabled={!location} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                  <Button variant="red" onClick={() => setStep(4)} disabled={!location} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
                     SELECT DATE & TIME <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                  <Button variant="ghost" onClick={() => setStep(2)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                  <Button variant="ghost" onClick={() => setStep(2)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO ADD-ONS
                   </Button>
                 </div>
@@ -437,11 +437,11 @@ const BookingFlow = () => {
             {step === 4 && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="space-y-2 text-center pb-2">
-                  <h3 className="text-xl font-bold text-white">Production Schedule</h3>
-                  <p className="text-white/50 text-sm font-medium">Standard 48-hour lead time enforced.</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Production Schedule</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">Standard 48-hour lead time enforced.</p>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-white/5 rounded-2xl p-4 border border-white/5 flex flex-col items-center">
+                  <div className="bg-foreground/5 rounded-2xl p-4 border border-foreground/5 flex flex-col items-center dark:bg-white/5 dark:border-white/5">
                     <Calendar
                       mode="single"
                       selected={date}
@@ -451,7 +451,7 @@ const BookingFlow = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-white/40 uppercase tracking-widest text-[10px] font-black text-center block">Select Time Slot</Label>
+                    <Label className="text-foreground/40 uppercase tracking-widest text-[10px] font-black text-center block dark:text-white/40">Select Time Slot</Label>
                     <div className="grid grid-cols-4 gap-2">
                       {timeSlots.map((t) => (
                         <button
@@ -462,7 +462,7 @@ const BookingFlow = () => {
                             "h-10 rounded-lg border text-[10px] font-black uppercase tracking-tighter transition-all duration-300",
                             time === t 
                               ? "bg-red-600 border-red-600 text-white shadow-[0_0_15px_rgba(220,38,38,0.3)]" 
-                              : "bg-white/[0.02] border-white/5 text-white/40 hover:border-white/20"
+                              : "bg-foreground/[0.02] border-foreground/5 text-foreground/40 hover:border-foreground/20 dark:bg-white/[0.02] dark:border-white/5 dark:text-white/40 dark:hover:border-white/20"
                           )}
                         >
                           {t}
@@ -472,10 +472,10 @@ const BookingFlow = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button onClick={() => setStep(5)} disabled={!date || !time} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                  <Button variant="red" onClick={() => setStep(5)} disabled={!date || !time} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
                     CONTINUE TO DETAILS <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                  <Button variant="ghost" onClick={() => setStep(3)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                  <Button variant="ghost" onClick={() => setStep(3)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO LOCATION
                   </Button>
                 </div>
@@ -486,48 +486,48 @@ const BookingFlow = () => {
             {step === 5 && !confirmed && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">Client Information</h3>
-                  <p className="text-white/50 text-sm font-medium">How should we contact you about your production?</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Client Information</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">How should we contact you about your production?</p>
                 </div>
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="clientName" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Full Name</Label>
+                    <Label htmlFor="clientName" className="text-foreground/40 uppercase tracking-widest text-[10px] font-black dark:text-white/40">Full Name</Label>
                     <Input 
                       id="clientName" 
                       value={clientName} 
                       onChange={(e) => setClientName(e.target.value)} 
                       placeholder="John Doe" 
-                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                      className="h-14 bg-foreground/[0.02] border-foreground/10 text-foreground placeholder:text-foreground/20 rounded-xl dark:bg-white/[0.02] dark:border-white/10 dark:text-white dark:placeholder:text-white/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="clientPhone" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Phone Number / WhatsApp</Label>
+                    <Label htmlFor="clientPhone" className="text-foreground/40 uppercase tracking-widest text-[10px] font-black dark:text-white/40">Phone Number / WhatsApp</Label>
                     <Input 
                       id="clientPhone" 
                       type="tel"
                       value={clientPhone} 
                       onChange={(e) => setClientPhone(e.target.value)} 
                       placeholder="065 970 4101" 
-                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                      className="h-14 bg-foreground/[0.02] border-foreground/10 text-foreground placeholder:text-foreground/20 rounded-xl dark:bg-white/[0.02] dark:border-white/10 dark:text-white dark:placeholder:text-white/20"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="clientEmail" className="text-white/40 uppercase tracking-widest text-[10px] font-black">Email Address (Optional)</Label>
+                    <Label htmlFor="clientEmail" className="text-foreground/40 uppercase tracking-widest text-[10px] font-black dark:text-white/40">Email Address (Optional)</Label>
                     <Input 
                       id="clientEmail" 
                       type="email"
                       value={clientEmail} 
                       onChange={(e) => setClientEmail(e.target.value)} 
                       placeholder="john@example.com" 
-                      className="h-14 bg-white/[0.02] border-white/10 text-white placeholder:text-white/20 rounded-xl"
+                      className="h-14 bg-foreground/[0.02] border-foreground/10 text-foreground placeholder:text-foreground/20 rounded-xl dark:bg-white/[0.02] dark:border-white/10 dark:text-white dark:placeholder:text-white/20"
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button onClick={() => setStep(6)} disabled={!clientName || !clientPhone} className="w-full h-14 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                  <Button variant="red" onClick={() => setStep(6)} disabled={!clientName || !clientPhone} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
                     REVIEW SUMMARY <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
-                  <Button variant="ghost" onClick={() => setStep(4)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                  <Button variant="ghost" onClick={() => setStep(4)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO SCHEDULE
                   </Button>
                 </div>
@@ -538,63 +538,63 @@ const BookingFlow = () => {
             {step === 6 && !confirmed && (
               <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500 pb-10">
                 <div className="space-y-2">
-                  <h3 className="text-xl font-bold text-white">Booking Summary</h3>
-                  <p className="text-white/50 text-sm font-medium">Review your production details before final confirmation.</p>
+                  <h3 className="text-xl font-bold text-foreground dark:text-white">Booking Summary</h3>
+                  <p className="text-foreground/50 text-sm font-medium dark:text-white/50">Review your production details before final confirmation.</p>
                 </div>
                 
                 <div className="space-y-4">
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
-                    <div className="p-5 border-b border-white/5 bg-white/5 flex justify-between items-center">
-                      <span className="text-[10px] font-black text-white/40 uppercase tracking-[0.2em]">Investment Details</span>
+                  <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] overflow-hidden dark:border-white/10 dark:bg-white/[0.02]">
+                    <div className="p-5 border-b border-foreground/5 bg-foreground/5 flex justify-between items-center dark:border-white/5 dark:bg-white/5">
+                      <span className="text-[10px] font-black text-foreground/40 uppercase tracking-[0.2em] dark:text-white/40">Investment Details</span>
                       <span className="text-[10px] font-black text-red-500 uppercase tracking-widest">Pricing Summary</span>
                     </div>
                     <div className="p-5 space-y-4">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-black text-white uppercase">{bookingInfo?.package}</p>
-                          <p className="text-[10px] font-bold text-white/30 uppercase mt-0.5">{bookingInfo?.service}</p>
+                          <p className="text-sm font-black text-foreground uppercase dark:text-white">{bookingInfo?.package}</p>
+                          <p className="text-[10px] font-bold text-foreground/30 uppercase mt-0.5 dark:text-white/30">{bookingInfo?.service}</p>
                         </div>
-                        <span className="text-sm font-black text-white">{formatZAR(basePrice)}</span>
+                        <span className="text-sm font-black text-foreground dark:text-white">{formatZAR(basePrice)}</span>
                       </div>
                       {selectedAddOns.map((id) => {
                         const a = currentAddOns.find((x) => x.id === id)!;
                         return (
                           <div key={id} className="flex justify-between items-start">
-                            <p className="text-[11px] font-bold text-white/50 uppercase">+ {a.name}</p>
-                            <span className="text-[11px] font-bold text-white/50">{formatZAR(a.price)}</span>
+                            <p className="text-[11px] font-bold text-foreground/50 uppercase dark:text-white/50">+ {a.name}</p>
+                            <span className="text-[11px] font-bold text-foreground/50 dark:text-white/50">{formatZAR(a.price)}</span>
                           </div>
                         );
                       })}
-                      <div className="pt-4 border-t border-white/5 space-y-2">
+                      <div className="pt-4 border-t border-foreground/5 dark:border-white/5 space-y-2">
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-bold text-white/30 uppercase">Subtotal</span>
-                          <span className="font-bold text-white/60">{formatZAR(subtotal)}</span>
+                          <span className="font-bold text-foreground/30 uppercase dark:text-white/30">Subtotal</span>
+                          <span className="font-bold text-foreground/60 dark:text-white/60">{formatZAR(subtotal)}</span>
                         </div>
                         <div className="flex justify-between items-center text-xs">
-                          <span className="font-bold text-white/30 uppercase">VAT (15%)</span>
-                          <span className="font-bold text-white/60">{formatZAR(vat)}</span>
+                          <span className="font-bold text-foreground/30 uppercase dark:text-white/30">VAT (15%)</span>
+                          <span className="font-bold text-foreground/60 dark:text-white/60">{formatZAR(vat)}</span>
                         </div>
                         <div className="flex justify-between items-center pt-2">
-                          <span className="text-xs font-black text-white uppercase tracking-widest">Total Investment</span>
+                          <span className="text-xs font-black text-foreground uppercase tracking-widest dark:text-white">Total Investment</span>
                           <span className="text-xl font-black text-red-600">{formatZAR(total)}</span>
                         </div>
                       </div>
                     </div>
                   </div>
 
-                  <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 space-y-3">
+                  <div className="rounded-2xl border border-foreground/10 bg-foreground/[0.02] p-5 space-y-3 dark:border-white/10 dark:bg-white/[0.02]">
                     <div className="flex gap-4">
                       <div className="h-4 w-4 text-red-500 mt-1"><CheckCircle className="h-full w-full" /></div>
                       <div>
-                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest underline">Location</p>
-                        <p className="text-sm font-bold text-white uppercase text-left">{location}</p>
+                        <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest underline dark:text-white/30">Location</p>
+                        <p className="text-sm font-bold text-foreground uppercase text-left dark:text-white">{location}</p>
                       </div>
                     </div>
                     <div className="flex gap-4">
                       <div className="h-4 w-4 text-red-500 mt-1"><CheckCircle className="h-full w-full" /></div>
                       <div>
-                        <p className="text-[10px] font-black text-white/30 uppercase tracking-widest underline">Schedule</p>
-                        <p className="text-sm font-bold text-white uppercase text-left">{date ? format(date, "PPP") : ""} AT {time}</p>
+                        <p className="text-[10px] font-black text-foreground/30 uppercase tracking-widest underline dark:text-white/30">Schedule</p>
+                        <p className="text-sm font-bold text-foreground uppercase text-left dark:text-white">{date ? format(date, "PPP") : ""} AT {time}</p>
                       </div>
                     </div>
                   </div>
@@ -602,16 +602,16 @@ const BookingFlow = () => {
 
                 <div className="bg-red-600/5 border border-red-600/10 p-5 rounded-2xl text-center space-y-3">
                   <p className="text-[10px] font-black text-red-500 uppercase tracking-[0.2em]">Trust Statement</p>
-                  <p className="text-xs font-bold text-white leading-relaxed">
+                  <p className="text-xs font-bold text-foreground leading-relaxed dark:text-white">
                     Trusted by artists, weddings, and corporate clients across the Eastern Cape.
                   </p>
                 </div>
 
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button onClick={handleConfirm} className="w-full h-16 bg-red-600 hover:bg-red-700 text-white font-black uppercase tracking-[0.2em] text-xs shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] transition-all">
+                  <Button variant="red" onClick={handleConfirm} className="w-full h-16 uppercase tracking-[0.2em] text-xs shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] transition-all">
                     CONFIRM PRODUCTION BOOKING
                   </Button>
-                  <Button variant="ghost" onClick={() => setStep(5)} className="w-full text-white/40 hover:text-white hover:bg-white/5 font-black uppercase tracking-widest text-[10px]">
+                  <Button variant="ghost" onClick={() => setStep(5)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO DETAILS
                   </Button>
                 </div>
@@ -628,24 +628,24 @@ const BookingFlow = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Production Reserved</h3>
-                  <p className="text-white/50 text-sm font-bold mt-2 uppercase tracking-widest">Reference No: <span className="text-red-500">{refNumber}</span></p>
+                  <h3 className="text-3xl font-black text-foreground uppercase tracking-tighter dark:text-white">Production Reserved</h3>
+                  <p className="text-foreground/50 text-sm font-bold mt-2 uppercase tracking-widest dark:text-white/50">Reference No: <span className="text-red-500">{refNumber}</span></p>
                 </div>
                 
-                <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-6 space-y-4 text-left">
-                  <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-white/30 border-b border-white/5 pb-4">
+                <div className="bg-foreground/[0.02] border border-foreground/5 rounded-2xl p-6 space-y-4 text-left dark:bg-white/[0.02] dark:border-white/5">
+                  <div className="flex justify-between items-center text-xs font-black uppercase tracking-widest text-foreground/30 border-b border-foreground/5 pb-4 dark:text-white/30 dark:border-white/5">
                     <span>Summary</span>
                     <span>Investment</span>
                   </div>
                   <div className="space-y-3">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-sm font-black text-white uppercase">{bookingInfo?.package}</p>
-                        <p className="text-[10px] font-bold text-white/40 uppercase">{bookingInfo?.service}</p>
+                        <p className="text-sm font-black text-foreground uppercase dark:text-white">{bookingInfo?.package}</p>
+                        <p className="text-[10px] font-bold text-foreground/40 uppercase dark:text-white/40">{bookingInfo?.service}</p>
                       </div>
                       <span className="text-lg font-black text-red-600">{formatZAR(total)}</span>
                     </div>
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-tighter leading-relaxed">
+                    <p className="text-[10px] font-bold text-foreground/30 uppercase tracking-tighter leading-relaxed dark:text-white/30">
                       Scheduled for {date ? format(date, "PPP") : ""} at {time}.<br />
                       Location: {location}
                     </p>
@@ -656,10 +656,10 @@ const BookingFlow = () => {
                   <Button onClick={openWhatsApp} className="w-full h-16 bg-[#25D366] hover:bg-[#128C7E] text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3">
                     <MessageCircle className="h-5 w-5" /> SEND TO WHATSAPP
                   </Button>
-                  <Button variant="outline" onClick={downloadPDF} className="w-full h-16 border-white/10 bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-xs flex items-center justify-center gap-3">
+                  <Button variant="black" onClick={downloadPDF} className="w-full h-16 flex items-center justify-center gap-3">
                     <Download className="h-5 w-5" /> DOWNLOAD QUOTATION
                   </Button>
-                  <p className="text-[9px] font-bold text-white/30 uppercase tracking-[0.3em] pt-4">
+                  <p className="text-[9px] font-bold text-foreground/30 uppercase tracking-[0.3em] pt-4 dark:text-white/30">
                     A representative will contact you shortly to finalize technical requirements.
                   </p>
                 </div>

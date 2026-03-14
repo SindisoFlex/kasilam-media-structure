@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9fb3a8"/>
+      <stop offset="55%" stop-color="#b7c3b9"/>
+      <stop offset="100%" stop-color="#d8d2c2"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 160) rotate(140) scale(480 360)">
+      <stop offset="0%" stop-color="#f2e3c6" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#f2e3c6" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#6b7c6e"/>
+      <stop offset="55%" stop-color="#7f8b7d"/>
+      <stop offset="100%" stop-color="#8e9585"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <rect width="1600" height="900" fill="url(#sun)"/>
+
+  <rect y="560" width="1600" height="340" fill="url(#ground)"/>
+
+  <g opacity="0.35">
+    <rect x="160" y="540" width="80" height="60" rx="6" fill="#8a8f84"/>
+    <rect x="320" y="520" width="90" height="70" rx="6" fill="#7f847a"/>
+    <rect x="520" y="545" width="70" height="55" rx="6" fill="#8a8f84"/>
+    <rect x="760" y="515" width="100" height="75" rx="6" fill="#7f847a"/>
+    <rect x="980" y="540" width="85" height="60" rx="6" fill="#8a8f84"/>
+    <rect x="1200" y="525" width="95" height="70" rx="6" fill="#7f847a"/>
+    <rect x="1380" y="545" width="70" height="55" rx="6" fill="#8a8f84"/>
+  </g>
+
+  <g opacity="0.5">
+    <path d="M780 500c0-35 28-64 64-64h12c10 0 18-8 18-18v-18h24v18c0 10 8 18 18 18h12c35 0 64 29 64 64v14h-212v-14z" fill="#d7c9b1"/>
+    <rect x="780" y="514" width="212" height="24" rx="12" fill="#c7b9a2"/>
+  </g>
+
+  <g opacity="0.55">
+    <circle cx="650" cy="610" r="26" fill="#c9b39c"/>
+    <circle cx="690" cy="610" r="26" fill="#bfa893"/>
+    <circle cx="730" cy="610" r="26" fill="#c9b39c"/>
+    <rect x="635" y="630" width="120" height="16" rx="8" fill="#b69f8a"/>
+  </g>
+
+  <g opacity="0.3">
+    <path d="M420 585c0 0 40-35 80-35s80 35 80 35" stroke="#d8cdbb" stroke-width="8" stroke-linecap="round"/>
+    <path d="M1040 585c0 0 40-35 80-35s80 35 80 35" stroke="#d8cdbb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+</svg>
