@@ -1,31 +1,45 @@
 
 
-# Fix Build Errors + Digital Marketing Futuristic Hero Background
+# Audio Production Landing Page — Implementation Plan
 
-## 1. Fix: AboutHero.tsx — Duplicate `className`
-Merge the two `className` attributes on lines 58/64 and 68/74 into single attributes:
-- Line 57-65: `className="hand-left text-primary"`
-- Line 67-75: `className="hand-right text-foreground"`
+## Overview
+Create a fully independent, immersive landing page at `/services/audio-production` with its own component file and route. Update the Services overview page to link to it. Establish the architecture pattern for future independent service pages.
 
-## 2. Fix: Portfolio.tsx — Missing `disabled` property
-Add `disabled: true` to the Videography category object (line 21-27). The other two categories don't need it (falsy by default).
+## Files to Create
 
-## 3. Digital Marketing Hero — Futuristic Circuit Background
-Replace the current plain mesh-bg in `src/pages/DigitalMarketing.tsx` hero section with an inline animated SVG featuring:
-- **Circuit board grid** with thin lines forming a network pattern
-- **Glowing red nodes** at intersections with pulse animations
-- **Floating geometric shapes** (hexagons, data symbols) drifting slowly
-- **Connection lines** with animated dash-offset for "data flow" effect
-- All using CSS keyframe animations with `prefers-reduced-motion` respect
-- Colors: red-600 accent nodes/lines on dark background, subtle opacity
+### `src/pages/AudioProduction.tsx`
+A standalone page component with 6 sections:
 
-The SVG replaces the `mesh-bg` div inside the existing absolute-positioned background container. The hero text content remains unchanged.
+1. **Hero** — Dark `bg-background` section with gradient overlay (`from-primary/10`), studio-themed layout. Bold headline, subheadline, two CTAs ("Book a Recording Session" linking to `/booking`, "View Packages" scrolling to `#packages`).
 
-### Files Changed
+2. **Who We Are** — "Your Creative Production Partner" section. Honest, confident positioning text about collaborating with engineers and creatives. Clean two-column or centered layout.
 
-| File | Change |
-|------|--------|
-| `src/components/AboutHero.tsx` | Merge duplicate className on 2 path elements |
-| `src/pages/Portfolio.tsx` | Add `disabled: true` to Videography category |
-| `src/pages/DigitalMarketing.tsx` | Replace hero background with animated circuit SVG |
+3. **Our Process** — 4-step horizontal grid (consultation, recording, collaboration, delivery). Numbered steps with icons, consistent with the site's existing step-card pattern.
+
+4. **Services Included** — Grid of 5 service cards (Studio Recording, Podcast Recording, Voice-over Production, Mixing & Mastering Coordination, Beat Sourcing & Production Management). Cards use `bg-muted` for soft gray background in both themes.
+
+5. **Pricing Tiers** — 3 premium elevated cards with `shadow-lg` and subtle border highlights. Starter Session, Professional Package, Full Production. Price displayed as "R____" placeholder. Feature lists with checkmark icons.
+
+6. **Final CTA** — Dark `bg-card` section. "Ready to Record Something That Sounds Professional?" with booking button.
+
+## Files to Modify
+
+### `src/App.tsx`
+- Import `AudioProduction` component
+- Add route: `<Route path="/services/audio-production" element={<AudioProduction />} />`
+
+### `src/pages/Services.tsx`
+- Convert from detailed service sections into a **navigation hub**
+- Each service card becomes a link to its dedicated page (`/services/audio-production`, with `/services/visual-production` and `/services/digital-marketing` as placeholder routes for now)
+- Keep brief intro text per service but remove detailed item lists
+
+### `src/components/Navbar.tsx`
+- Update the Services dropdown child links to point to the new independent routes (`/services/audio-production`, `/services/visual-production`, `/services/digital-marketing`)
+
+## Design Approach
+- Consistent with existing site: Tailwind utilities, `Card` components from shadcn, `Button` component, same animation classes (`animate-fade-in`)
+- Soft gray cards: `bg-muted` (maps to the theme's muted color)
+- Premium pricing cards: elevated with `shadow-lg border-primary/20`, middle tier highlighted with `border-primary`
+- Icons from `lucide-react`: `Mic`, `Headphones`, `Radio`, `Music`, `AudioWaveform`
+- All content strictly audio-focused, no cross-service contamination
 

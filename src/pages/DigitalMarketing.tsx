@@ -97,7 +97,129 @@ const DigitalMarketing = () => {
       <section className="relative overflow-hidden section-padding pb-32">
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
-          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+          {/* Futuristic Circuit Network Background */}
+          <svg
+            className="absolute inset-0 w-full h-full opacity-15 dark:opacity-30"
+            viewBox="0 0 1200 800"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid slice"
+            aria-hidden="true"
+          >
+            <style>
+              {`
+                @keyframes circuit-pulse {
+                  0%, 100% { opacity: 0.3; r: 3; }
+                  50% { opacity: 1; r: 6; }
+                }
+                @keyframes circuit-flow {
+                  0% { stroke-dashoffset: 40; }
+                  100% { stroke-dashoffset: 0; }
+                }
+                @keyframes node-glow {
+                  0%, 100% { opacity: 0.2; }
+                  50% { opacity: 0.8; }
+                }
+                @keyframes hex-drift {
+                  0% { transform: translateY(0) rotate(0deg); }
+                  50% { transform: translateY(-15px) rotate(5deg); }
+                  100% { transform: translateY(0) rotate(0deg); }
+                }
+                @keyframes hex-drift-alt {
+                  0% { transform: translateY(0) rotate(0deg); }
+                  50% { transform: translateY(10px) rotate(-3deg); }
+                  100% { transform: translateY(0) rotate(0deg); }
+                }
+                .circuit-node { animation: circuit-pulse 3s ease-in-out infinite; }
+                .circuit-node-2 { animation: circuit-pulse 3s ease-in-out infinite 0.5s; }
+                .circuit-node-3 { animation: circuit-pulse 3s ease-in-out infinite 1s; }
+                .circuit-node-4 { animation: circuit-pulse 3s ease-in-out infinite 1.5s; }
+                .circuit-node-5 { animation: circuit-pulse 3s ease-in-out infinite 2s; }
+                .circuit-line { stroke-dasharray: 20 20; animation: circuit-flow 2s linear infinite; }
+                .circuit-line-2 { stroke-dasharray: 15 25; animation: circuit-flow 3s linear infinite; }
+                .node-outer { animation: node-glow 4s ease-in-out infinite; }
+                .node-outer-2 { animation: node-glow 4s ease-in-out infinite 1s; }
+                .node-outer-3 { animation: node-glow 4s ease-in-out infinite 2s; }
+                .hex-float { animation: hex-drift 8s ease-in-out infinite; transform-origin: center; }
+                .hex-float-2 { animation: hex-drift-alt 10s ease-in-out infinite; transform-origin: center; }
+                .hex-float-3 { animation: hex-drift 12s ease-in-out infinite 2s; transform-origin: center; }
+                @media (prefers-reduced-motion: reduce) {
+                  .circuit-node, .circuit-node-2, .circuit-node-3, .circuit-node-4, .circuit-node-5,
+                  .circuit-line, .circuit-line-2, .node-outer, .node-outer-2, .node-outer-3,
+                  .hex-float, .hex-float-2, .hex-float-3 {
+                    animation: none !important;
+                  }
+                }
+              `}
+            </style>
+
+            {/* Grid Lines */}
+            <g stroke="hsl(0 0% 50%)" strokeWidth="0.5" opacity="0.15">
+              <line x1="0" y1="200" x2="1200" y2="200" />
+              <line x1="0" y1="400" x2="1200" y2="400" />
+              <line x1="0" y1="600" x2="1200" y2="600" />
+              <line x1="300" y1="0" x2="300" y2="800" />
+              <line x1="600" y1="0" x2="600" y2="800" />
+              <line x1="900" y1="0" x2="900" y2="800" />
+            </g>
+
+            {/* Circuit Connection Lines with Flow Animation */}
+            <g strokeWidth="1.5">
+              <path className="circuit-line" d="M150 200 L300 200 L450 350 L600 350" stroke="hsl(0 72% 51%)" opacity="0.4" />
+              <path className="circuit-line-2" d="M600 350 L750 200 L900 200 L1050 350" stroke="hsl(0 72% 51%)" opacity="0.3" />
+              <path className="circuit-line" d="M300 600 L450 450 L600 450 L750 600" stroke="hsl(0 72% 51%)" opacity="0.35" />
+              <path className="circuit-line-2" d="M100 500 L250 350 L400 350" stroke="hsl(0 72% 51%)" opacity="0.25" />
+              <path className="circuit-line" d="M800 500 L950 350 L1100 350 L1150 400" stroke="hsl(0 72% 51%)" opacity="0.3" />
+            </g>
+
+            {/* Glowing Nodes at Intersections */}
+            <g>
+              <circle className="node-outer" cx="300" cy="200" r="20" fill="hsl(0 72% 51%)" opacity="0.1" />
+              <circle className="circuit-node" cx="300" cy="200" r="4" fill="hsl(0 72% 51%)" />
+              
+              <circle className="node-outer-2" cx="600" cy="350" r="25" fill="hsl(0 72% 51%)" opacity="0.1" />
+              <circle className="circuit-node-2" cx="600" cy="350" r="5" fill="hsl(0 72% 51%)" />
+              
+              <circle className="node-outer-3" cx="900" cy="200" r="18" fill="hsl(0 72% 51%)" opacity="0.1" />
+              <circle className="circuit-node-3" cx="900" cy="200" r="4" fill="hsl(0 72% 51%)" />
+              
+              <circle className="node-outer" cx="450" cy="450" r="15" fill="hsl(0 72% 51%)" opacity="0.08" />
+              <circle className="circuit-node-4" cx="450" cy="450" r="3" fill="hsl(0 72% 51%)" />
+              
+              <circle className="node-outer-2" cx="750" cy="600" r="22" fill="hsl(0 72% 51%)" opacity="0.1" />
+              <circle className="circuit-node-5" cx="750" cy="600" r="4" fill="hsl(0 72% 51%)" />
+
+              <circle className="node-outer-3" cx="150" cy="200" r="12" fill="hsl(0 72% 51%)" opacity="0.08" />
+              <circle className="circuit-node" cx="150" cy="200" r="3" fill="hsl(0 72% 51%)" />
+
+              <circle className="node-outer" cx="1050" cy="350" r="16" fill="hsl(0 72% 51%)" opacity="0.08" />
+              <circle className="circuit-node-3" cx="1050" cy="350" r="3" fill="hsl(0 72% 51%)" />
+            </g>
+
+            {/* Floating Hexagons */}
+            <g stroke="hsl(0 72% 51%)" strokeWidth="1" fill="none">
+              <polygon className="hex-float" points="200,100 220,88 240,100 240,124 220,136 200,124" opacity="0.3" />
+              <polygon className="hex-float-2" points="850,500 875,486 900,500 900,528 875,542 850,528" opacity="0.25" />
+              <polygon className="hex-float-3" points="1000,150 1020,138 1040,150 1040,174 1020,186 1000,174" opacity="0.2" />
+            </g>
+
+            {/* Floating Circles */}
+            <g stroke="hsl(0 0% 50%)" strokeWidth="0.8" fill="none">
+              <circle className="hex-float-2" cx="500" cy="150" r="30" opacity="0.15" />
+              <circle className="hex-float" cx="100" cy="650" r="25" opacity="0.1" />
+              <circle className="hex-float-3" cx="1100" cy="600" r="35" opacity="0.12" />
+            </g>
+
+            {/* Data Flow Dots */}
+            <g fill="hsl(0 72% 51%)">
+              <circle className="circuit-node-2" cx="375" cy="275" r="2" opacity="0.5" />
+              <circle className="circuit-node-4" cx="525" cy="350" r="2" opacity="0.4" />
+              <circle className="circuit-node" cx="675" cy="275" r="2" opacity="0.5" />
+              <circle className="circuit-node-3" cx="825" cy="200" r="2" opacity="0.4" />
+              <circle className="circuit-node-5" cx="375" cy="425" r="2" opacity="0.3" />
+              <circle className="circuit-node-2" cx="525" cy="450" r="2" opacity="0.4" />
+            </g>
+          </svg>
         </div>
         
         <div className="content-width relative z-10">

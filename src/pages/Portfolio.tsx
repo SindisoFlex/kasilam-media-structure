@@ -24,6 +24,7 @@ const categories = [
         icon: Video,
         to: "/portfolio/videography",
         button: "Coming Soon",
+        disabled: true,
     },
 ];
 
