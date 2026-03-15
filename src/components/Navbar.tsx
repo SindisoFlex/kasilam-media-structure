@@ -8,6 +8,7 @@ import logo from "@/images/kmp.svg";
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
+  { label: "Insights", path: "/insights" },
   {
     label: "Services",
     path: "/services",
@@ -24,6 +25,7 @@ const navLinks = [
 const mobileLinks = [
   { label: "Home", path: "/" },
   { label: "About", path: "/about" },
+  { label: "Insights", path: "/insights" },
   { label: "Services", path: "/services" },
   { label: "Audio Production", path: "/services/audio-production", indent: true },
   { label: "Visual Production", path: "/services/visual-production", indent: true },

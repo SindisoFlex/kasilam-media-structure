@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
@@ -6,122 +5,17 @@ import { ArrowRight } from "lucide-react";
 const AboutHero = () => {
   return (
     <section className="relative flex min-h-[80vh] items-center justify-center overflow-hidden pt-20 bg-background" aria-labelledby="about-hero-title">
-      {/* 1. Background Illustrations - Inline SVG for Performance */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none select-none" aria-hidden="true">
-        {/* Mesh Background Effect */}
+        <div className="absolute inset-0">
+          <img
+            src="/about-hero.svg"
+            alt="Creative production workspace with editing tools and media equipment"
+            className="h-full w-full object-cover"
+            loading="lazy"
+          />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background" />
         <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-20" />
-        
-        {/* Partnership Icon (Hands Shaking) - Left Side */}
-        <svg
-          className="absolute left-[5%] top-[20%] w-[150px] md:w-[250px] lg:w-[350px] opacity-10 dark:opacity-20 transition-opacity duration-500"
-          viewBox="0 0 200 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          role="img"
-          aria-label="Stylized handshake illustration representing partnership"
-        >
-          <style>
-            {`
-              @keyframes shake {
-                0%, 100% { transform: rotate(0deg); }
-                25% { transform: rotate(-3deg); }
-                75% { transform: rotate(3deg); }
-              }
-              @keyframes slide-left {
-                0% { transform: translateX(-20px); opacity: 0; }
-                100% { transform: translateX(0); opacity: 1; }
-              }
-              @keyframes slide-right {
-                0% { transform: translateX(20px); opacity: 0; }
-                100% { transform: translateX(0); opacity: 1; }
-              }
-              /* Default states for fallback */
-              .hand-left, .hand-right { opacity: 1; transform: translateX(0); }
-              
-              /* Only apply animation if supported */
-              @supports (animation: shake 1s) {
-                .hand-left { animation: slide-left 1s ease-out forwards; opacity: 0; }
-                .hand-right { animation: slide-right 1s ease-out forwards; opacity: 0; }
-                .handshake-group { 
-                  animation: shake 3s ease-in-out infinite; 
-                  transform-origin: center;
-                }
-              }
-              @media (prefers-reduced-motion: reduce) {
-                .handshake-group, .hand-left, .hand-right { animation: none !important; opacity: 1 !important; transform: none !important; }
-              }
-            `}
-          </style>
-          <g className="handshake-group">
-            {/* Left Hand */}
-            <path
-              className="hand-left text-primary"
-              d="M40 100C40 100 60 80 80 85C100 90 110 105 110 105L100 125L60 120L40 100Z"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Right Hand */}
-            <path
-              className="hand-right text-foreground"
-              d="M160 100C160 100 140 80 120 85C100 90 90 105 90 105L100 125L140 120L160 100Z"
-              stroke="currentColor"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            {/* Grip Detail */}
-            <path
-              d="M100 105L110 115M110 105L100 115"
-              stroke="currentColor"
-              strokeWidth="2"
-              opacity="0.5"
-            />
-          </g>
-        </svg>
-
-        {/* Growth Icon (Bar Graph) - Right Side */}
-        <svg
-          className="absolute right-[5%] bottom-[20%] w-[150px] md:w-[250px] lg:w-[350px] opacity-10 dark:opacity-20 transition-opacity duration-500"
-          viewBox="0 0 200 200"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          role="img"
-          aria-label="Animated bar graph illustration representing business growth"
-        >
-          <style>
-            {`
-              @keyframes grow-up {
-                0% { transform: scaleY(0); }
-                100% { transform: scaleY(1); }
-              }
-              .bar { 
-                transform-origin: bottom;
-                /* Default state is visible for fallback */
-                transform: scaleY(1);
-              }
-              /* Only apply animation if supported */
-              @supports (animation: grow-up 1s) {
-                .bar { animation: grow-up 1.5s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards; }
-                .bar-1 { animation-delay: 0.2s; transform: scaleY(0); }
-                .bar-2 { animation-delay: 0.5s; transform: scaleY(0); }
-                .bar-3 { animation-delay: 0.8s; transform: scaleY(0); }
-              }
-              @media (prefers-reduced-motion: reduce) {
-                .bar { animation: none !important; transform: scaleY(1) !important; }
-              }
-            `}
-          </style>
-          {/* Axis */}
-          <path d="M40 160H160" stroke="currentColor" strokeWidth="2" opacity="0.3" />
-          <path d="M40 40V160" stroke="currentColor" strokeWidth="2" opacity="0.3" />
-          
-          {/* Bars */}
-          <rect className="bar bar-1 text-primary/40" x="55" y="100" width="20" height="60" fill="currentColor" rx="4" />
-          <rect className="bar bar-2 text-primary/70" x="90" y="70" width="20" height="90" fill="currentColor" rx="4" />
-          <rect className="bar bar-3 text-primary" x="125" y="40" width="20" height="120" fill="currentColor" rx="4" />
-        </svg>
       </div>
 
       {/* 2. Content Section - Centered and High Contrast */}
@@ -135,11 +29,11 @@ const AboutHero = () => {
           
           <div className="space-y-8">
             <p className="animate-fade-in text-lg md:text-2xl font-semibold text-foreground/80 leading-relaxed max-w-3xl mx-auto" style={{ animationDelay: "150ms" }}>
-              Kasilam Media Production is a multidisciplinary creative studio operating at the intersection of media, technology, and strategic brand visibility.
+              Kasilam Media Production is a multidisciplinary creative studio in Port Elizabeth (Gqeberha), Eastern Cape, operating at the intersection of media, technology, and strategic brand visibility.
             </p>
             
             <p className="animate-fade-in text-base md:text-lg text-foreground/60 leading-relaxed max-w-2xl mx-auto font-medium" style={{ animationDelay: "300ms" }}>
-              We bridge the gap between talent and visibility, providing professional tools for those ready to scale their impact.
+              We bridge the gap between talent and visibility for brands, creators, and businesses across South Africa.
             </p>
           </div>
 

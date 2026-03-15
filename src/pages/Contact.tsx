@@ -1,93 +1,40 @@
-import { useState } from "react";
+import { ContactForm } from "@/components/ContactForm";
+import { Briefcase, Mail, MapPin, MessageCircle } from "lucide-react";
+import { FadeInSection, HeroSection } from "@/components/animations";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
-import { MessageCircle, Send, Facebook, Instagram, Mail, MapPin, Phone } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { FadeInSection, HeroSection, StaggerContainer, StaggerItem } from "@/components/animations";
 
 const Contact = () => {
-  const { toast } = useToast();
-  const [form, setForm] = useState({ name: "", email: "", message: "", _honeypot: "" });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Simple spam protection
-    if (form._honeypot) {
-      console.log("Spam detected");
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    try {
-      // Using Formspree as a secure backend to hide the actual email address
-      // The email sindisototo@hotmail.com is handled on the Formspree side
-      // For maximum security, the user should replace 'mailto:sindisototo@hotmail.com' 
-      // with a Formspree Form ID (e.g., https://formspree.io/f/xknkyvoz)
-      const response = await fetch("https://formspree.io/f/xknkyvoz", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify({
-          name: form.name,
-          email: form.email,
-          message: form.message
-        })
-      });
-
-      if (response.ok) {
-        toast({ 
-          title: "Message sent!", 
-          description: "Thank you for reaching out. We'll get back to you soon.",
-          variant: "default"
-        });
-        setForm({ name: "", email: "", message: "", _honeypot: "" });
-      } else {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to send message");
-      }
-    } catch (error) {
-      toast({ 
-        title: "Submission failed", 
-        description: "There was an error sending your message. Please try again later or contact us via WhatsApp.",
-        variant: "destructive"
-      });
-      console.error("Form submission error:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
     <div>
-      <section className="relative overflow-hidden section-padding pb-32">
+      <section className="relative overflow-hidden section-padding pb-24">
         <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background z-10" />
-          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
+          <div className="absolute inset-0">
+            <img
+              src="/contact-hero.svg"
+              alt="Digital workspace with laptop and creative dashboards"
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/70 to-background z-10" />
+          <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
         </div>
         
         <div className="content-width relative z-10">
           <div className="mx-auto max-w-4xl text-center">
             <HeroSection>
-              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
-                Connect With Us
+              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600">
+                Start the Conversation
               </div>
             </HeroSection>
             <HeroSection delay={0.1}>
-              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12 uppercase">
-                Get In <span className="text-gradient">Touch</span>
+              <h1 className="text-5xl font-black leading-[0.9] md:text-7xl lg:text-8xl text-foreground tracking-[-0.05em] mb-8 uppercase">
+                Start Your <span className="text-gradient">Project</span> Conversation
               </h1>
             </HeroSection>
             <HeroSection delay={0.2}>
-              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
-                Have a project in mind? Let's build something extraordinary together.
+              <p className="mt-4 text-lg md:text-2xl text-foreground/70 font-semibold leading-relaxed max-w-3xl mx-auto">
+                Tell us about your project and we will help you build the right solution for your business.
               </p>
             </HeroSection>
           </div>
@@ -96,140 +43,162 @@ const Contact = () => {
 
       <section className="section-padding bg-background">
         <div className="content-width">
-          <div className="grid gap-16 lg:grid-cols-2">
-            {/* Form */}
+          <div className="grid gap-8">
             <FadeInSection>
-              <div className="premium-card p-10 bg-background">
-                <h2 className="text-3xl font-black text-foreground mb-8 uppercase tracking-tighter">Send a Message</h2>
-                <form onSubmit={handleSubmit} className="space-y-8">
-                  {/* Honeypot Field (Hidden from users) */}
-                  <div className="hidden">
-                    <Label htmlFor="_honeypot">Leave this field empty</Label>
-                    <Input
-                      id="_honeypot"
-                      name="_honeypot"
-                      value={form._honeypot}
-                      onChange={(e) => setForm({ ...form, _honeypot: e.target.value })}
-                      tabIndex={-1}
-                      autoComplete="off"
-                    />
+              <div className="flex flex-col gap-4">
+                <p className="text-xs font-black uppercase tracking-[0.35em] text-red-600">Contact Options</p>
+                <h2 className="text-3xl md:text-4xl font-black text-foreground uppercase tracking-tight">
+                  Choose Your Preferred Way to Reach Us
+                </h2>
+              </div>
+            </FadeInSection>
+            <div className="grid gap-6 md:grid-cols-3">
+              <FadeInSection delay={0.05}>
+                <a
+                  href="#project-inquiry"
+                  className="premium-card p-8 flex flex-col gap-4 bg-background transition-all hover:border-red-600/30"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600/10 text-red-600">
+                    <Mail className="h-6 w-6" />
                   </div>
+                  <div>
+                    <p className="text-lg font-black text-foreground">Email Inquiry</p>
+                    <p className="text-sm text-foreground/70">
+                      Share a detailed brief using the form and we will respond with next steps.
+                    </p>
+                  </div>
+                </a>
+              </FadeInSection>
+              <FadeInSection delay={0.1}>
+                <a
+                  href="https://wa.me/27732238078"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="premium-card p-8 flex flex-col gap-4 bg-background transition-all hover:border-red-600/30"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600/10 text-red-600">
+                    <MessageCircle className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-black text-foreground">Direct WhatsApp Message</p>
+                    <p className="text-sm text-foreground/70">
+                      Start a quick conversation to see if we are a fit.
+                    </p>
+                  </div>
+                </a>
+              </FadeInSection>
+              <FadeInSection delay={0.15}>
+                <a
+                  href="#project-inquiry"
+                  className="premium-card p-8 flex flex-col gap-4 bg-background transition-all hover:border-red-600/30"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-600/10 text-red-600">
+                    <Briefcase className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-lg font-black text-foreground">Project Consultation Request</p>
+                    <p className="text-sm text-foreground/70">
+                      Book a discovery call to shape the best plan for your goals.
+                    </p>
+                  </div>
+                </a>
+              </FadeInSection>
+            </div>
+          </div>
+        </div>
+      </section>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Full Name</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Your name"
-                      required
-                      className="h-16 bg-foreground/5 border-foreground/5 focus:border-red-600/50 rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Email Address</Label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={(e) => setForm({ ...form, email: e.target.value })}
-                      placeholder="you@example.com"
-                      required
-                      className="h-16 bg-foreground/5 border-foreground/5 focus:border-red-600/50 rounded-xl"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="message" className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50">Project Details</Label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      value={form.message}
-                      onChange={(e) => setForm({ ...form, message: e.target.value })}
-                      placeholder="Tell us about your project..."
-                      rows={5}
-                      required
-                      className="bg-foreground/5 border-foreground/5 focus:border-red-600/50 rounded-xl"
-                    />
-                  </div>
-                  <Button 
-                    type="submit" 
-                    size="lg" 
-                    variant="red"
-                    disabled={isSubmitting}
-                    className="w-full h-20 text-xs font-black rounded-xl uppercase tracking-[0.4em] disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isSubmitting ? "Sending..." : "Send Message"} <Send className="h-4 w-4 ml-4" />
-                  </Button>
-                </form>
+      <section className="section-padding bg-background">
+        <div className="content-width">
+          <div className="grid gap-16 lg:grid-cols-2">
+            <FadeInSection>
+              <div className="premium-card p-10 bg-background" id="project-inquiry">
+                <div className="mb-8">
+                  <p className="text-xs font-black uppercase tracking-[0.35em] text-red-600 mb-3">
+                    Project Inquiry Form
+                  </p>
+                  <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter">
+                    Tell Us About Your Project
+                  </h2>
+                  <p className="mt-4 text-sm font-semibold text-foreground/70">
+                    Most project inquiries receive a response within 24 hours.
+                  </p>
+                </div>
+                <ContactForm />
               </div>
             </FadeInSection>
 
-            {/* Connect */}
-            <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-8">
               <FadeInSection delay={0.1}>
-                <h2 className="text-3xl font-black text-foreground mb-8 uppercase tracking-tighter">Reach Us Directly</h2>
-                <div className="grid gap-6">
-                  <a
-                    href="https://wa.me/27732238078"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="premium-card p-8 flex items-center gap-8 group hover:border-red-600/30 transition-all bg-background"
-                  >
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-red-600/10 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all duration-500">
-                      <MessageCircle className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 mb-1">WhatsApp</p>
-                      <p className="text-xl font-black text-foreground uppercase tracking-tight">Chat with us</p>
-                    </div>
-                  </a>
-
-                  <div className="premium-card p-8 flex items-center gap-8 bg-background">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-foreground/5 text-foreground/50">
-                      <MapPin className="h-7 w-7" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 mb-1">Our Studio</p>
-                      <p className="text-base font-bold text-foreground/80 uppercase tracking-tight leading-tight">
-                        6034 NTONGELA STREET<br />KWAZAKHELE, PORT ELIZABETH
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-6">
-                    <a
-                      href="#"
-                      className="premium-card p-6 flex flex-col items-center text-center gap-4 group hover:border-red-600/30 transition-all bg-background"
-                    >
-                      <Facebook className="h-6 w-6 text-foreground/30 group-hover:text-red-600 transition-colors" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">Facebook</span>
-                    </a>
-                    <a
-                      href="#"
-                      className="premium-card p-6 flex flex-col items-center text-center gap-4 group hover:border-red-600/30 transition-all bg-background"
-                    >
-                      <Instagram className="h-6 w-6 text-foreground/30 group-hover:text-red-600 transition-colors" />
-                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">Instagram</span>
-                    </a>
+                <div className="premium-card p-10 bg-background">
+                  <p className="text-xs font-black uppercase tracking-[0.35em] text-red-600 mb-3">
+                    What Happens Next
+                  </p>
+                  <h2 className="text-3xl font-black text-foreground uppercase tracking-tighter mb-6">
+                    A Clear, Simple Process
+                  </h2>
+                  <div className="grid gap-4">
+                    {[
+                      "Request review",
+                      "Response within 24 hours",
+                      "Consultation discussion",
+                      "Project proposal",
+                    ].map((step, index) => (
+                      <div
+                        key={step}
+                        className="flex items-start gap-4 rounded-2xl border border-foreground/10 bg-foreground/5 p-4"
+                      >
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-white text-sm font-black">
+                          {index + 1}
+                        </div>
+                        <div className="pt-1">
+                          <p className="text-base font-semibold text-foreground">{step}</p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </FadeInSection>
 
-              <FadeInSection delay={0.2} className="mt-auto">
-                <div className="p-10 rounded-3xl bg-red-600 text-white flex flex-col items-center text-center gap-6 shadow-2xl shadow-red-600/20">
-                  <h3 className="text-2xl font-black uppercase tracking-tighter">Ready to Start?</h3>
-                  <p className="text-xs font-bold uppercase tracking-widest opacity-80 leading-relaxed">
-                    Skip the form and jump straight into our scheduling system.
+              <FadeInSection delay={0.15}>
+                <div className="premium-card p-10 bg-background">
+                  <p className="text-xs font-black uppercase tracking-[0.35em] text-red-600 mb-3">
+                    Local Presence
                   </p>
-                  <Button className="w-full h-16 bg-white text-red-600 hover:bg-white/90 font-black uppercase tracking-[0.3em] rounded-xl transition-all hover:scale-105 active:scale-95">
-                    View Availability
-                  </Button>
+                  <h3 className="text-2xl font-black text-foreground uppercase tracking-tighter mb-4">
+                    Based in South Africa
+                  </h3>
+                  <p className="text-sm font-semibold text-foreground/70 mb-6">
+                    Serving businesses in Port Elizabeth (Gqeberha), across the Eastern Cape, and throughout South Africa.
+                  </p>
+                  <div className="relative h-40 overflow-hidden rounded-2xl border border-foreground/10 bg-gradient-to-br from-foreground/5 via-background to-foreground/5">
+                    <div className="absolute inset-0 grid grid-cols-6 gap-2 opacity-40">
+                      {Array.from({ length: 24 }).map((_, index) => (
+                        <div key={index} className="h-full border border-foreground/10" />
+                      ))}
+                    </div>
+                    <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2 rounded-full bg-background/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] text-foreground shadow-lg">
+                      <MapPin className="h-4 w-4 text-red-600" />
+                      Eastern Cape
+                    </div>
+                    <div className="absolute left-[48%] top-[58%] h-3 w-3 rounded-full bg-red-600 shadow-[0_0_20px_rgba(225,29,46,0.6)]" />
+                  </div>
                 </div>
               </FadeInSection>
             </div>
           </div>
+
+          <FadeInSection delay={0.2} className="mt-16">
+            <div className="p-10 rounded-3xl bg-red-600 text-white flex flex-col items-center text-center gap-6 shadow-2xl shadow-red-600/20">
+              <h3 className="text-2xl font-black uppercase tracking-tighter">Ready to Start?</h3>
+              <p className="text-xs font-bold uppercase tracking-widest opacity-80 leading-relaxed">
+                Skip the form and jump straight into our scheduling system.
+              </p>
+              <Button className="w-full max-w-md h-16 bg-white text-red-600 hover:bg-white/90 font-black uppercase tracking-[0.3em] rounded-xl transition-all">
+                View Availability
+              </Button>
+            </div>
+          </FadeInSection>
         </div>
       </section>
     </div>

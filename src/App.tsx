@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
+import Insights from "./pages/Insights";
 import AudioProduction from "./pages/AudioProduction";
 import VisualProduction from "./pages/VisualProduction";
 import DigitalMarketing from "./pages/DigitalMarketing";
@@ -81,6 +82,7 @@ const App = () => (
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="/insights" element={<Insights />} />
                   <Route path="/services" element={<Services />} />
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/services/audio-production" element={<AudioProduction />} />

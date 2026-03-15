@@ -1,25 +1,28 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Mic, Camera, Globe, Zap, Users, Award, Clock, ArrowRight, MapPin, LineChart } from "lucide-react";
+import { Zap, Users, Award, Clock, ArrowRight, MapPin } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import heroBg from "@/images/hero-bg.png";
 import { useEffect } from "react";
 
 const steps = [
-  { num: "01", title: "Consult", desc: "We understand your goals, vision, and expectations." },
-  { num: "02", title: "Plan", desc: "We design a structured creative and digital strategy." },
-  { num: "03", title: "Create", desc: "We produce high-quality media with precision and professionalism." },
-  { num: "04", title: "Deliver", desc: "We deliver work that reflects excellence, intention, and impact." },
+  { num: "01", title: "Discovery", desc: "We clarify your goals, audience, and success metrics." },
+  { num: "02", title: "Planning", desc: "We shape the strategy, scope, and production roadmap." },
+  { num: "03", title: "Production", desc: "We execute with professional media, design, and technical rigor." },
+  { num: "04", title: "Delivery", desc: "We launch, hand over, and support the final outcome." },
 ];
 
 const Index = () => {
   const { openBooking } = useBooking();
 
   useEffect(() => {
-    document.title = "KMP | Kasilam Media Productions – Photography, Video, Audio & Web Design in Port Elizabeth";
+    document.title = "KMP | Kasilam Media Productions - Photography, Video & Digital Services in Port Elizabeth";
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-      metaDescription.setAttribute("content", "Kasilam Media Productions (KMP) is a creative production company in Port Elizabeth (Gqeberha), Eastern Cape providing photography, videography, audio production, and website development services for businesses and creators across South Africa.");
+      metaDescription.setAttribute(
+        "content",
+        "Kasilam Media Productions (KMP) delivers professional photography, videography, website development, and digital marketing in Port Elizabeth (Gqeberha), Eastern Cape, serving businesses across South Africa."
+      );
     }
   }, []);
 
@@ -40,20 +43,39 @@ const Index = () => {
 
         <div className="content-width relative z-20 text-center py-20">
           <h1 className="animate-fade-in mb-8 text-gradient">
-            Creative Media Studio for Modern Brands, Artists,
+            Creative Media and Digital Solutions
             <br />
-            <span className="text-primary italic">and Life&apos;s Biggest Moments.</span>
+            <span className="text-primary italic">for Growing Brands.</span>
           </h1>
           <p
-            className="mx-auto mt-8 max-w-3xl animate-fade-in text-lg md:text-2xl font-semibold uppercase tracking-[0.2em] text-foreground/80"
+            className="mx-auto mt-6 max-w-3xl animate-fade-in text-lg md:text-2xl font-semibold text-foreground/80 leading-relaxed"
             style={{ animationDelay: "150ms" }}
           >
-            Kasilam Media Productions (KMP) is a creative media production company based in Port Elizabeth (Gqeberha), Eastern Cape, offering professional photography, videography, audio production, and digital media services for clients across South Africa.
+            Professional photography, videography, website development, and digital marketing built to grow visibility, trust, and revenue.
           </p>
-          <div className="mt-8 animate-fade-in text-xs font-black uppercase tracking-[0.4em] text-primary/60" style={{ animationDelay: "200ms" }}>
-            KMP | Kasilam Media Productions - Port Elizabeth, Eastern Cape & South Africa
-          </div>
-          <div className="mt-16 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
+          <p
+            className="mt-6 animate-fade-in text-sm md:text-base font-bold uppercase tracking-[0.2em] text-primary/70"
+            style={{ animationDelay: "200ms" }}
+          >
+            Serving businesses in Port Elizabeth (Gqeberha), across the Eastern Cape, and throughout South Africa.
+          </p>
+          <div className="mt-14 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
+            <Button
+              asChild
+              variant="black"
+              size="lg"
+              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95"
+            >
+              <Link to="/services">View Services</Link>
+            </Button>
+            <Button
+              asChild
+              variant="outlineBlack"
+              size="lg"
+              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95"
+            >
+              <Link to="/portfolio">View Portfolio</Link>
+            </Button>
             <Button
               onClick={() => openBooking({
                 service: "General Inquiry",
@@ -64,66 +86,8 @@ const Index = () => {
               size="lg"
               className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer"
             >
-              Start Your Project <ArrowRight className="h-4 w-4 ml-3" />
+              Start a Project <ArrowRight className="h-4 w-4 ml-3" />
             </Button>
-            <Button
-              asChild
-              variant="black"
-              size="lg"
-              className="h-16 px-12 text-[11px] font-black uppercase tracking-[0.3em] rounded-full transition-all hover:scale-105 active:scale-95"
-            >
-              <Link to="/services">View Our Work</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Proven Creative & Digital Solutions */}
-      <section className="section-padding bg-background border-b border-foreground/5">
-        <div className="content-width">
-          <div className="max-w-4xl mx-auto text-center mb-16">
-            <h2 className="mb-6 text-gradient">Proven Creative &amp; Digital Solutions</h2>
-            <p className="text-lg text-foreground/60 font-medium leading-relaxed">
-              We build professional websites, create powerful visual content, and develop digital systems that help businesses grow, attract customers, and present themselves with confidence.
-            </p>
-          </div>
-          <div className="grid gap-8 lg:grid-cols-3">
-            {[
-              {
-                icon: Globe,
-                title: "Web Development",
-                desc: "Professional websites and digital platforms designed for performance and business growth.",
-                items: ["business websites", "service company websites", "portfolio websites", "custom web applications"],
-              },
-              {
-                icon: Camera,
-                title: "Content & Media Production",
-                desc: "Professional visual content designed to strengthen brand identity and engagement.",
-                items: ["brand videos", "social media visuals", "product photography", "short-form video content"],
-              },
-              {
-                icon: LineChart,
-                title: "Digital Growth Solutions",
-                desc: "Tools and services that help businesses improve visibility and attract clients online.",
-                items: ["social media management", "brand identity design", "SEO-ready website development", "marketing visuals"],
-              },
-            ].map((item) => (
-              <div key={item.title} className="premium-card p-8 h-full">
-                <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 border border-foreground/10">
-                  <item.icon className="h-6 w-6 text-red-600" />
-                </div>
-                <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{item.title}</h3>
-                <p className="text-sm text-foreground/60 font-medium leading-relaxed mb-6">{item.desc}</p>
-                <ul className="space-y-3">
-                  {item.items.map((entry) => (
-                    <li key={entry} className="flex items-center gap-3 text-xs font-black uppercase tracking-widest text-foreground/70">
-                      <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
-                      {entry}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -145,142 +109,87 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 2. Who We Help - Futuristic Grid */}
+      {/* 2. Client Types */}
       <section className="section-padding relative overflow-hidden bg-alternate/50">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-foreground/10 to-transparent" />
         <div className="content-width">
-          <div className="max-w-4xl mx-auto text-center mb-32">
+          <div className="max-w-4xl mx-auto text-center mb-20">
             <h2 className="mb-8 text-gradient">Who We Work With</h2>
-            <p className="text-xl font-medium uppercase tracking-widest text-foreground/50">
-              Strategic creative services for leaders, creators, and communities.
+            <p className="text-xl font-medium text-foreground/60">
+              Entrepreneurs, small businesses, growing brands, creators, and organizations - all supported with the same professional standard.
             </p>
           </div>
-          <div className="grid lg:grid-cols-3 gap-10">
-            <div className="premium-card group">
-              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Globe className="h-6 w-6 text-primary" />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+            {[
+              { title: "Entrepreneurs", desc: "Launch-ready brand and digital foundations." },
+              { title: "Small Businesses", desc: "Professional content and websites that convert." },
+              { title: "Growing Brands", desc: "Scalable media and marketing execution." },
+              { title: "Creators", desc: "High-end visual and video storytelling." },
+              { title: "Organizations", desc: "Reliable production for teams and campaigns." },
+            ].map((item) => (
+              <div key={item.title} className="premium-card p-6 text-left bg-background">
+                <h3 className="text-lg font-black mb-3">{item.title}</h3>
+                <p className="text-sm text-foreground/60 leading-relaxed">{item.desc}</p>
               </div>
-              <h3 className="text-3xl font-bold mb-6">Businesses</h3>
-              <p className="text-base mb-10 text-foreground/60 font-medium leading-relaxed">
-                For entrepreneurs, startups, and growing businesses ready to build credibility and stand out in the digital world.
-              </p>
-              <div className="space-y-5 mb-12 flex-grow">
-                {["Business websites", "Corporate photography", "Promotional videos", "Digital brand support"].map((item) => (
-                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-foreground/80">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Visibility & Trust</p>
-            </div>
-
-            <div className="premium-card group border-primary/20 bg-background/50 scale-105 shadow-[0_20px_40px_-10px_rgba(220,38,38,0.1)] dark:shadow-[0_0_100px_-20px_rgba(220,38,38,0.1)]">
-              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/20 border border-primary/40 flex items-center justify-center group-hover:scale-110 transition-transform duration-500 red-glow">
-                <Mic className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-3xl font-bold mb-6">Artists</h3>
-              <p className="text-base mb-10 text-foreground/60 font-medium leading-relaxed">
-                Helping musicians and creators produce professional sound and visuals that compete on a global stage.
-              </p>
-              <div className="space-y-5 mb-12 flex-grow">
-                {["Music recording", "Voiceovers", "Music videos", "Audio editing & mixing"].map((item) => (
-                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-foreground/80">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Creativity & Impact</p>
-            </div>
-
-            <div className="premium-card group">
-              <div className="mb-8 h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                <Camera className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="text-3xl font-bold mb-6">Community</h3>
-              <p className="text-base mb-10 text-foreground/60 font-medium leading-relaxed">
-                For families preserving life&apos;s most important milestones with professionalism, respect, and care.
-              </p>
-              <div className="space-y-5 mb-12 flex-grow">
-                {["Weddings", "Graduations", "Funerals & memorials", "Celebrations & events"].map((item) => (
-                  <div key={item} className="flex items-center gap-4 text-xs font-black uppercase tracking-widest text-foreground/80">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                    <span>{item}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="font-black text-[10px] uppercase tracking-[0.4em] text-primary">Preservation & Care</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 3. Services Architecture */}
+      {/* 3. Services Overview */}
       <section className="section-padding bg-background relative border-y border-foreground/5">
         <div className="content-width">
-          <div className="max-w-4xl mx-auto text-center mb-32">
-            <h2 className="mb-8 text-gradient">Services Architecture</h2>
-            <p className="text-xl font-medium uppercase tracking-widest text-foreground/40">Bridging the gap between media and technology.</p>
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <h2 className="mb-8 text-gradient">Services Overview</h2>
+            <p className="text-xl font-medium text-foreground/60">
+              Integrated creative and digital services built for clarity, growth, and consistency.
+            </p>
           </div>
-          <div className="grid gap-20 lg:grid-cols-2">
-            <div className="space-y-16">
-              <div className="flex items-center gap-6 mb-16">
-                <div className="h-14 w-1 bg-red-600 rounded-full red-glow" />
-                <h3 className="text-3xl font-black uppercase tracking-[0.3em] text-foreground/80">Core Identity</h3>
+          <div className="grid gap-8 lg:grid-cols-3">
+            {[
+              {
+                title: "Creative Production",
+                desc: "Photography, videography, and event production.",
+                link: "/services/visual-production",
+              },
+              {
+                title: "Digital Services",
+                desc: "Website development, content creation, and SEO optimization.",
+                link: "/services/web-development",
+              },
+              {
+                title: "Marketing Support",
+                desc: "Social media content, brand promotion, and analytics reporting.",
+                link: "/services/digital-marketing",
+              },
+            ].map((service) => (
+              <div key={service.title} className="premium-card p-8 bg-background flex flex-col justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.35em] text-primary mb-3">Service</p>
+                  <h3 className="text-2xl font-black mb-4">{service.title}</h3>
+                  <p className="text-base text-foreground/60 leading-relaxed">{service.desc}</p>
+                </div>
+                <Button
+                  asChild
+                  variant="link"
+                  className="mt-8 h-auto p-0 text-red-600 font-black uppercase tracking-[0.3em] text-[10px]"
+                >
+                  <Link to={service.link} className="flex items-center gap-3">
+                    Explore Service <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
               </div>
-              <div className="space-y-16 pl-8 border-l border-foreground/5 dark:border-white/5">
-                {[
-                  { icon: Camera, title: "Photography", desc: "Events, weddings, graduations, lifestyle, and corporate photography." },
-                  { icon: Mic, title: "Audio Production", desc: "Professional music recording, voiceovers, podcast production, and audio mixing." },
-                  { icon: ArrowRight, title: "Videography", desc: "Event coverage, promotional videos, music videos, and cinematic storytelling." },
-                ].map((s) => (
-                  <div key={s.title} className="group transition-all">
-                    <h4 className="text-2xl font-bold flex items-center gap-6 mb-4 group-hover:text-red-500 transition-colors">
-                      <div className="rounded-2xl bg-foreground/5 p-4 border border-foreground/5 group-hover:border-red-600/30 transition-all dark:bg-white/5 dark:border-white/5">
-                        <s.icon className="h-6 w-6 text-red-600" />
-                      </div>
-                      {s.title}
-                    </h4>
-                    <p className="text-lg text-foreground/50 leading-relaxed font-medium">{s.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-16">
-              <div className="flex items-center gap-6 mb-16">
-                <div className="h-14 w-1 bg-foreground/20 rounded-full dark:bg-white/20" />
-                <h3 className="text-3xl font-black uppercase tracking-[0.3em] text-foreground/40 dark:text-white/60">Growth Services</h3>
-              </div>
-              <div className="space-y-16 pl-8 border-l border-foreground/5 dark:border-white/5">
-                {[
-                  { icon: Globe, title: "Web Development", desc: "Modern business, portfolio, and startup websites with full maintenance support." },
-                  { icon: Zap, title: "Digital Marketing", desc: "Brand visibility strategies, social media content creation, and online presence optimization." },
-                  { icon: Award, title: "AI & Automation", desc: "AI-assisted content creation and smart digital workflows that help businesses operate faster and more efficiently." },
-                ].map((s) => (
-                  <div key={s.title} className="group transition-all">
-                    <h4 className="text-2xl font-bold flex items-center gap-6 mb-4 group-hover:text-red-500 transition-colors">
-                      <div className="rounded-2xl bg-foreground/5 p-4 border border-foreground/5 group-hover:border-red-600/30 transition-all dark:bg-white/5 dark:border-white/5">
-                        <s.icon className="h-6 w-6 text-red-600" />
-                      </div>
-                      {s.title}
-                    </h4>
-                    <p className="text-lg text-foreground/50 leading-relaxed font-medium">{s.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 4. Our Process - Methodical Layout */}
+      {/* 4. Process */}
       <section className="section-padding bg-alternate relative overflow-hidden">
         <div className="content-width">
-          <div className="max-w-4xl mx-auto text-center mb-32">
-            <h2 className="mb-8 text-gradient">The KMP Methodology</h2>
-            <p className="text-xl font-medium uppercase tracking-widest text-foreground/40">Structured planning for elite results.</p>
+          <div className="max-w-4xl mx-auto text-center mb-20">
+            <h2 className="mb-8 text-gradient">Project Workflow</h2>
+            <p className="text-xl font-medium text-foreground/60">A simple, reliable process from idea to delivery.</p>
           </div>
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 mb-20">
             {steps.map((s) => (
@@ -294,15 +203,6 @@ const Index = () => {
             ))}
           </div>
           
-          <div className="text-center mb-24">
-            <p className="hidden md:block text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">
-              Click on a service card to explore the package details.
-            </p>
-            <p className="md:hidden text-[10px] font-black uppercase tracking-[0.4em] text-foreground/40">
-              Tap a service card to explore the package details.
-            </p>
-          </div>
-
           <div className="text-center">
             <div className="inline-block px-10 py-5 rounded-full bg-foreground/5 border border-foreground/10 tech-border dark:bg-white/5 dark:border-white/10">
               <span className="text-[10px] font-black uppercase tracking-[0.5em] text-red-600">Clear. Efficient. Professional.</span>
@@ -311,23 +211,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 5. Why Work With Us */}
+      {/* 5. Why Businesses Work With Us */}
       <section className="section-padding bg-background">
         <div className="content-width text-center">
-          <h2 className="mb-32 text-gradient">Why Choose Our Studio?</h2>
-          <div className="grid gap-20 sm:grid-cols-2 lg:grid-cols-4">
+          <h2 className="mb-20 text-gradient">Why Businesses Work With Us</h2>
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: Award, title: "Strategic Thinking", desc: "Every project is designed with long-term brand growth in mind." },
-              { icon: Users, title: "Inclusive Access", desc: "High-quality media production accessible to startups, artists, and corporate clients." },
-              { icon: Zap, title: "Modern Technology", desc: "We integrate modern digital tools, AI, and creative innovation into every workflow." },
-              { icon: Clock, title: "Reliable Delivery", desc: "Clear timelines, transparent communication, and professional results you can trust." },
+              { icon: Award, title: "Production Quality", desc: "Professional visuals, audio, and digital execution across every deliverable." },
+              { icon: Zap, title: "Strategic Creativity", desc: "Creative thinking aligned to brand goals, growth, and ROI." },
+              { icon: Clock, title: "Reliable Execution", desc: "Clear timelines, structured workflows, and consistent delivery." },
+              { icon: Users, title: "Local Insight", desc: "Deep understanding of Port Elizabeth (Gqeberha) business realities and audience culture." },
             ].map((r) => (
               <div key={r.title} className="flex flex-col items-center group">
-                <div className="mb-10 rounded-[2.5rem] bg-foreground/5 p-8 border border-foreground/5 group-hover:border-red-600/30 group-hover:-rotate-12 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
-                  <r.icon className="h-8 w-8 text-red-600" />
+                <div className="mb-8 rounded-[2.5rem] bg-foreground/5 p-6 border border-foreground/5 group-hover:border-red-600/30 transition-all duration-700 dark:bg-white/5 dark:border-white/5">
+                  <r.icon className="h-7 w-7 text-red-600" />
                 </div>
-                <h4 className="font-bold text-2xl mb-6 uppercase tracking-tight tracking-[-0.03em]">{r.title}</h4>
-                <p className="text-base text-foreground/40 leading-relaxed max-w-[260px] font-medium">{r.desc}</p>
+                <h4 className="font-bold text-xl mb-4 uppercase tracking-tight tracking-[-0.03em]">{r.title}</h4>
+                <p className="text-base text-foreground/50 leading-relaxed max-w-[260px] font-medium">{r.desc}</p>
               </div>
             ))}
           </div>
@@ -339,9 +239,9 @@ const Index = () => {
         <div className="content-width">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-24 gap-10">
             <div className="max-w-2xl">
-              <h2 className="mb-8 text-gradient">Selected Projects</h2>
+              <h2 className="mb-8 text-gradient">Portfolio Highlights</h2>
               <p className="text-xl text-foreground/50 font-medium">
-                Real stories captured through powerful visuals, cinematic video, and professional sound.
+                Photography, video production, and digital projects that reflect real outcomes.
               </p>
             </div>
             <Button asChild variant="link" className="h-auto p-0 text-red-600 font-black uppercase tracking-[0.3em] text-[10px] group transition-all">
@@ -350,12 +250,36 @@ const Index = () => {
               </Link>
             </Button>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 lg:gap-12">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="premium-card p-0 aspect-video flex items-center justify-center group overflow-hidden relative border-foreground/5 hover:border-red-600/50">
-                <Camera className="h-10 w-10 text-foreground/10 group-hover:text-red-600/30 transition-all duration-700 z-10 scale-90 group-hover:scale-125 dark:text-white/10" />
-                <div className="absolute inset-0 bg-red-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              </div>
+          <div className="grid gap-8 md:grid-cols-3">
+            {[
+              {
+                title: "Photography",
+                desc: "Portraits, events, and brand imagery captured with precision.",
+                link: "/portfolio/photography",
+              },
+              {
+                title: "Video Production",
+                desc: "Cinematic storytelling, promotional video, and coverage.",
+                link: "/portfolio/videography",
+              },
+              {
+                title: "Digital Projects",
+                desc: "Business websites and brand-ready digital experiences.",
+                link: "/portfolio/restaurant-demo",
+              },
+            ].map((item) => (
+              <Link
+                key={item.title}
+                to={item.link}
+                className="premium-card p-8 bg-background group border-foreground/10 hover:border-red-600/40 transition-all"
+              >
+                <div className="mb-6 h-40 rounded-2xl bg-gradient-to-br from-foreground/10 via-background to-foreground/5 border border-foreground/10 group-hover:border-red-600/40 transition-colors" />
+                <h3 className="text-2xl font-black mb-3">{item.title}</h3>
+                <p className="text-sm text-foreground/60 leading-relaxed">{item.desc}</p>
+                <div className="mt-6 text-[10px] font-black uppercase tracking-[0.3em] text-red-600">
+                  View Work
+                </div>
+              </Link>
             ))}
           </div>
         </div>
@@ -410,17 +334,17 @@ const Index = () => {
         </div>
       </section>
 
-      {/* 8. Final CTA Section - Cinematic & Minimal */}
+      {/* 8. Final CTA Section */}
       <section className="section-padding relative overflow-hidden bg-alternate border-t border-foreground/5">
         <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
         <div className="content-width relative z-10 text-center">
-          <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
-            Let&apos;s Bring Your
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black mb-10 text-gradient leading-[0.9] tracking-[-0.05em]">
+            Let&apos;s Build Something
             <br />
-            Vision to Life.
+            Powerful Together.
           </h2>
-          <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-semibold uppercase tracking-[0.2em] leading-relaxed">
-            Creative media solutions for bold brands, growing businesses, and unforgettable moments.
+          <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/60 mb-16 font-semibold leading-relaxed">
+            Share your project ideas and explore how KMP can bring them to life with professional media and digital execution.
           </p>
           <div className="flex justify-center flex-wrap gap-8">
             <Button
@@ -433,7 +357,7 @@ const Index = () => {
               size="lg"
               className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 pointer-events-auto cursor-pointer"
             >
-              Start Your Project
+              Start a Project
             </Button>
             <Button
               asChild

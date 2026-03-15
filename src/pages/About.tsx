@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Users, Palette, Handshake, Lightbulb, Shield, TrendingUp, ArrowRight } from "lucide-react";
+import { Handshake, Lightbulb, Shield, TrendingUp } from "lucide-react";
 import { useBooking } from "@/contexts/BookingContext";
 import AboutHero from "@/components/AboutHero";
 
@@ -10,7 +10,7 @@ const timeline = [
   { year: "2020", title: "Industry Recalibration", desc: "Identifying and navigating structural shifts during global disruption to refine the business model." },
   { year: "2023", title: "Technological Integration", desc: "Front-end development studies to integrate modern technology and AI with media production." },
   { year: "2025", title: "Strategic Restructuring", desc: "Complete vision restructuring and business alignment for long-term positioning." },
-  { year: "2026", title: "Official Launch", desc: "Company registration and studio launch — delivering structured creative solutions for growth." },
+  { year: "2026", title: "Official Launch", desc: "Company registration and studio launch - delivering structured creative solutions for growth." },
 ];
 
 const principles = [
@@ -35,7 +35,7 @@ const About = () => {
               <h2 className="border-l-4 border-primary pl-6">Why We Exist</h2>
               <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
                 <p>
-                  Too many entrepreneurs, creatives, and growing businesses struggle not because they lack ability — but because they lack professional presentation and digital presence.
+                  Too many entrepreneurs, creatives, and growing businesses in Port Elizabeth (Gqeberha) and the Eastern Cape struggle not because they lack ability - but because they lack professional presentation and digital presence.
                 </p>
                 <div className="pt-4 grid grid-cols-1 sm:grid-cols-3 gap-6">
                   {["Creativity", "Technology", "Community"].map((item) => (
@@ -51,8 +51,41 @@ const About = () => {
               <p className="text-xs font-black uppercase tracking-[0.3em] mb-6 opacity-80">Our Core Belief</p>
               <h3 className="text-4xl font-black mb-8 text-primary-foreground leading-tight">Professional visibility creates opportunity.</h3>
               <p className="text-xl opacity-90 leading-relaxed font-bold italic">
-                “Creative solutions for real people, real stories, and growing businesses.”
+                "Creative solutions for real people, real stories, and growing businesses."
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 2.5 Founder Section */}
+      <section className="section-padding">
+        <div className="content-width">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
+            <div className="space-y-6">
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-primary">Founder & Creative Director</p>
+              <h2 className="text-3xl md:text-4xl font-black text-foreground uppercase tracking-tight">
+                Sindiso Sophazi
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Sindiso Sophazi founded Kasilam Media Production through direct experience within the creative industry in Port Elizabeth (Gqeberha), Eastern Cape. The business was built to address the lack of professional creative infrastructure and digital visibility for entrepreneurs, artists, and businesses across South Africa.
+              </p>
+              <p className="text-base text-muted-foreground leading-relaxed">
+                The result is a studio that combines disciplined production standards with practical strategy - giving clients the tools, presence, and confidence to grow.
+              </p>
+            </div>
+            <div className="premium-card p-6 bg-background">
+              <div className="overflow-hidden rounded-2xl border border-border/40 bg-muted/30">
+                <img
+                  src="/founder-portrait.svg"
+                  alt="Portrait of Sindiso Sophazi, Founder and Creative Director"
+                  className="h-full w-full object-cover"
+                  loading="lazy"
+                />
+              </div>
+              <div className="mt-4 text-sm font-semibold text-muted-foreground">
+                Founder & Creative Director
+              </div>
             </div>
           </div>
         </div>
@@ -85,10 +118,10 @@ const About = () => {
             <h2 className="mb-8">The Journey Behind the Vision</h2>
             <div className="space-y-8 text-lg text-muted-foreground leading-relaxed italic mx-auto max-w-3xl">
               <p>
-                Kasilam Media Production was shaped through Sindiso Sophazi’s direct experience with structural limitations within the creative industry in Port Elizabeth.
+                Kasilam Media Production was shaped through Sindiso Sophazi's direct experience with structural limitations within the creative industry in Port Elizabeth (Gqeberha).
               </p>
               <p>
-                Access to professional studios, technical infrastructure, and meaningful visibility was limited. That reality exposed a deeper issue — talent exists everywhere, but opportunity does not.
+                Access to professional studios, technical infrastructure, and meaningful visibility was limited. That reality exposed a deeper issue - talent exists everywhere, but opportunity does not.
               </p>
             </div>
           </div>
@@ -106,10 +139,10 @@ const About = () => {
           </div>
           <div className="max-w-3xl mx-auto text-center space-y-10 border-t border-border/40 pt-24">
             <p className="text-lg text-muted-foreground italic">
-              “Each stage was intentional. The company was built not on momentum, but on discipline, systems thinking, and long-term positioning.”
+              "Each stage was intentional. The company was built not on momentum, but on discipline, systems thinking, and long-term positioning."
             </p>
             <p className="text-xl md:text-2xl font-black text-foreground leading-[1.4]">
-              Today, Kasilam Media Production exists to eliminate barriers of access, visibility, and professional infrastructure — delivering structured creative solutions for brands and individuals ready to operate at a higher level.
+              Today, Kasilam Media Production exists to eliminate barriers of access, visibility, and professional infrastructure - delivering structured creative solutions for brands and individuals ready to operate at a higher level across the Eastern Cape and South Africa.
             </p>
           </div>
         </div>
@@ -136,18 +169,18 @@ const About = () => {
         </div>
       </section>
 
-      {/* 5.5 Our Position - New Section */}
+      {/* 5.5 Who We Work With */}
       <section className="section-padding bg-muted/20 border-t border-border/40">
         <div className="content-width text-center">
-          <h2 className="mb-14">Our Position</h2>
+          <h2 className="mb-8">Who We Work With</h2>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            We support entrepreneurs, growing businesses, artists and creators, community professionals, and corporate teams throughout Port Elizabeth (Gqeberha), the Eastern Cape, and South Africa. Every client receives the same professional standard, regardless of size.
+          </p>
           <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
-            {["Growing businesses", "Emerging entrepreneurs", "Artists and creators", "Community professionals", "Corporate clients"].map((p) => (
+            {["Entrepreneurs", "Growing businesses", "Artists and creators", "Community professionals", "Corporate teams"].map((p) => (
               <span key={p} className="px-6 py-3 rounded-full bg-background border border-border/60 text-sm font-bold shadow-sm">{p}</span>
             ))}
           </div>
-          <p className="mt-12 text-lg text-muted-foreground italic mx-auto max-w-2xl">
-            “We serve township entrepreneurs and corporate teams with the same standard of professionalism.”
-          </p>
         </div>
       </section>
 
@@ -157,7 +190,7 @@ const About = () => {
         <div className="content-width text-center relative z-10">
           <h2 className="mb-8">Build Your Presence Properly.</h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground mb-12">
-            “Kasilam Media Production was built with a long-term mindset. The goal is not only to create content — but to build presence.”
+            "Kasilam Media Production was built with a long-term mindset. The goal is not only to create content - but to build presence."
           </p>
           <div className="flex flex-wrap justify-center gap-6">
             <Button 
@@ -183,3 +216,4 @@ const About = () => {
 };
 
 export default About;
+
