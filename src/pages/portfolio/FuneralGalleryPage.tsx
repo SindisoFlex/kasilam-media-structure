@@ -28,17 +28,17 @@ const FuneralGalleryPage = () => {
         "funeral-6.jpg",
         "funeral-7.jpg",
         "funeral-8.jpg",
-      ].map((file) => `/images/funeral-photography/${file}`),
+        "funeral-9.jpg",
+        "funeral-10.jpg",
+        "funeral-11.jpg",
+        "funeral-12.jpg",
+        "funeral-13.jpg",
+        "funeral-14.jpg",
+      ].map((file) => `/images/portfolio/funeral/optimized/${file}`),
     []
   );
 
-  const layoutForIndex = (index: number) => {
-    const groupIndex = index % 6;
-    const isLarge = groupIndex === 0 || groupIndex === 5;
-    return isLarge
-      ? "md:col-span-2 md:row-span-2"
-      : "md:col-span-1 md:row-span-1";
-  };
+
 
   const openLightbox = (index: number) => {
     setActiveIndex(index);
@@ -116,7 +116,7 @@ const FuneralGalleryPage = () => {
             <h2 className="text-3xl md:text-5xl font-black text-gradient">Stories of Remembrance.</h2>
           </motion.div>
 
-          <div className="grid auto-rows-[160px] gap-6 sm:auto-rows-[200px] md:grid-cols-3 md:auto-rows-[250px]">
+          <div className="gallery-grid">
             {images.map((src, index) => (
               <motion.button
                 key={src}
@@ -125,12 +125,13 @@ const FuneralGalleryPage = () => {
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 type="button"
                 onClick={() => openLightbox(index)}
-                className={`group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.03] transition-all duration-500 ${layoutForIndex(index)}`}
+                className="gallery-item group"
               >
                 <img
                   src={src}
                   alt={`Funeral memorial photography ${index + 1}`}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="p-4 rounded-full bg-amber-500 text-black">
