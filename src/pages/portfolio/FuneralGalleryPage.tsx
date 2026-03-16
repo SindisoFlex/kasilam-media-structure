@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, X, Camera, Home } from "lucide-react";
@@ -9,6 +9,22 @@ const FuneralGalleryPage = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [slideDirection, setSlideDirection] = useState<"next" | "prev">("next");
 
+  const images = [
+    "/images/portfolio/funeral/optimized/funeral-1.jpg",
+    "/images/portfolio/funeral/optimized/funeral-2.jpg",
+    "/images/portfolio/funeral/optimized/funeral-3.jpg",
+    "/images/portfolio/funeral/optimized/funeral-4.jpg",
+    "/images/portfolio/funeral/optimized/funeral-5.jpg",
+    "/images/portfolio/funeral/optimized/funeral-6.jpg",
+    "/images/portfolio/funeral/optimized/funeral-9.jpg",
+    "/images/portfolio/funeral/optimized/funeral-10.jpg",
+    "/images/portfolio/funeral/optimized/funeral-11.jpg",
+    "/images/portfolio/funeral/optimized/funeral-12.jpg",
+    "/images/portfolio/funeral/optimized/funeral-13.jpg",
+    "/images/portfolio/funeral/optimized/funeral-14.jpg",
+    "/images/portfolio/funeral/optimized/funeral-photography-gqeberha-13.jpg",
+  ];
+
   useEffect(() => {
     document.title = "Funeral Photography Gallery | Kasilam Media Productions";
     const metaDescription = document.querySelector('meta[name="description"]');
@@ -16,29 +32,6 @@ const FuneralGalleryPage = () => {
       metaDescription.setAttribute("content", "View our gallery of respectful memorial service photography and remembrance coverage.");
     }
   }, []);
-
-  const images = useMemo(
-    () =>
-      [
-        "funeral-1.jpg",
-        "funeral-2.jpg",
-        "funeral-3.jpg",
-        "funeral-4.jpg",
-        "funeral-5.jpg",
-        "funeral-6.jpg",
-        "funeral-7.jpg",
-        "funeral-8.jpg",
-        "funeral-9.jpg",
-        "funeral-10.jpg",
-        "funeral-11.jpg",
-        "funeral-12.jpg",
-        "funeral-13.jpg",
-        "funeral-14.jpg",
-      ].map((file) => `/images/portfolio/funeral/optimized/${file}`),
-    []
-  );
-
-
 
   const openLightbox = (index: number) => {
     setActiveIndex(index);
@@ -116,7 +109,7 @@ const FuneralGalleryPage = () => {
             <h2 className="text-3xl md:text-5xl font-black text-gradient">Stories of Remembrance.</h2>
           </motion.div>
 
-          <div className="gallery-grid">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
             {images.map((src, index) => (
               <motion.button
                 key={src}
@@ -125,12 +118,12 @@ const FuneralGalleryPage = () => {
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 type="button"
                 onClick={() => openLightbox(index)}
-                className="gallery-item group"
+                className="group relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.03]"
               >
                 <img
                   src={src}
-                  alt={`Funeral photography memorial service in Gqeberha, image ${index + 1}`}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  alt={`Funeral memorial photography ${index + 1}`}
+                  className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
@@ -187,7 +180,7 @@ const FuneralGalleryPage = () => {
             >
               <img
                 src={images[activeIndex]}
-                alt={`Funeral photography memorial service in Gqeberha, image ${activeIndex + 1}`}
+                alt={`Funeral memorial photography ${activeIndex + 1}`}
                 className="h-full w-full object-contain rounded-2xl shadow-2xl"
               />
               <div className="absolute bottom-[-60px] left-0 right-0 text-center">

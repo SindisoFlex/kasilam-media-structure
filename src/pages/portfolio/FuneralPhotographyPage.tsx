@@ -54,8 +54,9 @@ const FuneralPhotographyPage = () => {
             >
               <div className="aspect-square mb-8 overflow-hidden rounded-2xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1516589174184-c685266d4303?auto=format&fit=crop&w=800&q=80" 
+                  src="/images/portfolio/funeral/optimized/funeral-photography-gqeberha-13.jpg"
                   alt="Funeral Gallery"
+                  loading="lazy"
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
               </div>
