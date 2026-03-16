@@ -32,11 +32,11 @@ const FuneralPhotographyPage = () => {
               </span>
             </div>
             <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-8 leading-[0.9] tracking-tight text-gradient">
-              Honoring <br />
-              <span className="italic text-amber-500">Every Memory.</span>
+              Funeral Photography in <br />
+              <span className="italic text-amber-500">Gqeberha & Eastern Cape.</span>
             </h1>
             <p className="text-xl md:text-2xl text-white/50 font-medium max-w-2xl leading-relaxed">
-              Respectful and dignified coverage of memorial services, capturing the love and legacy of those who have passed.
+              Respectful and dignified memorial photography capturing love, remembrance, and legacy for families across the Eastern Cape.
             </p>
           </motion.div>
         </div>
@@ -95,6 +95,24 @@ const FuneralPhotographyPage = () => {
               <h4 className="text-amber-500 font-black uppercase tracking-wider mb-4">Lasting Legacy</h4>
               <p className="text-white/50 leading-relaxed">Creating a visual record that honors the departed and provides comfort to the living for generations.</p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Arrange Coverage CTA */}
+      <section className="section-padding border-t border-white/5 bg-gradient-to-b from-background via-amber-900/5 to-background">
+        <div className="content-width text-center">
+          <h2 className="text-4xl md:text-6xl font-black mb-6">Arrange Memorial Coverage</h2>
+          <p className="text-lg text-white/50 max-w-2xl mx-auto mb-10">
+            If you need respectful and professional funeral photography, our team is available to document memorial services with care and discretion.
+          </p>
+          <div className="flex justify-center flex-wrap gap-6">
+            <Button asChild size="lg" className="h-16 px-10 text-xs font-black uppercase tracking-[0.3em] bg-amber-500 text-black hover:bg-amber-600 transition-all">
+              <Link to="/contact">Contact Us</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg" className="h-16 px-10 text-xs font-black uppercase tracking-[0.3em] border-white/10 hover:bg-white/5">
+              <a href="https://wa.me/27732238078" target="_blank" rel="noopener noreferrer">WhatsApp Us</a>
+            </Button>
           </div>
         </div>
       </section>

@@ -129,7 +129,7 @@ const FuneralGalleryPage = () => {
               >
                 <img
                   src={src}
-                  alt={`Funeral memorial photography ${index + 1}`}
+                  alt={`Funeral photography memorial service in Gqeberha, image ${index + 1}`}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
                 />
@@ -187,7 +187,7 @@ const FuneralGalleryPage = () => {
             >
               <img
                 src={images[activeIndex]}
-                alt={`Funeral memorial photography ${activeIndex + 1}`}
+                alt={`Funeral photography memorial service in Gqeberha, image ${activeIndex + 1}`}
                 className="h-full w-full object-contain rounded-2xl shadow-2xl"
               />
               <div className="absolute bottom-[-60px] left-0 right-0 text-center">

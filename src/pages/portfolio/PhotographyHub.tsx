@@ -9,7 +9,7 @@ const categories = [
     title: "Funeral Photography",
     description: "Respectful memorial photography and remembrance coverage.",
     icon: Heart,
-    image: "https://images.unsplash.com/photo-1516589174184-c685266d4303?auto=format&fit=crop&w=800&q=80",
+    image: "/images/portfolio/funeral/optimized/funeral-photography-gqeberha-13.jpg",
     button: "View Funeral Gallery",
     to: "/portfolio/photography/funeral",
     color: "text-amber-500",
@@ -91,6 +91,7 @@ const PhotographyHub = () => {
                   <img 
                     src={category.image} 
                     alt={category.title}
+                    loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
