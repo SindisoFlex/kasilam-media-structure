@@ -77,14 +77,16 @@ const About = () => {
             <div className="premium-card p-6 bg-background">
               <div className="overflow-hidden rounded-2xl border border-border/40 bg-muted/30">
                 <img
-                  src="/founder-portrait.svg"
-                  alt="Portrait of Sindiso Sophazi, Founder and Creative Director"
+                  src="/images/Sindiso Sophazi.jpg"
+                  alt="Portrait of Sindiso Sophazi, Founder and Creative Director of Kasilam Media Productions"
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />
               </div>
-              <div className="mt-4 text-sm font-semibold text-muted-foreground">
-                Founder & Creative Director
+              <div className="mt-4 space-y-1">
+                <p className="text-base font-bold text-foreground">Sindiso Sophazi</p>
+                <p className="text-sm font-semibold text-muted-foreground">Founder &amp; Creative Director</p>
+                <p className="text-sm font-semibold text-muted-foreground">Kasilam Media Productions</p>
               </div>
             </div>
           </div>
