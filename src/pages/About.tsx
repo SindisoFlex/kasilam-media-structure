@@ -78,7 +78,7 @@ const About = () => {
               <div className="overflow-hidden rounded-2xl border border-border/40 bg-muted/30">
                 <img
                   src="/images/Sindiso Sophazi.jpg"
-                  alt="Portrait of Sindiso Sophazi, Founder and Creative Director of Kasilam Media Productions"
+                  alt="Portrait of Sindiso Sophazi, Founder of Kasilam Media Productions"
                   className="h-full w-full object-cover"
                   loading="lazy"
                 />

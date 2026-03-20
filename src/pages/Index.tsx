@@ -43,21 +43,21 @@ const Index = () => {
 
         <div className="content-width relative z-20 text-center py-20">
           <h1 className="animate-fade-in mb-8 text-gradient">
-            Creative Media and Digital Solutions
+            Technology &amp; Media Studio
             <br />
-            <span className="text-primary italic">for Growing Brands.</span>
+            <span className="text-primary italic">for Modern Brands.</span>
           </h1>
           <p
             className="mx-auto mt-6 max-w-3xl animate-fade-in text-lg md:text-2xl font-semibold text-foreground/80 leading-relaxed"
             style={{ animationDelay: "150ms" }}
           >
-            Professional photography, videography, website development, and digital marketing built to grow visibility, trust, and revenue.
+            We combine visual production, web development, and digital strategy to help businesses and creators build powerful digital presence across South Africa.
           </p>
           <p
             className="mt-6 animate-fade-in text-sm md:text-base font-bold uppercase tracking-[0.2em] text-primary/70"
             style={{ animationDelay: "200ms" }}
           >
-            Serving businesses in Port Elizabeth (Gqeberha), across the Eastern Cape, and throughout South Africa.
+            Serving creators, entrepreneurs, and businesses across Gqeberha, the Eastern Cape, and South Africa.
           </p>
           <div className="mt-14 flex animate-fade-in flex-wrap justify-center gap-6" style={{ animationDelay: "300ms" }}>
             <Button

@@ -110,6 +110,17 @@ const Contact = () => {
 
       <section className="section-padding bg-background">
         <div className="content-width">
+          <FadeInSection>
+            <div className="mb-8 premium-card p-6 bg-background">
+              <p className="text-xs font-black uppercase tracking-[0.35em] text-red-600 mb-2">
+                Typical Response Time
+              </p>
+              <p className="text-sm font-semibold text-foreground/70">
+                We reply within 24 hours.
+              </p>
+            </div>
+          </FadeInSection>
+
           <div className="grid gap-16 lg:grid-cols-2">
             <FadeInSection>
               <div className="premium-card p-10 bg-background" id="project-inquiry">
