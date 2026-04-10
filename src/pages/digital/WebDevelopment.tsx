@@ -1,605 +1,287 @@
-import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, CheckCircle, ArrowRight, Code, MousePointer2, Layout, Zap, Smartphone, Search, LineChart, Server, ShieldCheck, GraduationCap, UtensilsCrossed, HardHat, HeartHandshake } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { HeroSection, FadeInSection, StaggerContainer, StaggerItem } from "@/components/animations";
 import { useBooking } from "@/contexts/BookingContext";
-import { FadeInSection, HeroSection, StaggerContainer, StaggerItem, StaggerScaleItem } from "@/components/animations";
+import { Link } from "react-router-dom";
+import {
+  Globe, TrendingUp, Shield, CalendarCheck, MapPin,
+  CheckCircle, MessageCircle, ArrowRight
+} from "lucide-react";
 
 const WebDevelopment = () => {
   const { openBooking } = useBooking();
-  const startupFeatures = ["1 professional landing page", "mobile responsive design", "contact form integration", "basic SEO setup", "fast loading optimization"];
-  const businessFeatures = ["5-10 pages", "responsive design", "contact forms", "SEO setup", "Google Analytics integration"];
-  const appExamples = ["booking systems", "client portals", "dashboards", "custom web applications"];
+
   const whyInvest = [
-    "build trust with potential clients",
-    "generate leads and inquiries",
-    "showcase products and services professionally",
-    "automate bookings and business processes",
-    "expand their reach beyond physical locations",
+    { icon: Shield, text: "Build trust with serious clients" },
+    { icon: TrendingUp, text: "Generate consistent inquiries" },
+    { icon: Globe, text: "Showcase services professionally" },
+    { icon: CalendarCheck, text: "Automate bookings and processes" },
+    { icon: MapPin, text: "Expand beyond physical location" },
   ];
-  const technologies = [
-    "React & modern front-end frameworks",
-    "responsive mobile-first design",
-    "SEO optimized structure",
-    "secure and scalable architecture",
-  ];
-  const techPillars = [
+
+  const devPackages = [
     {
-      title: "Front-End Development",
-      desc: "Modern frameworks and responsive design systems powering fast and intuitive user experiences.",
-      items: ["React-based development", "responsive mobile-first layouts", "component-based architecture"],
-      icon: Code,
+      title: "Landing Page",
+      subtitle: "Startup Entrance",
+      price: "R4,500",
+      priceNote: "once-off",
+      altPrice: "or R180/month for 36 months",
+      features: [
+        "1 professional landing page",
+        "Mobile responsive design",
+        "Contact form integration",
+        "Basic SEO setup",
+        "Fast loading optimization",
+      ],
+      cta: "Get Started",
+      highlighted: false,
+      booking: { service: "Web Development", package: "Landing Page", price: 4500 },
     },
     {
-      title: "Performance & SEO Optimization",
-      desc: "Websites engineered for speed, visibility, and search performance.",
-      items: ["optimized page structure", "SEO-ready code architecture", "fast-loading assets and images"],
-      icon: Zap,
+      title: "Business Website",
+      subtitle: "Most Popular",
+      price: "R12,000",
+      priceNote: "once-off",
+      altPrice: "or R400/month for 36 months",
+      features: [
+        "5–10 pages",
+        "Full business structure",
+        "Contact forms",
+        "SEO setup",
+        "Google Analytics integration",
+      ],
+      cta: "Get Started",
+      highlighted: true,
+      booking: { service: "Web Development", package: "Business Website", price: 12000 },
     },
     {
-      title: "Security & Infrastructure",
-      desc: "Reliable systems protecting business data and ensuring website uptime.",
-      items: ["SSL encryption", "secure hosting environments", "daily backups and monitoring"],
-      icon: ShieldCheck,
-    },
-    {
-      title: "Scalable Architecture",
-      desc: "Web platforms built to grow with the business.",
-      items: ["modular development structure", "API-ready integrations", "expandable architecture for future features"],
-      icon: Server,
-    },
-  ];
-  const websitesBuilt = [
-    {
-      title: "Mpongoshe Security Services Website",
-      description: "Professional security company website designed for service visibility and lead generation.",
-      href: "https://mpongoshe-security-services.vercel.app/",
-      button: "Visit Website",
-      external: true,
-    },
-    {
-      title: "Funeral Home Demo",
-      description: "A calm, respectful layout with services, memorial planning, and support.",
-      href: "/portfolio/funeral-home-demo",
-      button: "View Demo",
-    },
-    {
-      title: "School Website Demo",
-      description: "Community-driven education site with programs and admissions info.",
-      href: "/portfolio/school-demo",
-      button: "View Demo",
-    },
-    {
-      title: "Restaurant Website Demo",
-      description: "Minimalist dining brand with menu highlights and reservations.",
-      href: "/portfolio/restaurant-demo",
-      button: "View Demo",
-    },
-    {
-      title: "Construction Company Website Demo",
-      description: "Strong, professional layout with services and project highlights.",
-      href: "/portfolio/construction-demo",
-      button: "View Demo",
+      title: "Custom / Web App",
+      subtitle: "Advanced Solutions",
+      price: "R25,000+",
+      priceNote: "",
+      altPrice: "",
+      features: [
+        "Booking systems",
+        "Client portals",
+        "Dashboards",
+        "Custom web applications",
+      ],
+      cta: "Inquire Project",
+      highlighted: false,
+      booking: { service: "Web Development", package: "Custom / Web App", price: 25000 },
     },
   ];
-  const industryFocus = [
+
+  const hostingPlans = [
     {
-      title: "Security Companies",
-      desc: "Professional service websites designed to showcase services, certifications, and client trust.",
-      icon: ShieldCheck,
+      title: "Starter",
+      price: "R99",
+      features: ["Secure hosting", "Basic performance", "Limited support"],
+      highlighted: false,
+      badge: "",
     },
     {
-      title: "Funeral Homes",
-      desc: "Respectful and calm website layouts with service details and memorial planning information.",
-      icon: HeartHandshake,
+      title: "Business",
+      badge: "Recommended",
+      price: "R199",
+      features: ["Faster hosting", "Daily backups", "WhatsApp support"],
+      highlighted: true,
     },
     {
-      title: "Schools & Education",
-      desc: "Structured websites for programs, admissions, announcements, and community communication.",
-      icon: GraduationCap,
+      title: "Premium",
+      price: "R299 – R499",
+      features: ["Priority performance", "Ongoing support", "Minor updates included"],
+      highlighted: false,
+      badge: "",
     },
-    {
-      title: "Restaurants",
-      desc: "Modern dining websites with menu highlights, reservations, and location visibility.",
-      icon: UtensilsCrossed,
-    },
-    {
-      title: "Construction & Contractors",
-      desc: "Professional websites with project galleries, service descriptions, and quote request forms.",
-      icon: HardHat,
-    },
-  ];
-  const projectQuestions = [
-    {
-      question: "What type of website or application do you need?",
-      options: ["Landing page", "Business website", "Online store", "Booking system", "Custom web application"],
-    },
-    {
-      question: "What stage are you at?",
-      options: ["Just exploring ideas", "Planning to build soon", "Redesigning an existing website", "Expanding an existing platform"],
-    },
-    {
-      question: "What is your estimated budget range?",
-      options: ["R3000 – R8000", "R8000 – R15000", "R15000 – R30000", "R30000+"],
-    },
-  ];
-  const developmentProcess = [
-    { step: "01", title: "Discovery & Planning", desc: "Understanding your business, audience, and project goals." },
-    { step: "02", title: "Design & User Experience", desc: "Creating intuitive layouts and user-focused design." },
-    { step: "03", title: "Development", desc: "Building the website or application with modern technologies." },
-    { step: "04", title: "Testing & Optimization", desc: "Ensuring performance, speed, and compatibility." },
-    { step: "05", title: "Launch & Support", desc: "Deploying your project and providing ongoing support if needed." },
-  ];
-  const hostingPackages = [
-    { name: "Basic Hosting", price: "R300", desc: "Perfect for starting fresh.", features: ["Hosting", "1 email account", "Daily backups"], icon: Server },
-    { name: "Standard Hosting", price: "R550", desc: "The standard for growing SMEs.", features: ["Hosting", "5 email accounts", "Daily backups", "SSL Certificate"], icon: ShieldCheck, highlighted: true },
-    { name: "Premium Hosting", price: "R1200", desc: "Maximum performance & security.", features: ["Hosting", "10 email accounts", "SSL + Security monitoring", "Monthly optimization"], icon: Zap },
   ];
 
   return (
-    <div className="pt-20">
-      <section className="relative overflow-hidden section-padding pb-32">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-gradient-to-b from-background/20 via-background/80 to-background z-10" />
-          <img
-            src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=2400"
-            alt="Modern web development workstation with code and UI layouts"
-            className="h-full w-full object-cover opacity-40 grayscale"
-          />
-          <div className="absolute inset-0 mesh-bg opacity-20 dark:opacity-40" />
-        </div>
-        
-        <div className="content-width relative z-10">
-          <div className="mx-auto max-w-4xl text-center">
-            <HeroSection>
-              <div className="mb-10 inline-flex items-center gap-3 rounded-full border border-red-600/30 bg-red-600/10 px-6 py-2 text-xs font-black uppercase tracking-[0.3em] text-red-600 animate-pulse">
-                <Globe className="h-4 w-4" /> Web Development & Engineering
-              </div>
-            </HeroSection>
-            <HeroSection delay={0.1}>
-              <h1 className="text-5xl font-black leading-[0.85] md:text-8xl lg:text-9xl text-foreground tracking-[-0.06em] mb-12">
-                Build Your Elite <span className="text-gradient">Digital Asset</span>
-              </h1>
-            </HeroSection>
-            <HeroSection delay={0.2}>
-              <p className="mt-8 text-xl md:text-2xl text-foreground/50 font-bold uppercase tracking-widest leading-relaxed max-w-3xl mx-auto">
-                We design and develop high-performance websites and web applications built to scale your business.
-              </p>
-            </HeroSection>
-            <HeroSection delay={0.3}>
-              <div className="flex flex-wrap justify-center gap-6 mt-16">
-                <Button
-                  onClick={() => openBooking({
-                    service: "Web Development",
-                    package: "General Project",
-                    price: 0
-                  })}
-                  size="lg"
-                  className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
-                >
-                  Discuss Your Project <ArrowRight className="h-4 w-4 ml-4" />
-                </Button>
-              </div>
-            </HeroSection>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <FadeInSection className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
-              Why Businesses Invest in <span className="text-primary">Professional Websites</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              A professional website is more than just an online presence. It is a digital asset that helps businesses:
-            </p>
-          </FadeInSection>
-          <StaggerContainer className="mx-auto mt-12 max-w-3xl">
-            <div className="grid gap-4">
-              {whyInvest.map((item) => (
-                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border">
-                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-white font-medium">{item}</span>
-                </StaggerItem>
-              ))}
-            </div>
-          </StaggerContainer>
-          <FadeInSection delay={0.2} className="mx-auto mt-10 max-w-3xl text-center">
-            <p className="text-lg text-muted-foreground">
-              Our goal is to create websites and applications that support real business growth.
-            </p>
-          </FadeInSection>
-        </div>
-      </section>
-
-      <section className="section-padding bg-card/40 border-y border-foreground/5">
-        <div className="content-width">
-          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
-            <h2 className="text-3xl font-bold md:text-5xl text-white mb-6">
-              Websites <span className="text-primary">We've Built</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              A mix of live projects and industry demos to showcase real client-ready work.
-            </p>
-          </FadeInSection>
-          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {websitesBuilt.map((site) => (
-              <StaggerItem key={site.title}>
-                <div className="premium-card p-6 flex flex-col gap-4">
-                  <div>
-                    <h3 className="text-lg font-black text-foreground">{site.title}</h3>
-                    <p className="mt-3 text-sm text-foreground/60">{site.description}</p>
-                  </div>
-                  <Button asChild className="mt-auto h-12 text-xs font-black uppercase tracking-[0.3em] btn-secondary">
-                    {site.external ? (
-                      <a href={site.href} target="_blank" rel="noreferrer">
-                        {site.button}
-                      </a>
-                    ) : (
-                      <Link to={site.href}>{site.button}</Link>
-                    )}
-                  </Button>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="section-padding bg-background border-y border-foreground/5">
-        <div className="content-width">
-          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
-            <h2 className="text-3xl font-black md:text-5xl text-foreground mb-6">
-              Websites Built for <span className="text-red-600">Real Businesses</span>
-            </h2>
-            <p className="text-lg font-medium text-foreground/60">
-              We design websites tailored for the industries that drive local business growth. Our solutions are built to help organizations present their services professionally and generate real client inquiries across Port Elizabeth, the Eastern Cape, and South Africa.
-            </p>
-          </FadeInSection>
-          <StaggerContainer className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {industryFocus.map((industry) => (
-              <StaggerItem key={industry.title}>
-                <div className="premium-card p-8 h-full border border-foreground/10 bg-background">
-                  <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 text-red-600">
-                    <industry.icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-lg font-black text-foreground mb-3 uppercase tracking-tight">{industry.title}</h3>
-                  <p className="text-sm text-foreground/60 font-medium leading-relaxed">{industry.desc}</p>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="section-padding bg-alternate border-y border-foreground/5">
-        <div className="content-width">
-          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">Development Packages</h2>
-            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Engineered for high-performance and business growth.</p>
-          </FadeInSection>
-          
-          <div className="mb-12 text-center md:hidden">
-            <p className="text-xs font-black uppercase tracking-widest text-red-600 animate-pulse">
-              Swipe to view packages
-            </p>
-          </div>
-          <div className="mb-12 text-center hidden md:block">
-            <p className="text-xs font-black uppercase tracking-widest text-foreground/30">
-              Click/Tap on a package card to start booking
-            </p>
-          </div>
-
-          <StaggerContainer className="grid gap-8 lg:grid-cols-3">
-            {[
-              {
-                title: "Landing Page",
-                subtitle: "(Startup Entrance)",
-                price: "R4500",
-                monthly: "R180",
-                features: startupFeatures,
-                icon: Smartphone,
-              },
-              {
-                title: "Small Business Website",
-                subtitle: "Growth Focus",
-                price: "R12000",
-                monthly: "R400",
-                features: businessFeatures,
-                icon: Layout,
-                highlighted: true,
-              },
-              {
-                title: "Custom / Web App",
-                subtitle: "Advanced Solutions",
-                price: "R25000+",
-                features: appExamples,
-                icon: Code,
-                isCustom: true,
-              }
-            ].map((pkg) => (
-              <StaggerItem key={pkg.title}>
-                <div
-                  onClick={() => openBooking({
-                    service: "Web Development",
-                    package: pkg.title,
-                    price: pkg.isCustom ? 25000 : parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
-                  })}
-                  className={`premium-card p-10 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 bg-background ${
-                    pkg.highlighted ? "border-red-600 border-2" : ""
-                  }`}
-                >
-                  {pkg.highlighted && (
-                    <div className="absolute -top-6 left-1/2 -translate-x-1/2">
-                      <span className="bg-red-600 text-white px-8 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.4em] shadow-xl">
-                        SME Essential
-                      </span>
-                    </div>
-                  )}
-                  <div className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
-                    <pkg.icon className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-2xl font-black text-foreground mb-2 uppercase tracking-tighter">{pkg.title}</h3>
-                  <p className="text-[10px] font-black tracking-widest text-foreground/30 uppercase mb-8">{pkg.subtitle}</p>
-                  
-                  <div className={`mb-10 flex flex-col items-center p-8 rounded-[2rem] w-full transition-colors ${
-                    pkg.highlighted ? "bg-red-600/10" : "bg-foreground/5 group-hover:bg-red-600/5"
-                  }`}>
-                    <span className="text-4xl font-black text-red-600">{pkg.price}</span>
-                    {pkg.monthly && (
-                      <div className="mt-4 pt-4 border-t border-foreground/10 w-full">
-                        <span className="text-lg font-black text-foreground">{pkg.monthly} <span className="text-[10px] uppercase tracking-widest opacity-50">/ mo</span></span>
-                        <p className="text-[8px] font-black uppercase tracking-widest opacity-30 mt-1">for 36 months</p>
-                      </div>
-                    )}
-                  </div>
-
-                  <ul className="mb-10 space-y-4 text-left w-full border-t border-foreground/5 pt-8">
-                    {pkg.features.map((f, i) => (
-                      <li key={i} className="flex items-center gap-4 text-xs font-bold text-foreground/80 uppercase tracking-tight">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-red-600" /> {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button className={`mt-auto w-full h-14 font-black uppercase tracking-[0.2em] transition-all ${
-                    pkg.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
-                  }`}>
-                    {pkg.isCustom ? "Inquire Project" : "Get Started"}
-                  </Button>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden py-20 bg-background">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
-        </div>
+    <div className="min-h-screen bg-background text-foreground">
+      {/* HERO */}
+      <section className="relative py-24 md:py-32 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
         <div className="container mx-auto px-4 relative z-10">
-          <FadeInSection className="mx-auto max-w-3xl text-center mb-12">
-            <h2 className="text-3xl font-bold md:text-4xl text-white mb-6">
-              Technologies <span className="text-primary">We Use</span>
-            </h2>
-            <p className="text-lg text-muted-foreground">
-              Our projects are built using modern and scalable technologies.
+          <HeroSection className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+              Build a Website That Works for Your Business
+            </h1>
+            <p className="text-xl md:text-2xl text-muted-foreground mb-4">
+              We design, build, and manage high-performance websites that generate real clients — not just look good.
             </p>
-          </FadeInSection>
-          <StaggerContainer className="mx-auto max-w-3xl">
-            <div className="grid gap-4">
-              {technologies.map((item) => (
-                <StaggerItem key={item} className="flex items-center gap-4 p-4 rounded-xl bg-muted border border-border">
-                  <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                  <span className="text-white font-medium">{item}</span>
-                </StaggerItem>
-              ))}
-            </div>
-          </StaggerContainer>
-          <FadeInSection delay={0.2} className="mx-auto mt-10 max-w-3xl text-center">
-            <p className="text-lg text-muted-foreground">
-              Our focus is building fast, reliable, and future-ready digital products.
+            <p className="text-muted-foreground mb-8">
+              From development to hosting and ongoing support, everything is handled in one place.
             </p>
-          </FadeInSection>
-        </div>
-      </section>
-
-      <section className="section-padding bg-background border-y border-foreground/5">
-        <div className="content-width">
-          <FadeInSection className="max-w-4xl mx-auto text-center mb-20">
-            <h2 className="mb-6 text-gradient">Technology Stack & Performance Infrastructure</h2>
-            <p className="text-lg font-bold uppercase tracking-widest text-foreground/50">
-              Our websites and applications are built using modern development tools, optimized performance strategies, and secure hosting infrastructure designed to support real business growth.
-            </p>
-          </FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-2">
-            {techPillars.map((pillar) => (
-              <StaggerItem key={pillar.title}>
-                <div className="premium-card p-8 h-full border border-foreground/10 bg-background/80">
-                  <div className="mb-6 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-foreground/5 text-red-600">
-                    <pillar.icon className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-black text-foreground mb-3 uppercase tracking-tight">{pillar.title}</h3>
-                  <p className="text-sm text-foreground/60 font-medium uppercase tracking-tight mb-6">{pillar.desc}</p>
-                  <ul className="space-y-3">
-                    {pillar.items.map((item) => (
-                      <li key={item} className="flex items-center gap-3 text-xs font-bold text-foreground/70 uppercase tracking-tight">
-                        <CheckCircle className="h-4 w-4 shrink-0 text-red-600" /> {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden bg-card py-20">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
-        </div>
-        <div className="container mx-auto px-4 relative z-10">
-          <FadeInSection>
-            <h2 className="text-center text-3xl font-bold md:text-4xl text-white mb-16">
-              Our <span className="text-primary">Development Process</span>
-            </h2>
-          </FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-5">
-            {developmentProcess.map((p) => (
-              <StaggerItem key={p.step} className="relative text-center">
-                <div className="mb-4 text-6xl font-black text-primary/10">{p.step}</div>
-                <h3 className="text-lg font-bold text-white mb-2">{p.title}</h3>
-                <p className="text-sm text-muted-foreground">{p.desc}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden section-padding bg-background border-y border-foreground/5">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
-        </div>
-        <div className="content-width relative z-10">
-          <FadeInSection className="max-w-4xl mx-auto text-center mb-24">
-            <h2 className="mb-8 text-gradient">Elite Hosting Infrastructure</h2>
-            <p className="text-xl font-bold uppercase tracking-widest text-foreground/50">Reliable performance and absolute security.</p>
-          </FadeInSection>
-
-          <StaggerContainer className="grid gap-10 md:grid-cols-3">
-            {hostingPackages.map((pkg) => (
-              <StaggerItem key={pkg.name}>
-                <div
-                  onClick={() => openBooking({
-                    service: "Web Hosting",
-                    package: pkg.name,
-                    price: parseInt(pkg.price.replace(/[^\d]/g, "")) || 0
-                  })}
-                  className={`premium-card p-12 flex flex-col items-center text-center cursor-pointer group hover:-translate-y-2 relative transition-all duration-500 ${
-                    pkg.highlighted ? "border-red-600 border-2" : ""
-                  }`}
-                >
-                  <div className="mb-8 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-foreground/5 text-red-600 group-hover:bg-red-600 group-hover:text-white transition-all">
-                    <pkg.icon className="h-8 w-8" />
-                  </div>
-                  <h3 className="text-2xl font-black text-foreground mb-4 uppercase tracking-tighter">{pkg.name}</h3>
-                  <p className="text-xs font-medium text-foreground/40 mb-8 uppercase tracking-widest h-8">{pkg.desc}</p>
-                  
-                  <div className="mb-10 flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-red-600">{pkg.price}</span>
-                    <span className="text-xs font-black text-foreground/30 uppercase tracking-[0.2em]">/ mo</span>
-                  </div>
-
-                  <ul className="mb-12 space-y-5 text-left w-full border-t border-foreground/5 pt-10">
-                    {pkg.features.map((f, j) => (
-                      <li key={j} className="flex items-center gap-4 text-xs font-black text-foreground/80 uppercase tracking-tight">
-                        <CheckCircle className="h-5 w-5 shrink-0 text-red-600" /> {f}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button className={`mt-auto w-full h-16 transition-all font-black uppercase tracking-[0.3em] ${
-                    pkg.highlighted ? "btn-primary red-glow" : "btn-secondary group-hover:bg-red-600"
-                  }`}>
-                    Select Plan
-                  </Button>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden py-20 bg-muted text-center">
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%2399A0A8 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%2399A0A8 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%2399A0A8 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.05] dark:hidden" />
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22320%22 height=%22320%22 viewBox=%220 0 320 320%22><path d=%22M0 40H320M0 120H320M0 200H320M0 280H320M40 0V320M120 0V320M200 0V320M280 0V320%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M24 28h88M24 52h60M24 76h98%22 stroke=%23F2F2F2 stroke-width=%220.8%22 opacity=%220.35%22/><circle cx=%22250%22 cy=%2270%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22230%22 cy=%22150%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><circle cx=%22280%22 cy=%22210%22 r=%222%22 fill=%23F2F2F2 opacity=%220.35%22/><path d=%22M250 70L230 150L280 210%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.25%22/><path d=%22M140 240h120M160 264h90%22 stroke=%23F2F2F2 stroke-width=%220.6%22 opacity=%220.3%22/></svg>')] bg-[length:320px_320px] bg-repeat opacity-[0.06] hidden dark:block" />
-        </div>
-        <div className="container mx-auto px-4 relative z-10">
-          <FadeInSection><h2 className="text-3xl font-bold md:text-4xl text-white mb-12">Built for <span className="text-primary">Performance</span></h2></FadeInSection>
-          <StaggerContainer className="grid gap-8 md:grid-cols-4">
-            {[
-              { icon: Zap, title: "Scalable Architecture", desc: "Optimized for speed and SEO." },
-              { icon: Search, title: "SEO Integrated", desc: "Structured data and search optimization included." },
-              { icon: MousePointer2, title: "Modern UI/UX", desc: "Professional designs focused on usability." },
-              { icon: LineChart, title: "Growth Ready", desc: "Built to support business expansion." }
-            ].map((item) => (
-              <StaggerItem key={item.title} className="space-y-3">
-                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-primary/5 text-primary border border-primary/10"><item.icon className="h-6 w-6" /></div>
-                <h4 className="text-white font-bold">{item.title}</h4>
-                <p className="text-xs text-muted-foreground font-medium">{item.desc}</p>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      <section className="section-padding bg-background border-t border-foreground/5">
-        <div className="content-width">
-          <FadeInSection className="mx-auto max-w-4xl text-center mb-16">
-            <h2 className="text-3xl font-black md:text-5xl text-foreground mb-6">
-              Start Your Website Project
-            </h2>
-            <p className="text-lg font-medium text-foreground/60">
-              Answer a few quick questions so we can understand your business goals and recommend the best development solution for your needs.
-            </p>
-          </FadeInSection>
-          <div className="grid gap-8 md:grid-cols-3">
-            {projectQuestions.map((block) => (
-              <div key={block.question} className="premium-card p-8 border border-foreground/10 bg-background">
-                <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-6">{block.question}</h3>
-                <div className="grid gap-3">
-                  {block.options.map((option) => (
-                    <div key={option} className="rounded-xl border border-foreground/10 bg-foreground/5 px-4 py-3 text-xs font-black uppercase tracking-wider text-foreground/70">
-                      {option}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="mt-12 flex justify-center">
-            <Button asChild size="lg" className="h-16 px-12 text-xs font-black uppercase tracking-[0.4em] btn-primary">
-              <Link to="/contact">Get Project Recommendation</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="section-padding relative overflow-hidden bg-background text-center border-t border-foreground/5">
-        <div className="absolute inset-0 mesh-bg opacity-10 dark:opacity-30" />
-        <div className="content-width relative z-10">
-          <HeroSection>
-            <h2 className="text-5xl md:text-8xl lg:text-9xl font-black mb-12 text-gradient leading-[0.85] tracking-[-0.06em]">
-              Build Your<br />Digital Asset
-            </h2>
-          </HeroSection>
-          <FadeInSection delay={0.2}>
-            <p className="mx-auto max-w-4xl text-xl md:text-2xl text-foreground/50 mb-20 font-bold uppercase tracking-[0.2em] leading-relaxed">
-              Whether you need a professional website or a custom web application, we help businesses turn ideas into powerful digital platforms.
-            </p>
-          </FadeInSection>
-          <FadeInSection delay={0.3}>
-            <div className="flex flex-wrap justify-center gap-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
-                onClick={() => openBooking({
-                  service: "Web Development",
-                  package: "General Project",
-                  price: 0
-                })}
+                variant="red"
                 size="lg"
-                className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 red-glow cursor-pointer btn-primary"
+                onClick={() => openBooking({ service: "Web Development", package: "Website Project", price: 4500 })}
               >
-                Start Your Project <ArrowRight className="h-4 w-4 ml-4" />
+                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button asChild className="h-20 px-16 text-xs font-black rounded-full uppercase tracking-[0.4em] transition-all hover:scale-105 active:scale-95 cursor-pointer btn-secondary">
-                <Link to="/contact">Contact Support</Link>
+              <Button variant="outlineBlack" size="lg" asChild>
+                <a href="https://wa.me/27659704101" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-2 h-4 w-4" /> Talk on WhatsApp
+                </a>
+              </Button>
+            </div>
+          </HeroSection>
+        </div>
+      </section>
+
+      {/* WHY BUSINESSES INVEST */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Why Businesses Invest in Professional Websites</h2>
+          </FadeInSection>
+          <StaggerContainer className="max-w-2xl mx-auto space-y-4">
+            {whyInvest.map((item, i) => (
+              <StaggerItem key={i}>
+                <div className="flex items-center gap-4 p-4 rounded-lg bg-card border border-border">
+                  <item.icon className="h-6 w-6 text-primary shrink-0" />
+                  <span className="text-lg font-medium">{item.text}</span>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* DEVELOPMENT PACKAGES */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Development Packages</h2>
+          </FadeInSection>
+          <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {devPackages.map((pkg, i) => (
+              <StaggerItem key={i}>
+                <Card className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${pkg.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
+                  {pkg.highlighted && (
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                      Most Popular
+                    </Badge>
+                  )}
+                  <CardHeader className="text-center">
+                    <CardTitle className="text-xl">{pkg.title}</CardTitle>
+                    <p className="text-sm text-muted-foreground">{pkg.subtitle}</p>
+                    <div className="mt-4">
+                      <span className="text-3xl font-bold">{pkg.price}</span>
+                      {pkg.priceNote && <span className="text-muted-foreground ml-2 text-sm">{pkg.priceNote}</span>}
+                    </div>
+                    {pkg.altPrice && <p className="text-sm text-muted-foreground mt-1">{pkg.altPrice}</p>}
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {pkg.features.map((f, j) => (
+                        <li key={j} className="flex items-start gap-2">
+                          <CheckCircle className="h-4 w-4 text-primary mt-1 shrink-0" />
+                          <span className="text-sm">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      variant={pkg.highlighted ? "red" : "outlineRed"}
+                      className="w-full"
+                      onClick={() => openBooking(pkg.booking)}
+                    >
+                      {pkg.cta}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* HOSTING & ONGOING SUPPORT */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold">Hosting & Ongoing Support</h2>
+          </FadeInSection>
+          <FadeInSection className="text-center mb-12 max-w-2xl mx-auto">
+            <p className="text-muted-foreground">
+              Your website is not just built — it needs to stay fast, secure, and online at all times.
+              We handle everything for you.
+            </p>
+          </FadeInSection>
+          <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {hostingPlans.map((plan, i) => (
+              <StaggerItem key={i}>
+                <Card className={`relative text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${plan.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
+                  {plan.badge && (
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
+                      {plan.badge}
+                    </Badge>
+                  )}
+                  <CardHeader>
+                    <CardTitle className="text-xl">{plan.title}</CardTitle>
+                    <div className="mt-4">
+                      <span className="text-3xl font-bold">{plan.price}</span>
+                      <span className="text-muted-foreground ml-1 text-sm">/ month</span>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <ul className="space-y-3">
+                      {plan.features.map((f, j) => (
+                        <li key={j} className="flex items-center justify-center gap-2">
+                          <CheckCircle className="h-4 w-4 text-primary shrink-0" />
+                          <span className="text-sm">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </CardContent>
+                </Card>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <FadeInSection className="text-center mt-8">
+            <p className="text-sm text-muted-foreground italic">
+              All websites require hosting to stay online. We manage everything so you don't have to.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
+      {/* POSITIONING BLOCK */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              We don't just build websites — we manage your entire digital presence.
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              From development to hosting and ongoing support, everything is handled under one system.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center max-w-2xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Your Website Project</h2>
+            <p className="text-muted-foreground mb-8">
+              Let's build a website that actually works for your business.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                variant="red"
+                size="lg"
+                onClick={() => openBooking({ service: "Web Development", package: "Website Project", price: 4500 })}
+              >
+                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+              <Button variant="outlineBlack" size="lg" asChild>
+                <Link to="/contact">Contact Us</Link>
               </Button>
             </div>
           </FadeInSection>
@@ -610,4 +292,3 @@ const WebDevelopment = () => {
 };
 
 export default WebDevelopment;
-
