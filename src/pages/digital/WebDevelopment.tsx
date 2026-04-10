@@ -6,7 +6,8 @@ import { useBooking } from "@/contexts/BookingContext";
 import { Link } from "react-router-dom";
 import {
   Globe, TrendingUp, Shield, CalendarCheck, MapPin,
-  CheckCircle, MessageCircle, ArrowRight
+  CheckCircle, MessageCircle, ArrowRight, Zap, Search, Lock, Gauge,
+  Monitor, Server, Headphones, Users
 } from "lucide-react";
 
 const WebDevelopment = () => {
@@ -18,6 +19,20 @@ const WebDevelopment = () => {
     { icon: Globe, text: "Showcase services professionally" },
     { icon: CalendarCheck, text: "Automate bookings and processes" },
     { icon: MapPin, text: "Expand beyond physical location" },
+  ];
+
+  const performancePillars = [
+    { icon: Zap, text: "Fast, mobile-first design" },
+    { icon: Search, text: "SEO-ready structure" },
+    { icon: Lock, text: "Secure and scalable systems" },
+    { icon: Gauge, text: "Optimized for speed and reliability" },
+  ];
+
+  const whatYouGet = [
+    { icon: Monitor, text: "A professional website" },
+    { icon: Server, text: "Secure hosting" },
+    { icon: Headphones, text: "Ongoing support" },
+    { icon: Users, text: "A system that brings you clients" },
   ];
 
   const devPackages = [
@@ -100,30 +115,28 @@ const WebDevelopment = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* HERO */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section className="relative py-28 md:py-36 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-background via-background to-primary/5" />
         <div className="container mx-auto px-4 relative z-10">
           <HeroSection className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-              Build a Website That Works for Your Business
+              Build a Website That Brings You Clients
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground mb-4">
-              We design, build, and manage high-performance websites that generate real clients — not just look good.
-            </p>
-            <p className="text-muted-foreground mb-8">
-              From development to hosting and ongoing support, everything is handled in one place.
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10">
+              We design, build, and manage websites that help your business generate real inquiries and grow consistently.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 variant="red"
                 size="lg"
+                className="text-base px-8 py-6"
                 onClick={() => openBooking({ service: "Web Development", package: "Website Project", price: 4500 })}
               >
-                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
+                Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="outlineBlack" size="lg" asChild>
+              <Button variant="outlineBlack" size="lg" className="text-base px-8 py-6" asChild>
                 <a href="https://wa.me/27659704101" target="_blank" rel="noopener noreferrer">
-                  <MessageCircle className="mr-2 h-4 w-4" /> Talk on WhatsApp
+                  <MessageCircle className="mr-2 h-5 w-5" /> Chat on WhatsApp
                 </a>
               </Button>
             </div>
@@ -150,22 +163,65 @@ const WebDevelopment = () => {
         </div>
       </section>
 
-      {/* DEVELOPMENT PACKAGES */}
+      {/* BUILT FOR PERFORMANCE */}
       <section className="py-20">
         <div className="container mx-auto px-4">
           <FadeInSection className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">Built for Performance & Growth</h2>
+          </FadeInSection>
+          <StaggerContainer className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {performancePillars.map((item, i) => (
+              <StaggerItem key={i}>
+                <div className="flex items-center gap-4 p-5 rounded-lg bg-card border border-border">
+                  <item.icon className="h-6 w-6 text-primary shrink-0" />
+                  <span className="text-base font-medium">{item.text}</span>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* WHAT YOU ACTUALLY GET */}
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold">What You Actually Get</h2>
+          </FadeInSection>
+          <StaggerContainer className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+            {whatYouGet.map((item, i) => (
+              <StaggerItem key={i}>
+                <div className="flex items-center gap-4 p-5 rounded-lg bg-card border border-border">
+                  <item.icon className="h-6 w-6 text-primary shrink-0" />
+                  <span className="text-base font-medium">{item.text}</span>
+                </div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+          <FadeInSection className="text-center mt-8">
+            <p className="text-lg text-muted-foreground font-medium">
+              Everything is handled for you in one place.
+            </p>
+          </FadeInSection>
+        </div>
+      </section>
+
+      {/* DEVELOPMENT PACKAGES */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <FadeInSection className="text-center mb-14">
             <h2 className="text-3xl md:text-4xl font-bold">Development Packages</h2>
           </FadeInSection>
-          <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <StaggerContainer className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {devPackages.map((pkg, i) => (
               <StaggerItem key={i}>
-                <Card className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${pkg.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
+                <Card className={`relative transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-full flex flex-col ${pkg.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
                   {pkg.highlighted && (
                     <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
                       Most Popular
                     </Badge>
                   )}
-                  <CardHeader className="text-center">
+                  <CardHeader className="text-center pb-2">
                     <CardTitle className="text-xl">{pkg.title}</CardTitle>
                     <p className="text-sm text-muted-foreground">{pkg.subtitle}</p>
                     <div className="mt-4">
@@ -174,17 +230,17 @@ const WebDevelopment = () => {
                     </div>
                     {pkg.altPrice && <p className="text-sm text-muted-foreground mt-1">{pkg.altPrice}</p>}
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="flex-1">
                     <ul className="space-y-3">
                       {pkg.features.map((f, j) => (
                         <li key={j} className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-primary mt-1 shrink-0" />
+                          <CheckCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                           <span className="text-sm">{f}</span>
                         </li>
                       ))}
                     </ul>
                   </CardContent>
-                  <CardFooter>
+                  <CardFooter className="pt-2">
                     <Button
                       variant={pkg.highlighted ? "red" : "outlineRed"}
                       className="w-full"
@@ -201,21 +257,20 @@ const WebDevelopment = () => {
       </section>
 
       {/* HOSTING & ONGOING SUPPORT */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <FadeInSection className="text-center mb-4">
             <h2 className="text-3xl md:text-4xl font-bold">Hosting & Ongoing Support</h2>
           </FadeInSection>
-          <FadeInSection className="text-center mb-12 max-w-2xl mx-auto">
-            <p className="text-muted-foreground">
-              Your website is not just built — it needs to stay fast, secure, and online at all times.
-              We handle everything for you.
+          <FadeInSection className="text-center mb-14 max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-lg">
+              Your website needs to stay fast, secure, and online at all times. We handle everything for you.
             </p>
           </FadeInSection>
-          <StaggerContainer className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <StaggerContainer className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {hostingPlans.map((plan, i) => (
               <StaggerItem key={i}>
-                <Card className={`relative text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl ${plan.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
+                <Card className={`relative text-center transition-all duration-300 hover:scale-[1.02] hover:shadow-xl h-full ${plan.highlighted ? "border-primary border-2 shadow-lg" : ""}`}>
                   {plan.badge && (
                     <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground">
                       {plan.badge}
@@ -242,9 +297,9 @@ const WebDevelopment = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
-          <FadeInSection className="text-center mt-8">
-            <p className="text-sm text-muted-foreground italic">
-              All websites require hosting to stay online. We manage everything so you don't have to.
+          <FadeInSection className="text-center mt-10">
+            <p className="text-sm text-muted-foreground">
+              All websites require hosting to stay online. We manage everything for you.
             </p>
           </FadeInSection>
         </div>
@@ -265,23 +320,26 @@ const WebDevelopment = () => {
       </section>
 
       {/* FINAL CTA */}
-      <section className="py-20 bg-muted/30">
+      <section className="py-24 bg-muted/30">
         <div className="container mx-auto px-4">
           <FadeInSection className="text-center max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Start Your Website Project</h2>
-            <p className="text-muted-foreground mb-8">
-              Let's build a website that actually works for your business.
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Let's Build Your Business Online</h2>
+            <p className="text-lg text-muted-foreground mb-10">
+              We help you launch, manage, and grow your digital presence — the right way.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 variant="red"
                 size="lg"
+                className="text-base px-8 py-6"
                 onClick={() => openBooking({ service: "Web Development", package: "Website Project", price: 4500 })}
               >
-                Start Your Project <ArrowRight className="ml-2 h-4 w-4" />
+                Start Your Project <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button variant="outlineBlack" size="lg" asChild>
-                <Link to="/contact">Contact Us</Link>
+              <Button variant="outlineBlack" size="lg" className="text-base px-8 py-6" asChild>
+                <a href="https://wa.me/27659704101" target="_blank" rel="noopener noreferrer">
+                  <MessageCircle className="mr-2 h-5 w-5" /> Chat on WhatsApp
+                </a>
               </Button>
             </div>
           </FadeInSection>
