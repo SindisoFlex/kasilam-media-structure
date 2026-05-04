@@ -1,0 +1,74 @@
+{
+  "company": {
+    "name": "Kasilam Media Productions",
+    "shortName": "KMP",
+    "founder": "Kasilam",
+    "mission": "To deliver professional media and digital solutions that help businesses, creators, and organizations build powerful, authentic brand presence.",
+    "vision": "To be South Africa's most trusted creative and digital partner, known for craftsmanship, reliability, and results."
+  },
+  "services": {
+    "visual_production": {
+      "weddings": {
+        "name": "Wedding Production",
+        "description": "Cinematic photography and videography for weddings and traditional ceremonies."
+      },
+      "funerals": {
+        "name": "Funeral Coverage",
+        "description": "Respectful, professional photography and videography for memorial services."
+      },
+      "community_events": {
+        "name": "Community Events",
+        "description": "Coverage for community gatherings, cultural events, and public celebrations."
+      },
+      "promotional": {
+        "name": "Promotional & Brand",
+        "description": "Promotional photography and video for businesses, products, and campaigns."
+      }
+    },
+    "audio_production": {
+      "name": "Audio Production",
+      "description": "Studio recording, mixing, mastering, voiceover, and podcast production.",
+      "offerings": [
+        "Studio Recording",
+        "Mixing & Mastering",
+        "Music Production",
+        "Voiceover Production",
+        "Podcast Recording",
+        "Production Management"
+      ]
+    },
+    "digital_solutions": {
+      "name": "Digital Solutions",
+      "description": "Websites, digital marketing, content creation, paid ads, and analytics.",
+      "offerings": [
+        "Web & App Development",
+        "Social Media Management",
+        "Content Creation",
+        "Paid Advertising",
+        "Analytics & Reporting"
+      ]
+    }
+  },
+  "navigation": {
+    "home": "/",
+    "services": "/services",
+    "portfolio": "/portfolio",
+    "contact": "/contact"
+  },
+  "booking": {
+    "method": "WhatsApp",
+    "whatsapp_number": "+27659704101",
+    "whatsapp_url": "https://wa.me/27659704101",
+    "instructions": "Clients book by sending a WhatsApp message with their service of interest, preferred date, and project details."
+  },
+  "contact": {
+    "phone": "+27 65 970 4101",
+    "email": "info@kasilammedia.co.za",
+    "location": {
+      "city": "Port Elizabeth (Gqeberha)",
+      "province": "Eastern Cape",
+      "country": "South Africa"
+    }
+  },
+  "faqs": []
+}
