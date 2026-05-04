@@ -2,73 +2,254 @@
   "company": {
     "name": "Kasilam Media Productions",
     "shortName": "KMP",
-    "founder": "Kasilam",
-    "mission": "To deliver professional media and digital solutions that help businesses, creators, and organizations build powerful, authentic brand presence.",
-    "vision": "To be South Africa's most trusted creative and digital partner, known for craftsmanship, reliability, and results."
+    "tagline": "Technology & Media Studio for Modern Brands",
+    "founder": "Sindiso Sophazi",
+    "founderRole": "Founder & Creative Director",
+    "founded": "2026",
+    "based": "Port Elizabeth (Gqeberha), Eastern Cape, South Africa",
+    "servesArea": "Port Elizabeth, Eastern Cape, and across South Africa",
+    "description": "Kasilam Media Productions (KMP) is a creative media and technology studio combining visual production, web development, and digital strategy to help businesses, creators, and organizations build a powerful digital presence.",
+    "mission": "To deliver high-quality, accessible creative and digital services that empower businesses and individuals to express themselves professionally, grow their brands, and preserve meaningful moments.",
+    "vision": "To be South Africa's most trusted creative and digital partner — known for craftsmanship, reliability, and measurable results — while developing local talent and creating opportunity.",
+    "coreBelief": "Professional visibility creates opportunity.",
+    "principles": [
+      "Strategic Creativity — creativity applied with intention and measurable purpose.",
+      "Professional Execution — disciplined delivery, clear communication, consistent quality.",
+      "Community Commitment — rooted in local culture, operating at international standards.",
+      "Growth & Innovation — merging storytelling with digital technology and AI."
+    ],
+    "clientsServed": [
+      "Entrepreneurs",
+      "Small businesses",
+      "Growing brands",
+      "Artists and creators",
+      "Community professionals",
+      "Corporate teams and organizations"
+    ]
   },
   "services": {
     "visual_production": {
-      "weddings": {
-        "name": "Wedding Production",
-        "description": "Cinematic photography and videography for weddings and traditional ceremonies."
-      },
-      "funerals": {
-        "name": "Funeral Coverage",
-        "description": "Respectful, professional photography and videography for memorial services."
-      },
-      "community_events": {
-        "name": "Community Events",
-        "description": "Coverage for community gatherings, cultural events, and public celebrations."
-      },
-      "promotional": {
-        "name": "Promotional & Brand",
-        "description": "Promotional photography and video for businesses, products, and campaigns."
+      "name": "Creative & Visual Production",
+      "description": "Professional photography and videography for life events, brand campaigns, and community moments. Cinematic storytelling with disciplined production standards.",
+      "route": "/services/visual-production",
+      "categories": {
+        "weddings": {
+          "name": "Wedding Production",
+          "description": "Cinematic photography and videography for white weddings, traditional ceremonies, and combined celebrations. Coverage includes preparation, ceremony, portraits, and reception, with professionally edited photo galleries and highlight films.",
+          "ideal_for": "Couples wanting authentic, cinematic memories of their wedding day.",
+          "deliverables": ["Edited photo gallery", "Highlight video", "Full ceremony coverage", "Online delivery"]
+        },
+        "funerals": {
+          "name": "Funeral & Memorial Coverage",
+          "description": "Respectful, discreet photography and videography for memorial services, burials, and remembrance gatherings. Captured with dignity to preserve the service for family members near and far.",
+          "ideal_for": "Families wanting a tasteful, professional record of a memorial or funeral service.",
+          "deliverables": ["Edited photos", "Service video", "Family keepsake delivery"]
+        },
+        "community_events": {
+          "name": "Community & Cultural Events",
+          "description": "Coverage for community gatherings, cultural celebrations, church events, and public functions. Documents the people, energy, and significance of the day.",
+          "ideal_for": "Churches, community leaders, cultural organizations, and event hosts.",
+          "deliverables": ["Event photo set", "Recap video", "Social-ready clips"]
+        },
+        "promotional": {
+          "name": "Promotional & Brand Production",
+          "description": "Promotional photography and video for businesses, products, services, and campaigns. Designed to position your brand professionally across web, social media, and advertising.",
+          "ideal_for": "Businesses, product brands, restaurants, and service providers needing premium content.",
+          "deliverables": ["Brand photoshoot", "Promo video", "Social content pack"]
+        },
+        "creators_artists": {
+          "name": "Creators & Artists",
+          "description": "High-end visual storytelling for musicians, performers, and content creators — including portraits, music visuals, and creative campaigns.",
+          "ideal_for": "Artists, musicians, and creators building a visual identity.",
+          "deliverables": ["Editorial portraits", "Visual content", "Creative direction"]
+        },
+        "corporate": {
+          "name": "Business & Corporate",
+          "description": "Corporate headshots, team portraits, conference coverage, and company-profile video production for professional organizations.",
+          "ideal_for": "Companies, agencies, and corporate teams.",
+          "deliverables": ["Headshots", "Corporate video", "Event documentation"]
+        }
       }
     },
     "audio_production": {
       "name": "Audio Production",
-      "description": "Studio recording, mixing, mastering, voiceover, and podcast production.",
+      "description": "Studio recording, mixing, mastering, voiceover, and podcast production — coordinated through KMP with trusted producers and engineers to deliver release-ready audio.",
+      "route": "/services/audio-production",
       "offerings": [
-        "Studio Recording",
-        "Mixing & Mastering",
-        "Music Production",
-        "Voiceover Production",
-        "Podcast Recording",
-        "Production Management"
+        {
+          "name": "Studio Recording",
+          "description": "Professional vocal and instrument recording sessions for artists and producers."
+        },
+        {
+          "name": "Mixing & Mastering",
+          "description": "Balanced, radio- and streaming-ready mixes and competitive mastered final files."
+        },
+        {
+          "name": "Music Production",
+          "description": "Beatmaking, arrangement, and full track production for artists across genres."
+        },
+        {
+          "name": "Voiceover Production",
+          "description": "Voiceover recording and editing for adverts, explainer videos, and corporate content."
+        },
+        {
+          "name": "Podcast Recording",
+          "description": "End-to-end podcast recording, editing, and packaging for publication."
+        },
+        {
+          "name": "Production Management",
+          "description": "Coordination across producers, engineers, and session musicians from concept to release."
+        }
       ]
     },
     "digital_solutions": {
       "name": "Digital Solutions",
-      "description": "Websites, digital marketing, content creation, paid ads, and analytics.",
+      "description": "Websites, digital marketing, content creation, paid advertising, and analytics — built to convert visitors into clients and grow your brand online.",
+      "route": "/services/digital-marketing",
       "offerings": [
-        "Web & App Development",
-        "Social Media Management",
-        "Content Creation",
-        "Paid Advertising",
-        "Analytics & Reporting"
+        {
+          "name": "Web & App Development",
+          "description": "High-performance websites and web apps — landing pages, business sites, and custom builds — designed to bring in real clients.",
+          "route": "/services/web-development",
+          "starting_price_zar": 4500
+        },
+        {
+          "name": "Hosting & Maintenance",
+          "description": "Managed hosting, security updates, backups, and ongoing support so your site stays fast and online.",
+          "starting_price_zar": 99
+        },
+        {
+          "name": "Social Media Management",
+          "description": "Strategy, content scheduling, and engagement across Instagram, Facebook, TikTok, and LinkedIn."
+        },
+        {
+          "name": "Content Creation",
+          "description": "Photo, video, and graphic content tailored for organic social and paid channels."
+        },
+        {
+          "name": "Paid Advertising",
+          "description": "Meta and Google ad campaigns designed for measurable lead generation and sales."
+        },
+        {
+          "name": "Analytics & Reporting",
+          "description": "Clear monthly reporting on performance, audience growth, and ROI."
+        },
+        {
+          "name": "SEO Optimization",
+          "description": "On-page SEO and local search optimization so customers find you on Google."
+        }
       ]
     }
   },
+  "workflow": [
+    { "step": 1, "name": "Discovery", "description": "We clarify your goals, audience, and success metrics." },
+    { "step": 2, "name": "Planning", "description": "We shape the strategy, scope, and production roadmap." },
+    { "step": 3, "name": "Production", "description": "We execute with professional media, design, and technical rigor." },
+    { "step": 4, "name": "Delivery", "description": "We launch, hand over, and support the final outcome." }
+  ],
   "navigation": {
     "home": "/",
+    "about": "/about",
     "services": "/services",
     "portfolio": "/portfolio",
+    "insights": "/insights",
     "contact": "/contact"
   },
   "booking": {
     "method": "WhatsApp",
     "whatsapp_number": "+27659704101",
     "whatsapp_url": "https://wa.me/27659704101",
-    "instructions": "Clients book by sending a WhatsApp message with their service of interest, preferred date, and project details."
+    "instructions": "Clients book by sending a WhatsApp message including: (1) the service they're interested in, (2) preferred date or timeframe, (3) location, and (4) a short description of the project. A team member responds with availability, a tailored quote, and next steps.",
+    "quotes": "Formal PDF quotations are issued on request and include Capitec banking details for EFT payment.",
+    "deposit_policy": "A booking deposit is typically required to secure the date; the balance is settled before or on the day of delivery."
   },
   "contact": {
     "phone": "+27 65 970 4101",
+    "whatsapp": "+27 65 970 4101",
     "email": "info@kasilammedia.co.za",
+    "website": "https://kasilammedia.co.za",
     "location": {
       "city": "Port Elizabeth (Gqeberha)",
       "province": "Eastern Cape",
       "country": "South Africa"
-    }
+    },
+    "service_area": "Port Elizabeth and surrounding Eastern Cape, with travel available across South Africa."
   },
-  "faqs": []
+  "faqs": [
+    {
+      "category": "About KMP",
+      "question": "What is KMP Media?",
+      "answer": "KMP stands for Kasilam Media Productions — a creative media and technology studio based in Port Elizabeth (Gqeberha). We offer photography, videography, audio production, web development, and digital marketing under one roof."
+    },
+    {
+      "category": "About KMP",
+      "question": "Where are you based and do you travel?",
+      "answer": "We're based in Port Elizabeth (Gqeberha), Eastern Cape, and we work with clients across South Africa. Travel outside the Eastern Cape is available — travel costs are added to the quote where applicable."
+    },
+    {
+      "category": "Choosing a Service",
+      "question": "I'm not sure which service I need — can you help?",
+      "answer": "Absolutely. Just tell us what you're trying to achieve — for example, 'I want more customers,' 'I'm getting married,' 'I need a website,' or 'I want to record a song.' We'll guide you to the right service. Most clients fall into one of three areas: Visual Production (photo/video), Audio Production (recording/mixing), or Digital Solutions (website, ads, social media)."
+    },
+    {
+      "category": "Choosing a Service",
+      "question": "I want more clients for my business. What should I book?",
+      "answer": "Most growing businesses benefit from a combination of a professional website, Google/Meta ads, and consistent social media content. A good starting point is our Business Website package plus Social Media Management or Paid Advertising. Send us a WhatsApp and we'll recommend the most cost-effective combination for your goals."
+    },
+    {
+      "category": "Choosing a Service",
+      "question": "I'm an artist — what can KMP do for me?",
+      "answer": "We support artists end-to-end: studio recording, mixing and mastering, music production, plus visual content like portraits, music videos, and cover art. We can also build you an artist website and manage your social media presence."
+    },
+    {
+      "category": "Booking",
+      "question": "How do I book?",
+      "answer": "Booking is easy. Send a WhatsApp message to +27 65 970 4101 with the service you're interested in, your preferred date, your location, and a short description of the project. We'll confirm availability and send a tailored quote."
+    },
+    {
+      "category": "Booking",
+      "question": "How far in advance should I book?",
+      "answer": "For weddings and large events, we recommend booking 2–6 months in advance. For photoshoots, podcasts, or smaller projects, 1–2 weeks is usually enough. Websites and digital projects start as soon as the deposit is received."
+    },
+    {
+      "category": "Booking",
+      "question": "Do I need to pay a deposit?",
+      "answer": "Yes — a booking deposit secures your date and starts the project. The remaining balance is settled before or on the day of delivery. Banking details (Capitec) are included on every formal quote."
+    },
+    {
+      "category": "Pricing",
+      "question": "How much do your services cost?",
+      "answer": "Pricing depends on scope, but here are typical starting points: Landing-page websites from R4,500, Business websites from R12,000, Custom web apps from R25,000+, and managed hosting from R99/month. Photography, video, and audio packages are quoted per project — share your details on WhatsApp for a fast, tailored quote."
+    },
+    {
+      "category": "Pricing",
+      "question": "Can I get a quote before committing?",
+      "answer": "Yes. Every client gets a free, no-obligation quote. We send a formal PDF quotation with the full breakdown, deliverables, timeline, and banking details so you know exactly what you're paying for."
+    },
+    {
+      "category": "Pricing",
+      "question": "Do you offer payment plans?",
+      "answer": "For larger projects (weddings, custom websites, full brand campaigns) we can split payments into milestones. Tell us your budget on WhatsApp and we'll structure something that works for both sides."
+    },
+    {
+      "category": "Delivery",
+      "question": "How long until I receive my photos, video, or website?",
+      "answer": "Photo galleries are typically delivered within 7–14 days. Highlight videos within 2–4 weeks. Landing-page websites in 1–2 weeks, business websites in 2–4 weeks, and custom builds depending on scope. Exact timelines are confirmed on your quote."
+    },
+    {
+      "category": "Delivery",
+      "question": "How will I receive my files?",
+      "answer": "All photo, video, and audio files are delivered through a secure online link — easy to download and share. Websites are deployed live with handover documentation."
+    },
+    {
+      "category": "Support",
+      "question": "Do you support the website after launch?",
+      "answer": "Yes. We offer managed hosting and maintenance plans starting from R99/month — covering hosting, backups, security updates, and small content changes so you never have to worry about the technical side."
+    },
+    {
+      "category": "Support",
+      "question": "Can I just chat first before deciding?",
+      "answer": "Of course. The fastest way is to send a WhatsApp message to +27 65 970 4101 — we'll talk through your project, recommend the best service, and only send a quote once you're ready."
+    }
+  ]
 }
