@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Msg = { role: "user" | "assistant"; content: string };
+const MAX_HISTORY_MESSAGES = 20;
 
 const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
@@ -25,14 +26,19 @@ const AIChatWidget = () => {
   const send = async () => {
     const text = input.trim();
     if (!text || loading) return;
+
+    const nextMessages = [...messages, { role: "user", content: text }] as Msg[];
     setInput("");
-    setMessages((m) => [...m, { role: "user", content: text }]);
+    setMessages(nextMessages);
     setLoading(true);
+
     try {
       const res = await fetch("/api/ai-chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text }),
+        body: JSON.stringify({
+          messages: nextMessages.slice(-MAX_HISTORY_MESSAGES),
+        }),
       });
 
       const raw = await res.text();
@@ -46,7 +52,7 @@ const AIChatWidget = () => {
         const hint =
           res.status === 404
             ? "The AI endpoint isn't available in this environment. It works on the deployed Vercel site."
-            : data?.error || `Request failed (${res.status}).`;
+            : data?.error || data?.details?.message || `Request failed (${res.status}).`;
         setMessages((m) => [...m, { role: "assistant", content: `Sorry, something went wrong. ${hint}` }]);
         return;
       }
