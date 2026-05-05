@@ -316,6 +316,11 @@ function detectIntent(userText) {
   return "default";
 }
 
+function detectIntentOrNull(userText) {
+  const detected = detectIntent(userText);
+  return detected === "default" ? null : detected;
+}
+
 function normalizeIntentText(userText) {
   return userText
     .toLowerCase()
@@ -436,6 +441,19 @@ function resolveActiveServiceContext(messages) {
   return activeContext;
 }
 
+function resolveLastDetectedIntent(messages) {
+  let lastIntent = null;
+
+  for (const message of messages) {
+    if (message?.role !== "user" || typeof message.content !== "string") continue;
+
+    const detected = detectIntentOrNull(message.content);
+    if (detected) lastIntent = detected;
+  }
+
+  return lastIntent;
+}
+
 function isShortContextualFollowUp(text) {
   const normalized = normalizeIntentText(text);
   return (
@@ -499,8 +517,23 @@ function isBookingIntent(text) {
   const normalized = normalizeIntentText(text);
   return (
     normalized.includes("book") ||
+    normalized.includes("price") ||
+    normalized.includes("how much") ||
+    normalized.includes("available") ||
+    normalized.includes("availability") ||
+    normalized.includes("date") ||
     normalized.includes("reserve") ||
     normalized.includes("go ahead")
+  );
+}
+
+function isShortUserQuery(text) {
+  const normalized = normalizeIntentText(text);
+  if (!normalized) return false;
+
+  return (
+    isShortContextualFollowUp(normalized) ||
+    normalized.split(" ").length <= 4
   );
 }
 
@@ -519,11 +552,16 @@ function inferConversationState(messages) {
   const activeServiceId = resolveActiveServiceContext(messages);
   const activeContext = activeServiceId ? SERVICE_CONTEXTS[activeServiceId] : null;
   const latestUserMessage = getLatestUserMessage(messages);
+  const lastDetectedIntent = resolveLastDetectedIntent(messages);
+  const userMessageCount = messages.filter((message) => message?.role === "user").length;
 
   return {
     activeService: activeContext?.slug || null,
     activeCategory: activeContext?.categoryId || null,
+    lastDetectedIntent,
     conversationStage: detectConversationStage(latestUserMessage),
+    hasShortQuery: isShortUserQuery(latestUserMessage),
+    userMessageCount,
   };
 }
 
@@ -531,31 +569,275 @@ function formatExactPricing(lines) {
   return lines.map((line) => `- ${line}`).join("\n");
 }
 
+function pickVariant(options, seed = "") {
+  if (!Array.isArray(options) || options.length === 0) return "";
+  const normalizedSeed = String(seed || "");
+  const total = normalizedSeed.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  return options[total % options.length];
+}
+
+function compactReplyLines(lines) {
+  return lines.filter(Boolean).slice(0, 4).join("\n");
+}
+
+function compactServiceSummary(context) {
+  if (!context) return "We can point you to the right service quickly.";
+
+  if (context.id === "funeral_photography") {
+    return "Respectful photo or photo-video coverage for memorial services.";
+  }
+
+  if (context.id === "birthday_photography") {
+    return "Photo and event coverage that captures the key moments and energy well.";
+  }
+
+  if (context.id === "web_development") {
+    return "Websites and web apps built around clear business goals and conversions.";
+  }
+
+  if (context.id === "branding_marketing") {
+    return "Digital support focused on visibility, leads, and stronger brand presence.";
+  }
+
+  if (context.id === "audio_production") {
+    return "Recording and post-production support with a clean, polished final result.";
+  }
+
+  return context.description;
+}
+
+function getStartingPriceSummary(context) {
+  if (!Array.isArray(context?.exactPricing) || context.exactPricing.length === 0) {
+    return "Pricing depends on the scope and booking details.";
+  }
+
+  if (context.id === "funeral_photography") {
+    return "Packages start from R1,500 for photography, R2,000 for videography, or R3,500 for both.";
+  }
+
+  if (context.id === "wedding_coverage") {
+    return "Packages start from R4,500 for photography, R5,000 for videography, or R7,500 for both.";
+  }
+
+  return context.exactPricing[0];
+}
+
+function shouldEncourageWhatsApp(state) {
+  return state?.userMessageCount >= 3;
+}
+
+function getWhatsAppGuidance(context, state, bookingFocused) {
+  if (bookingFocused) {
+    return `If you'd like to lock this in faster, WhatsApp us on ${WHATSAPP_NUMBER}.`;
+  }
+
+  if (shouldEncourageWhatsApp(state)) {
+    return `If you'd like, we can continue this on WhatsApp at ${WHATSAPP_NUMBER}.`;
+  }
+
+  if (context?.id === "funeral_photography") {
+    return `If it helps, we can also assist directly on WhatsApp at ${WHATSAPP_NUMBER}.`;
+  }
+
+  return `You can also message us on WhatsApp at ${WHATSAPP_NUMBER}.`;
+}
+
+function getQualificationQuestion(context) {
+  if (!context) return "What kind of service are you looking for help with?";
+
+  if (context.id === "funeral_photography") {
+    return "Do you already have the date and location for the service?";
+  }
+
+  if (context.id === "birthday_photography") {
+    return "Do you already have the date and venue in mind for the event?";
+  }
+
+  if (context.id === "web_development") {
+    return "Are you looking for a new website, a redesign, or a custom web app?";
+  }
+
+  if (context.id === "branding_marketing") {
+    return "What is the scope of the project: branding, content, social media, ads, or a broader campaign?";
+  }
+
+  if (context.id === "audio_production") {
+    return "What kind of audio project are you planning?";
+  }
+
+  return "Would you like me to help with the next step?";
+}
+
+function getServiceValueLine(context) {
+  if (!context) {
+    return "We can help you find the best fit quickly so you know where to start.";
+  }
+
+  if (context.id === "funeral_photography") {
+    return "We focus on discreet, well-organized coverage so your family can concentrate on the day.";
+  }
+
+  if (context.id === "birthday_photography") {
+    return "We make sure the key moments, energy, and details of the event are captured beautifully.";
+  }
+
+  if (context.id === "web_development") {
+    return "We build with clear business goals in mind so the final product supports leads, trust, and growth.";
+  }
+
+  if (context.id === "branding_marketing") {
+    return "We shape the work around visibility, consistency, and results that matter to your brand.";
+  }
+
+  if (context.id === "audio_production") {
+    return "We keep the process clean and focused so the final sound is ready for release or delivery.";
+  }
+
+  return "We tailor the service around what you need so the process feels straightforward from the start.";
+}
+
+function getBookingQuestion(context, state) {
+  if (context?.id === "funeral_photography") {
+    return "What date and location should I check for you?";
+  }
+
+  if (context?.id === "birthday_photography" || context?.id === "wedding_coverage") {
+    return "What date and venue do you have in mind?";
+  }
+
+  if (context?.id === "web_development") {
+    return "Is this a new website, a redesign, or a custom web app?";
+  }
+
+  if (context?.id === "branding_marketing") {
+    return "What scope do you need help with: branding, content, ads, or full digital marketing?";
+  }
+
+  if (context?.id === "audio_production") {
+    return "What kind of audio project are you planning?";
+  }
+
+  if (state?.lastDetectedIntent === "funeral") {
+    return "What date and location should I check for you?";
+  }
+
+  if (state?.lastDetectedIntent === "visual") {
+    return "What date and venue do you have in mind?";
+  }
+
+  if (
+    state?.lastDetectedIntent === "web_design" ||
+    state?.lastDetectedIntent === "digital_marketing"
+  ) {
+    return "Is this a new project, a redesign, or ongoing support?";
+  }
+
+  if (state?.lastDetectedIntent === "audio") {
+    return "What kind of audio project do you need help with?";
+  }
+
+  return "What kind of service would you like help with?";
+}
+
+function buildCompactContextReply(context, state, options = {}) {
+  const tone = getContextTone(context);
+  const bookingFocused = options.bookingFocused || false;
+  const summary = options.summary || compactServiceSummary(context);
+  const pageUrl = joinUrl(context.categoryRoute || context.route);
+  const question = options.question || getBookingQuestion(context, state);
+  const lineOne = bookingFocused
+    ? `${context.name}: You're in the right place, and we handle that.`
+    : `${context.name}: ${pickVariant(tone.leadOptions, `${context.id}:${options.stage || "interest"}`)}`;
+
+  return compactReplyLines([
+    lineOne,
+    summary,
+    `More details: ${pageUrl}`,
+    `${getWhatsAppGuidance(context, state, bookingFocused)} ${question}`,
+  ]);
+}
+
+function buildCompactGenericReply(info, state, options = {}) {
+  const bookingFocused = options.bookingFocused || false;
+  const question = options.question || getBookingQuestion(null, state);
+
+  return compactReplyLines([
+    bookingFocused
+      ? `${info.serviceName}: You're in the right place, and we handle that.`
+      : info.intro,
+    options.summary || `${info.description} ${info.valueLine}`.trim(),
+    `More details: ${info.url}`,
+    `${getWhatsAppGuidance(null, state, bookingFocused)} ${question}`,
+  ]);
+}
+
+function buildGeneralFallbackReply(options = {}) {
+  const state = {
+    userMessageCount: options.userMessageCount || 0,
+    conversationStage: options.bookingFocused ? "booking" : "interest",
+    lastDetectedIntent: null,
+  };
+
+  return compactReplyLines([
+    options.lead || "You're in the right place, and we can help with pricing and bookings.",
+    options.summary || "KMP covers visual production, audio work, and digital solutions.",
+    `More details: ${options.url || CONTACT_PAGE_URL}`,
+    `${getWhatsAppGuidance(null, state, !!options.bookingFocused)} ${options.question || "What kind of service do you need help with?"}`,
+  ]);
+}
+
 function getContextTone(context) {
   if (!context) {
     return {
-      lead: "I can help point you to the right KMP service.",
+      leadOptions: [
+        "You're in the right place, and I can help point you to the right KMP service.",
+        "We handle a range of bookings and projects, so I can point you in the right direction.",
+        "That's something I can help you with by matching you to the right KMP service.",
+      ],
+      bookingTransitionOptions: [
+        "If you'd like personal help from here,",
+        "If you'd prefer to continue directly with our team,",
+        "When you're ready to move forward,",
+      ],
       bookingGuidance:
-        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+        `you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
       followUpQuestion: "What kind of service are you looking for help with?",
     };
   }
 
   if (context.id === "funeral_photography") {
     return {
-      lead: "We're here to help with calm, respectful support for this kind of booking.",
+      leadOptions: [
+        "You're in the right place, and we handle this with calm, respectful support.",
+        "We handle funeral and memorial coverage with care, and I'm here to guide you.",
+        "That's something we cover, and we approach it in a calm and respectful way.",
+      ],
+      bookingTransitionOptions: [
+        "If you'd like us to help personally from here,",
+        "When you're ready for direct assistance,",
+        "If it helps,",
+      ],
       bookingGuidance:
-        `When you're ready, you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-      followUpQuestion: "Would you like me to help you check availability for the date and location?",
+        `you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "Do you already have the date and location for the service?",
     };
   }
 
   if (context.id === "birthday_photography") {
     return {
-      lead: "We'd love to help you capture the celebration.",
+      leadOptions: [
+        "You're in the right place, and we'd love to help capture the celebration.",
+        "We handle this kind of event coverage, and it sounds like a great fit for us.",
+        "That's something we cover, and we can help make sure the event is well captured.",
+      ],
+      bookingTransitionOptions: [
+        "If you'd like to keep things moving,",
+        "If you'd like direct help with the booking,",
+        "When you're ready to lock in the details,",
+      ],
       bookingGuidance:
-        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-      followUpQuestion: "Do you already have a date and venue in mind for the celebration?",
+        `you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "Do you already have the date and venue in mind for the event?",
     };
   }
 
@@ -564,18 +846,36 @@ function getContextTone(context) {
     context.id === "branding_marketing"
   ) {
     return {
-      lead: "We can help you with that through our digital solutions team.",
+      leadOptions: [
+        "You're in the right place, and we handle that through our digital solutions team.",
+        "That's something we cover, and we can guide you through the right digital solution.",
+        "We handle projects like this, and I can help you narrow down the best fit.",
+      ],
+      bookingTransitionOptions: [
+        "If you'd like to continue with our team,",
+        "If you'd like us to look at the project directly,",
+        "When you're ready to take the next step,",
+      ],
       bookingGuidance:
-        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-      followUpQuestion: "Would you like to share a few details about the project so we can guide you properly?",
+        `you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: getQualificationQuestion(context),
     };
   }
 
   return {
-    lead: "We can help you with that.",
+    leadOptions: [
+      "We handle that, and I can help with the next step.",
+      "You're in the right place, and we can help you from here.",
+      "That's something we cover, and I can point you in the right direction.",
+    ],
+    bookingTransitionOptions: [
+      "If you'd like direct help,",
+      "If you'd prefer to continue with our team,",
+      "When you're ready to move ahead,",
+    ],
     bookingGuidance:
-      `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-    followUpQuestion: "Would you like me to help you with the next booking step?",
+      `you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion: getQualificationQuestion(context),
   };
 }
 
@@ -587,15 +887,19 @@ ${context.pageSectionLabel}`;
 
 function buildContextFallbackReply(context, options = {}) {
   const tone = getContextTone(context);
+  const variantSeed = `${context?.id || "default"}:${options.stage || "interest"}`;
   const {
     summary,
-    bookingGuidance = tone.bookingGuidance,
-    followUpQuestion = tone.followUpQuestion,
+    valueLine = getServiceValueLine(context),
+    bookingGuidance = `${pickVariant(tone.bookingTransitionOptions, variantSeed)} ${tone.bookingGuidance}`,
+    followUpQuestion = getQualificationQuestion(context) || tone.followUpQuestion,
   } = options;
 
-  return `${tone.lead}
+  return `${pickVariant(tone.leadOptions, `${variantSeed}:lead`)}
 
 ${context.name}: ${summary || context.description}
+
+${valueLine}
 
 ${getContextPageLine(context)}
 
@@ -604,98 +908,77 @@ ${bookingGuidance}
 ${followUpQuestion}`;
 }
 
-function buildPricingReply(context) {
-  if (context.pricingType === "exact") {
-    return buildContextFallbackReply(context, {
-      summary: `Here is the pricing for ${context.name.toLowerCase()}:
-${formatExactPricing(context.exactPricing || [])}
+function buildPricingReply(context, state) {
+  const bookingFocused = true;
 
-Pricing can still vary if travel, extra hours, or extended coverage is needed.`,
-      bookingGuidance:
-        `${getContextTone(context).bookingGuidance} To confirm the best option, tell me your date and whether you need photography only or photo + video coverage.`,
-      followUpQuestion:
+  if (context.pricingType === "exact") {
+    return buildCompactContextReply(context, state, {
+      stage: "pricing",
+      bookingFocused,
+      summary: `${getStartingPriceSummary(context)} Final pricing can shift with travel or extra hours.`,
+      question:
         context.id === "funeral_photography"
-          ? "Would you like me to help narrow this down based on the service date and coverage you need?"
-          : "Would you like help choosing the best option for your date and coverage needs?",
+          ? "What date and location should I check for you?"
+          : "What date and venue should I work from?",
     });
   }
 
   if (context.pricingType === "hybrid") {
-    return buildContextFallbackReply(context, {
-      summary: `Here are the usual starting prices for this service:
-${formatExactPricing(context.exactPricing || [])}
-
-Final pricing depends on scope, features, timeline, and any extra setup requirements.`,
-      bookingGuidance:
-        `${getContextTone(context).bookingGuidance} To guide you properly, tell me what type of website you need and your target launch timeline.`,
-      followUpQuestion:
-        "Do you already know whether you need a landing page, a business website, or a custom web app?",
+    return buildCompactContextReply(context, state, {
+      stage: "pricing",
+      bookingFocused,
+      summary: "Projects usually start from R4,500 for landing pages, R12,000 for business sites, and R25,000+ for custom web apps.",
+      question: "Is this a new website, a redesign, or a custom web app?",
     });
   }
 
-  return buildContextFallbackReply(context, {
-    summary: `Pricing depends on duration, location, and coverage requirements.`,
-    bookingGuidance: `${getContextTone(context).bookingGuidance} To quote you properly, please send me:
-${formatFollowUps(context.followUps)}`,
-    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+  return buildCompactContextReply(context, state, {
+    stage: "pricing",
+    bookingFocused,
+    summary: "Pricing depends on the scope, timing, and service details.",
+    question: getBookingQuestion(context, state),
   });
 }
 
-function buildPageReply(context) {
-  return buildContextFallbackReply(context, {
-    summary: context.description,
-    bookingGuidance:
-      `${getContextTone(context).bookingGuidance} If you'd like, I can also help with pricing or the first booking details for this service.`,
-    followUpQuestion:
-      "Would you like help with pricing, availability, or starting the booking details?",
+function buildPageReply(context, state) {
+  return buildCompactContextReply(context, state, {
+    stage: "page_reference",
+    summary: compactServiceSummary(context),
+    question: "Would you like pricing, availability, or booking help for this service?",
   });
 }
 
-function buildBookingReply(context) {
-  return buildContextFallbackReply(context, {
-    summary: context.description,
-    bookingGuidance: `To move this booking forward, please send me:
-${formatFollowUps(context.followUps)}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-    followUpQuestion:
-      context.id === "funeral_photography"
-        ? "Would you like to start with the service date and location?"
-        : "Would you like to start by sharing the date and location?",
+function buildBookingReply(context, state) {
+  return buildCompactContextReply(context, state, {
+    stage: "booking",
+    bookingFocused: true,
+    summary: `${compactServiceSummary(context)} Once I have the basics, we can move you straight to booking.`,
+    question: getBookingQuestion(context, state),
   });
 }
 
-function buildAvailabilityReply(context) {
-  return buildContextFallbackReply(context, {
-    summary: `${context.description} Availability is confirmed based on the booking details for this service.`,
-    bookingGuidance: `Please send:
-${formatFollowUps(context.followUps)}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-    followUpQuestion:
-      "Would you like me to help you check availability once you share those details?",
+function buildAvailabilityReply(context, state) {
+  return buildCompactContextReply(context, state, {
+    stage: "availability",
+    bookingFocused: true,
+    summary: "Availability depends on your booking details, and we can check it quickly once we have them.",
+    question: getBookingQuestion(context, state),
   });
 }
 
-function buildQualificationReply(context) {
-  return buildContextFallbackReply(context, {
-    summary: context.description,
-    bookingGuidance: `To guide your booking properly, I need:
-${formatFollowUps(context.followUps)}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+function buildQualificationReply(context, state) {
+  return buildCompactContextReply(context, state, {
+    stage: "qualification",
+    summary: compactServiceSummary(context),
+    question: getBookingQuestion(context, state),
   });
 }
 
-function buildInterestReply(context) {
-  return buildContextFallbackReply(context, {
-    summary: context.description,
-    bookingGuidance: `To help match you with the right package, please send:
-${formatFollowUps(context.followUps)}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
-    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+function buildInterestReply(context, state) {
+  return buildCompactContextReply(context, state, {
+    stage: "interest",
+    summary: compactServiceSummary(context),
+    question: getBookingQuestion(context, state),
   });
 }
 
@@ -732,94 +1015,99 @@ function buildFallbackServiceInfo(intent, knowledge) {
   switch (intent) {
     case "funeral":
       return {
-        intro: "We provide respectful funeral photography and videography under our Visual Production services.",
+        intro: "You're in the right place. We handle respectful funeral photography and videography under our Visual Production services.",
         serviceName: funerals.name || visual.name || "Visual Production",
         description: pickFirstSentence(
           funerals.description,
           "Respectful, discreet coverage for memorial services, burials, and remembrance gatherings."
         ),
+        valueLine:
+          "Our team works with care and professionalism so coverage stays unobtrusive and well managed.",
         url: joinUrl(visual.route || "/services/visual-production"),
       };
     case "visual":
       return {
-        intro: "We cover birthday, social event, and photoshoot bookings under our Visual Production services.",
+        intro: "You're in the right place. We handle birthday, social event, and photoshoot bookings under our Visual Production services.",
         serviceName: communityEvents.name || visual.name || "Visual Production",
         description: pickFirstSentence(
           communityEvents.description || visual.description,
           "Professional photography and videography for events, portraits, and brand content."
         ),
+        valueLine:
+          "We focus on capturing the atmosphere, key moments, and details that make the event memorable.",
         url: joinUrl(visual.route || "/services/visual-production"),
       };
     case "web_design":
       return {
-        intro: "Web design requests fall under our Digital Solutions services.",
+        intro: "You're in the right place. We handle web design and development through our Digital Solutions services.",
         serviceName: webOffering?.name || "Web & App Development",
         description: pickFirstSentence(
           webOffering?.description,
           "High-performance websites and web apps designed to bring in real clients."
         ),
+        valueLine:
+          "We shape each build around your goals, whether you need a stronger online presence, leads, or a better user experience.",
         url: joinUrl(webOffering?.route || "/services/web-development"),
       };
     case "digital_marketing":
       return {
-        intro: "Digital marketing support sits under our Digital Solutions services.",
+        intro: "That's something we cover through our Digital Solutions services.",
         serviceName: digital.name || "Digital Solutions",
         description: pickFirstSentence(
           digital.description,
           "Websites, digital marketing, content creation, paid advertising, and analytics built to grow your brand online."
         ),
+        valueLine:
+          "We tailor the strategy around what you need most, from visibility and content to leads and campaigns.",
         url: joinUrl(digital.route || "/services/digital-marketing"),
       };
     case "audio":
       return {
-        intro: "Voiceover and recording work is handled through our Audio Production services.",
+        intro: "You're in the right place. We handle voiceover and recording work through our Audio Production services.",
         serviceName: audio.name || "Audio Production",
         description: pickFirstSentence(
           audio.description,
           "Studio recording, mixing, mastering, voiceover, and podcast production."
         ),
+        valueLine:
+          "We keep the process polished and practical so your final audio is ready for release or delivery.",
         url: joinUrl(audio.route || "/services/audio-production"),
       };
     default:
       return {
-        intro: "We can guide you to the right KMP service based on what you need.",
+        intro: "You're in the right place, and we can guide you to the right KMP service based on what you need.",
         serviceName: digital.name || "KMP Services",
         description: pickFirstSentence(
           knowledge?.company?.description,
           "KMP combines visual production, audio production, and digital solutions for modern brands."
         ),
+        valueLine:
+          "We can quickly narrow things down based on the type of project, event, or support you need.",
         url: SITE_BASE_URL,
       };
   }
 }
 
 function buildBusyFallbackReply(messages) {
+  const state = inferConversationState(messages);
   const activeContextId = resolveActiveServiceContext(messages);
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
 
   if (activeContext) {
-    return buildContextFallbackReply(activeContext, {
-      summary: `${activeContext.description} Our assistant is a little busy right now, but we can still help you personally.`,
-      bookingGuidance:
-        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly. If you prefer, you can also use our contact page here:
-${CONTACT_PAGE_URL}`,
-      followUpQuestion:
-        "Would you like help checking pricing or availability for this service?",
+    return buildCompactContextReply(activeContext, state, {
+      stage: "busy",
+      bookingFocused: true,
+      summary: "Our assistant is a little busy right now, but we can still help you personally with pricing and availability.",
+      question: "What date should I check for you?",
     });
   }
 
-  const tone = getContextTone(null);
-
-  return `${tone.lead}
-
-Our assistant is a little busy right now, but our team can still help with service details, pricing, and bookings.
-
-You can also check out more details here:
-${CONTACT_PAGE_URL}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-What would you like help with today?`;
+  return compactReplyLines([
+    "You're in the right place, and we can still help you personally.",
+    "Our assistant is a little busy right now, but our team can help with pricing and bookings.",
+    `More details: ${CONTACT_PAGE_URL}`,
+    `${getWhatsAppGuidance(null, state, true)} What kind of service do you need help with?`,
+  ]);
 }
 
 function buildFallbackReply(messages, knowledge) {
@@ -831,43 +1119,46 @@ function buildFallbackReply(messages, knowledge) {
   if (activeContext) {
     switch (state.conversationStage) {
       case "pricing":
-        return buildPricingReply(activeContext);
+        return buildPricingReply(activeContext, state);
       case "page_reference":
-        return buildPageReply(activeContext);
+        return buildPageReply(activeContext, state);
       case "booking":
-        return buildBookingReply(activeContext);
+        return buildBookingReply(activeContext, state);
       case "availability":
-        return buildAvailabilityReply(activeContext);
+        return buildAvailabilityReply(activeContext, state);
       case "qualification":
-        return buildQualificationReply(activeContext);
+        return buildQualificationReply(activeContext, state);
       default:
-        return buildInterestReply(activeContext);
+        return buildInterestReply(activeContext, state);
     }
   }
 
-  const intent = detectIntent(latestUserMessage);
+  const intent = detectIntentOrNull(latestUserMessage) || state.lastDetectedIntent || "default";
   const info = buildFallbackServiceInfo(intent, knowledge);
   const followUpQuestionByIntent = {
-    funeral: "Would you like me to help you check availability for the date and location?",
-    visual: "Do you already have a date and venue in mind?",
+    funeral: "What date and location should I check for you?",
+    visual: "What date and venue do you have in mind?",
     web_design:
-      "Would you like to share what kind of website or app you need?",
+      "Is this a new website, a redesign, or a custom web app?",
     digital_marketing:
-      "Are you looking for help with branding, content, ads, or overall digital marketing?",
-    audio: "What kind of audio project would you like help with?",
+      "What scope do you need help with: branding, content, ads, or full digital marketing support?",
+    audio: "What kind of audio project do you need help with?",
     default: "What kind of service would you like help with?",
   };
+  const bookingFocused =
+    state.conversationStage === "pricing" ||
+    state.conversationStage === "availability" ||
+    state.conversationStage === "booking" ||
+    state.conversationStage === "qualification";
+  const summary = state.hasShortQuery
+    ? info.description
+    : `${info.description} ${info.valueLine}`.trim();
 
-  return `${info.intro}
-
-${info.serviceName}: ${info.description}
-
-You can also check out more details here:
-${info.url}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-${followUpQuestionByIntent[intent] || followUpQuestionByIntent.default}`;
+  return buildCompactGenericReply(info, state, {
+    bookingFocused,
+    summary,
+    question: followUpQuestionByIntent[intent] || followUpQuestionByIntent.default,
+  });
 }
 
 async function callGeminiWithRetry(url, payload) {
@@ -926,14 +1217,7 @@ export default async function handler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(200).json({
-      reply: `I can help with service information, pricing, and bookings.
-
-You can also check out more details here:
-${CONTACT_PAGE_URL}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-What would you like help with today?`,
+      reply: buildGeneralFallbackReply(),
       fallback: true,
       model: GEMINI_MODEL,
     });
@@ -950,16 +1234,12 @@ What would you like help with today?`,
 
     if (!messages.length) {
       return res.status(200).json({
-        reply: `I can help you find the right KMP service.
-
-KMP Services: We offer visual production, audio production, and digital solutions for different kinds of projects and events.
-
-You can also check out more details here:
-${CONTACT_PAGE_URL}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-What kind of service are you looking for?`,
+        reply: buildGeneralFallbackReply({
+          lead: "You're in the right place, and I can help you find the right KMP service.",
+          summary:
+            "KMP covers visual production, audio production, and digital solutions for different kinds of projects and events.",
+          question: "What kind of service are you looking for?",
+        }),
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -983,16 +1263,11 @@ What kind of service are you looking for?`,
     } catch (e) {
       console.error("[ai-chat] Failed to load knowledge file:", e);
       return res.status(200).json({
-        reply: `I can still help point you in the right direction.
-
-KMP Services: We offer support across visual production, audio production, and digital solutions.
-
-You can also check out more details here:
-${CONTACT_PAGE_URL}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-What would you like help with today?`,
+        reply: buildGeneralFallbackReply({
+          lead: "You're in the right place, and I can still point you in the right direction.",
+          summary:
+            "KMP offers support across visual production, audio production, and digital solutions.",
+        }),
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -1081,22 +1356,20 @@ ${JSON.stringify(knowledge)}`;
   } catch (error) {
     console.error("[ai-chat] Unhandled error:", error);
     return res.status(200).json({
-      reply: `I can still help with service information, pricing, and bookings.
-
-KMP Services: We handle a mix of visual production, audio work, and digital solutions.
-
-You can also check out more details here:
-${CONTACT_PAGE_URL}
-
-You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
-
-What would you like help with today?`,
+      reply: buildGeneralFallbackReply({
+        lead: "You're in the right place, and we can still help with service information and bookings.",
+        summary:
+          "KMP handles a mix of visual production, audio work, and digital solutions.",
+      }),
       fallback: true,
       model: GEMINI_MODEL,
       state: {
         activeService: null,
         activeCategory: null,
+        lastDetectedIntent: null,
         conversationStage: "interest",
+        hasShortQuery: false,
+        userMessageCount: 0,
       },
     });
   }
