@@ -11,6 +11,7 @@ const MAX_GEMINI_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 400;
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
+const CONTACT_PAGE_URL = `${SITE_BASE_URL}/contact`;
 
 const SERVICE_CONTEXTS = {
   funeral_photography: {
@@ -168,6 +169,21 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function getRetryDelayMs(retryAfterHeader) {
+  if (!retryAfterHeader) return null;
+
+  const numericSeconds = Number(retryAfterHeader);
+  if (Number.isFinite(numericSeconds) && numericSeconds >= 0) {
+    return numericSeconds * 1000;
+  }
+
+  const parsedDate = Date.parse(retryAfterHeader);
+  if (Number.isNaN(parsedDate)) return null;
+
+  const delayMs = parsedDate - Date.now();
+  return delayMs > 0 ? delayMs : null;
+}
+
 function normalizeMessages(body) {
   const rawMessages = Array.isArray(body?.messages)
     ? body.messages
@@ -254,32 +270,45 @@ function pickFirstSentence(text, fallback) {
 }
 
 function detectIntent(userText) {
-  if (userText.includes("funeral")) {
+  const text = normalizeIntentText(userText);
+
+  if (text.includes("funeral")) {
     return "funeral";
   }
 
   if (
-    userText.includes("birthday") ||
-    userText.includes("21st") ||
-    userText.includes("photoshoot") ||
-    userText.includes("photo") ||
-    userText.includes("photography")
+    text.includes("branding") ||
+    text.includes("social media") ||
+    text.includes("paid advertising") ||
+    text.includes("digital marketing") ||
+    text.includes("marketing")
   ) {
-    return "visual";
-  }
-
-  if (userText.includes("web design") || userText.includes("website") || userText.includes("web development")) {
-    return "web_design";
-  }
-
-  if (userText.includes("digital marketing")) {
     return "digital_marketing";
   }
 
   if (
-    userText.includes("voiceover") ||
-    userText.includes("recording") ||
-    userText.includes("studio recording")
+    text.includes("birthday") ||
+    text.includes("21st") ||
+    text.includes("photoshoot") ||
+    text.includes("photo") ||
+    text.includes("photography")
+  ) {
+    return "visual";
+  }
+
+  if (
+    text.includes("web design") ||
+    text.includes("website") ||
+    text.includes("web development") ||
+    text.includes("digital marketing")
+  ) {
+    return "web_design";
+  }
+
+  if (
+    text.includes("voiceover") ||
+    text.includes("recording") ||
+    text.includes("studio recording")
   ) {
     return "audio";
   }
@@ -628,6 +657,7 @@ function buildFallbackServiceInfo(intent, knowledge) {
   const funerals = visual.categories?.funerals || {};
   const audio = services.audio_production || {};
   const digital = services.digital_solutions || {};
+  const communityEvents = visual.categories?.community_events || {};
   const webOffering = Array.isArray(digital.offerings)
     ? digital.offerings.find((offering) => offering?.route === "/services/web-development")
     : null;
@@ -646,9 +676,9 @@ function buildFallbackServiceInfo(intent, knowledge) {
     case "visual":
       return {
         intro: "We cover birthday, social event, and photoshoot bookings under our Visual Production services.",
-        serviceName: visual.name || "Visual Production",
+        serviceName: communityEvents.name || visual.name || "Visual Production",
         description: pickFirstSentence(
-          visual.description,
+          communityEvents.description || visual.description,
           "Professional photography and videography for events, portraits, and brand content."
         ),
         url: joinUrl(visual.route || "/services/visual-production"),
@@ -694,6 +724,37 @@ function buildFallbackServiceInfo(intent, knowledge) {
         url: SITE_BASE_URL,
       };
   }
+}
+
+function buildBusyFallbackReply(messages) {
+  const activeContextId = resolveActiveServiceContext(messages);
+  const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
+
+  if (activeContext) {
+    return `Our AI assistant is temporarily assisting many visitors right now.
+
+For ${activeContext.name} pricing or booking assistance, please WhatsApp us directly:
++27 65 970 4101
+
+You can also view the relevant page here:
+${joinUrl(activeContext.categoryRoute || activeContext.route)}
+${activeContext.pageSectionLabel}
+
+Or visit our Contact page:
+${CONTACT_PAGE_URL}
+
+Our team will assist you personally with pricing, bookings, and service information.`;
+  }
+
+  return `Our AI assistant is temporarily assisting many visitors right now.
+
+To continue immediately, please contact us directly on WhatsApp:
++27 65 970 4101
+
+Or visit our Contact page:
+${CONTACT_PAGE_URL}
+
+Our team will assist you personally with pricing, bookings, and service information.`;
 }
 
 function buildFallbackReply(messages, knowledge) {
@@ -762,6 +823,7 @@ async function callGeminiWithRetry(url, payload) {
 
     lastStatus = geminiRes.status;
     lastData = data;
+    const retryAfterMs = getRetryDelayMs(geminiRes.headers.get("retry-after"));
     const shouldRetry =
       attempt < MAX_GEMINI_ATTEMPTS - 1 && isRetryableGeminiError(geminiRes.status, data);
     console.error("[ai-chat] Gemini error", geminiRes.status, data, shouldRetry ? "(retrying)" : "");
@@ -770,7 +832,7 @@ async function callGeminiWithRetry(url, payload) {
       return { ok: false, status: geminiRes.status, data };
     }
 
-    await sleep(RETRY_DELAY_MS);
+    await sleep(retryAfterMs ?? RETRY_DELAY_MS);
   }
 
   return { ok: false, status: lastStatus, data: lastData };
@@ -804,7 +866,7 @@ export default async function handler(req, res) {
 
     if (!messages.length) {
       return res.status(200).json({
-        reply: "If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 and we'll assist you.",
+        reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -828,7 +890,7 @@ export default async function handler(req, res) {
     } catch (e) {
       console.error("[ai-chat] Failed to load knowledge file:", e);
       return res.status(200).json({
-        reply: "If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 and we'll assist you.",
+        reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -881,7 +943,7 @@ ${JSON.stringify(knowledge)}`;
     if (!geminiResult.ok) {
       if (isFallbackWorthyGeminiError(geminiResult.status, data)) {
         return res.status(200).json({
-          reply: buildFallbackReply(messages, knowledge),
+          reply: buildBusyFallbackReply(messages),
           fallback: true,
           model: GEMINI_MODEL,
           state,
@@ -917,7 +979,7 @@ ${JSON.stringify(knowledge)}`;
   } catch (error) {
     console.error("[ai-chat] Unhandled error:", error);
     return res.status(200).json({
-      reply: "If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 and we'll assist you.",
+      reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
       fallback: true,
       model: GEMINI_MODEL,
       state: {
