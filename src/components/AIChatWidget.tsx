@@ -34,10 +34,32 @@ const AIChatWidget = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
       });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.reply) throw new Error(data?.error || "Bad response");
+
+      const raw = await res.text();
+      let data: any = {};
+      try { data = raw ? JSON.parse(raw) : {}; } catch {
+        console.error("[AIChatWidget] Non-JSON response:", res.status, raw.slice(0, 300));
+      }
+
+      if (!res.ok) {
+        console.error("[AIChatWidget] HTTP error", res.status, data);
+        const hint =
+          res.status === 404
+            ? "The AI endpoint isn't available in this environment. It works on the deployed Vercel site."
+            : data?.error || `Request failed (${res.status}).`;
+        setMessages((m) => [...m, { role: "assistant", content: `Sorry, something went wrong. ${hint}` }]);
+        return;
+      }
+
+      if (!data?.reply) {
+        console.error("[AIChatWidget] Missing 'reply' in response:", data);
+        setMessages((m) => [...m, { role: "assistant", content: "Sorry, I didn't get a reply. Please try again." }]);
+        return;
+      }
+
       setMessages((m) => [...m, { role: "assistant", content: data.reply }]);
-    } catch {
+    } catch (err) {
+      console.error("[AIChatWidget] Network error:", err);
       setMessages((m) => [
         ...m,
         { role: "assistant", content: "Sorry, something went wrong. Please try again." },
