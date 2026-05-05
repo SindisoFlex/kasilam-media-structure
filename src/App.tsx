@@ -64,6 +64,7 @@ import WeddingProduction from "./pages/visual/WeddingProduction";
 import FuneralCoverage from "./pages/visual/FuneralCoverage";
 
 import ErrorBoundary from "@/components/ErrorBoundary";
+import AIChatWidget from "@/components/AIChatWidget";
 
 const queryClient = new QueryClient();
 
@@ -141,6 +142,7 @@ const App = () => (
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Layout>
+              <AIChatWidget />
             </BrowserRouter>
           </BookingProvider>
         </TooltipProvider>
