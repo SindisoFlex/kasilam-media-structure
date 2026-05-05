@@ -786,6 +786,25 @@ function buildGeneralFallbackReply(options = {}) {
   ]);
 }
 
+function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
+  const reply = options.preferBusy
+    ? buildBusyFallbackReply(messages)
+    : knowledge
+      ? buildFallbackReply(messages, knowledge)
+      : buildGeneralFallbackReply({
+          lead: "You're in the right place, and we can still help with service information and bookings.",
+          summary:
+            "KMP handles a mix of visual production, audio work, and digital solutions.",
+        });
+
+  return {
+    reply,
+    fallback: true,
+    model: GEMINI_MODEL,
+    state,
+  };
+}
+
 function getContextTone(context) {
   if (!context) {
     return {
@@ -1314,45 +1333,44 @@ ${JSON.stringify(knowledge)}`;
       },
     };
 
-    const geminiResult = await callGeminiWithRetry(`${GEMINI_URL}?key=${apiKey}`, payload);
-    const data = geminiResult.data;
+    try {
+      const geminiResult = await callGeminiWithRetry(`${GEMINI_URL}?key=${apiKey}`, payload);
+      const data = geminiResult?.data;
 
-    if (!geminiResult.ok) {
-      if (isFallbackWorthyGeminiError(geminiResult.status, data)) {
-        return res.status(200).json({
-          reply: buildBusyFallbackReply(messages),
-          fallback: true,
-          model: GEMINI_MODEL,
-          state,
-        });
+      if (!geminiResult?.ok) {
+        console.log("[ai-chat] Gemini fallback triggered from HTTP/model error:", geminiResult?.status);
+        return res.status(200).json(
+          buildSafeFallbackResponse(messages, knowledge, state, {
+            preferBusy: isFallbackWorthyGeminiError(geminiResult?.status, data),
+          })
+        );
       }
 
-      return res.status(200).json({
-        reply: buildFallbackReply(messages, knowledge),
-        fallback: true,
-        model: GEMINI_MODEL,
-        state,
-      });
+      if (!data || !Array.isArray(data?.candidates) || data.candidates.length === 0) {
+        console.log("[ai-chat] Gemini fallback triggered from missing candidates.");
+        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+      }
+
+      const candidate = data.candidates[0];
+      const finishReason = candidate?.finishReason;
+      const parts = candidate?.content?.parts;
+
+      if (!Array.isArray(parts) || parts.length === 0) {
+        console.log("[ai-chat] Gemini fallback triggered from missing content parts.", finishReason);
+        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+      }
+
+      const reply = parts.map((p) => p?.text || "").join("").trim();
+      if (!reply) {
+        console.log("[ai-chat] Gemini fallback triggered from empty reply.", finishReason);
+        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+      }
+
+      return res.status(200).json({ reply, finishReason, model: GEMINI_MODEL, state });
+    } catch (error) {
+      console.log("[ai-chat] Gemini request failed, using fallback:", error);
+      return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
     }
-
-    const candidate = data?.candidates?.[0];
-    const finishReason = candidate?.finishReason;
-    const parts = candidate?.content?.parts;
-    const reply = Array.isArray(parts)
-      ? parts.map((p) => p?.text || "").join("").trim()
-      : "";
-
-    if (!reply) {
-      console.error("[ai-chat] Empty reply. finishReason=", finishReason, "data=", JSON.stringify(data).slice(0, 1000));
-      return res.status(200).json({
-        reply: buildFallbackReply(messages, knowledge),
-        fallback: true,
-        model: GEMINI_MODEL,
-        state,
-      });
-    }
-
-    return res.status(200).json({ reply, finishReason, model: GEMINI_MODEL, state });
   } catch (error) {
     console.error("[ai-chat] Unhandled error:", error);
     return res.status(200).json({

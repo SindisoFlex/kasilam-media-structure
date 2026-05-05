@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 
 type Msg = { role: "user" | "assistant"; content: string };
 const MAX_HISTORY_MESSAGES = 20;
+const SAFE_FALLBACK_MESSAGE =
+  "You're in the right place, and we can still help. You can message us on WhatsApp at +27659704101 for direct assistance.";
 
 const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
@@ -47,19 +49,13 @@ const AIChatWidget = () => {
         console.error("[AIChatWidget] Non-JSON response:", res.status, raw.slice(0, 300));
       }
 
-      if (!res.ok) {
-        console.error("[AIChatWidget] HTTP error", res.status, data);
-        const hint =
-          res.status === 404
-            ? "The AI endpoint isn't available in this environment. It works on the deployed Vercel site."
-            : data?.error || data?.details?.message || `Request failed (${res.status}).`;
-        setMessages((m) => [...m, { role: "assistant", content: `Sorry, something went wrong. ${hint}` }]);
-        return;
-      }
-
-      if (!data?.reply) {
-        console.error("[AIChatWidget] Missing 'reply' in response:", data);
-        setMessages((m) => [...m, { role: "assistant", content: "Sorry, I didn't get a reply. Please try again." }]);
+      if (!res.ok || typeof data?.reply !== "string" || !data.reply.trim()) {
+        if (!res.ok) {
+          console.error("[AIChatWidget] HTTP error", res.status, data);
+        } else {
+          console.error("[AIChatWidget] Missing 'reply' in response:", data);
+        }
+        setMessages((m) => [...m, { role: "assistant", content: SAFE_FALLBACK_MESSAGE }]);
         return;
       }
 
@@ -68,7 +64,7 @@ const AIChatWidget = () => {
       console.error("[AIChatWidget] Network error:", err);
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: "Sorry, something went wrong. Please try again." },
+        { role: "assistant", content: SAFE_FALLBACK_MESSAGE },
       ]);
     } finally {
       setLoading(false);
