@@ -531,105 +531,172 @@ function formatExactPricing(lines) {
   return lines.map((line) => `- ${line}`).join("\n");
 }
 
+function getContextTone(context) {
+  if (!context) {
+    return {
+      lead: "I can help point you to the right KMP service.",
+      bookingGuidance:
+        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "What kind of service are you looking for help with?",
+    };
+  }
+
+  if (context.id === "funeral_photography") {
+    return {
+      lead: "We're here to help with calm, respectful support for this kind of booking.",
+      bookingGuidance:
+        `When you're ready, you can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "Would you like me to help you check availability for the date and location?",
+    };
+  }
+
+  if (context.id === "birthday_photography") {
+    return {
+      lead: "We'd love to help you capture the celebration.",
+      bookingGuidance:
+        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "Do you already have a date and venue in mind for the celebration?",
+    };
+  }
+
+  if (
+    context.id === "web_development" ||
+    context.id === "branding_marketing"
+  ) {
+    return {
+      lead: "We can help you with that through our digital solutions team.",
+      bookingGuidance:
+        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+      followUpQuestion: "Would you like to share a few details about the project so we can guide you properly?",
+    };
+  }
+
+  return {
+    lead: "We can help you with that.",
+    bookingGuidance:
+      `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion: "Would you like me to help you with the next booking step?",
+  };
+}
+
+function getContextPageLine(context) {
+  return `You can also check out more details here:
+${joinUrl(context.categoryRoute || context.route)}
+${context.pageSectionLabel}`;
+}
+
+function buildContextFallbackReply(context, options = {}) {
+  const tone = getContextTone(context);
+  const {
+    summary,
+    bookingGuidance = tone.bookingGuidance,
+    followUpQuestion = tone.followUpQuestion,
+  } = options;
+
+  return `${tone.lead}
+
+${context.name}: ${summary || context.description}
+
+${getContextPageLine(context)}
+
+${bookingGuidance}
+
+${followUpQuestion}`;
+}
+
 function buildPricingReply(context) {
-  const pageUrl = joinUrl(context.categoryRoute || context.route);
-
   if (context.pricingType === "exact") {
-    return `${context.intro}
-
-Here is the pricing for ${context.name.toLowerCase()}:
+    return buildContextFallbackReply(context, {
+      summary: `Here is the pricing for ${context.name.toLowerCase()}:
 ${formatExactPricing(context.exactPricing || [])}
 
-Pricing can still vary if travel, extra hours, or extended coverage is needed.
-
-Page:
-${pageUrl}
-${context.pageSectionLabel}
-
-To confirm the best option, tell me your date and whether you need photography only or photo + video coverage.`;
+Pricing can still vary if travel, extra hours, or extended coverage is needed.`,
+      bookingGuidance:
+        `${getContextTone(context).bookingGuidance} To confirm the best option, tell me your date and whether you need photography only or photo + video coverage.`,
+      followUpQuestion:
+        context.id === "funeral_photography"
+          ? "Would you like me to help narrow this down based on the service date and coverage you need?"
+          : "Would you like help choosing the best option for your date and coverage needs?",
+    });
   }
 
   if (context.pricingType === "hybrid") {
-    return `${context.intro}
-
-Here are the usual starting prices for this service:
+    return buildContextFallbackReply(context, {
+      summary: `Here are the usual starting prices for this service:
 ${formatExactPricing(context.exactPricing || [])}
 
-Final pricing depends on scope, features, timeline, and any extra setup requirements.
-
-Page:
-${pageUrl}
-${context.pageSectionLabel}
-
-To guide you properly, tell me what type of website you need and your target launch timeline.`;
+Final pricing depends on scope, features, timeline, and any extra setup requirements.`,
+      bookingGuidance:
+        `${getContextTone(context).bookingGuidance} To guide you properly, tell me what type of website you need and your target launch timeline.`,
+      followUpQuestion:
+        "Do you already know whether you need a landing page, a business website, or a custom web app?",
+    });
   }
 
-  return `${context.intro}
-
-Pricing depends on duration, location, and coverage requirements.
-
-Page:
-${pageUrl}
-${context.pageSectionLabel}
-
-To quote you properly, please send me:
-${formatFollowUps(context.followUps)}`;
+  return buildContextFallbackReply(context, {
+    summary: `Pricing depends on duration, location, and coverage requirements.`,
+    bookingGuidance: `${getContextTone(context).bookingGuidance} To quote you properly, please send me:
+${formatFollowUps(context.followUps)}`,
+    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+  });
 }
 
 function buildPageReply(context) {
-  const pageUrl = joinUrl(context.categoryRoute || context.route);
-
-  return `${context.intro}
-
-Here is the page for this service:
-${pageUrl}
-${context.pageSectionLabel}
-
-If you want, I can also help you with pricing or start the booking details for this exact service.`;
+  return buildContextFallbackReply(context, {
+    summary: context.description,
+    bookingGuidance:
+      `${getContextTone(context).bookingGuidance} If you'd like, I can also help with pricing or the first booking details for this service.`,
+    followUpQuestion:
+      "Would you like help with pricing, availability, or starting the booking details?",
+  });
 }
 
 function buildBookingReply(context) {
-  return `${context.intro}
-
-We can book this service. To move forward, send me:
+  return buildContextFallbackReply(context, {
+    summary: context.description,
+    bookingGuidance: `To move this booking forward, please send me:
 ${formatFollowUps(context.followUps)}
 
-Once I have that, the booking step continues on WhatsApp at ${WHATSAPP_NUMBER}.`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion:
+      context.id === "funeral_photography"
+        ? "Would you like to start with the service date and location?"
+        : "Would you like to start by sharing the date and location?",
+  });
 }
 
 function buildAvailabilityReply(context) {
-  return `${context.intro}
-
-Availability is checked per booking details for this exact service.
-
-Please send:
+  return buildContextFallbackReply(context, {
+    summary: `${context.description} Availability is confirmed based on the booking details for this service.`,
+    bookingGuidance: `Please send:
 ${formatFollowUps(context.followUps)}
 
-Then we can confirm the next step on WhatsApp at ${WHATSAPP_NUMBER}.`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion:
+      "Would you like me to help you check availability once you share those details?",
+  });
 }
 
 function buildQualificationReply(context) {
-  return `${context.intro}
+  return buildContextFallbackReply(context, {
+    summary: context.description,
+    bookingGuidance: `To guide your booking properly, I need:
+${formatFollowUps(context.followUps)}
 
-${context.description}
-
-To guide your booking properly, I need:
-${formatFollowUps(context.followUps)}`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+  });
 }
 
 function buildInterestReply(context) {
-  const pageUrl = joinUrl(context.categoryRoute || context.route);
+  return buildContextFallbackReply(context, {
+    summary: context.description,
+    bookingGuidance: `To help match you with the right package, please send:
+${formatFollowUps(context.followUps)}
 
-  return `${context.intro}
-
-${context.description}
-
-Page:
-${pageUrl}
-${context.pageSectionLabel}
-
-To get you to the right package, please send:
-${formatFollowUps(context.followUps)}`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.`,
+    followUpQuestion: context.followUps?.[0] || getContextTone(context).followUpQuestion,
+  });
 }
 
 function formatFollowUps(questions) {
@@ -731,30 +798,28 @@ function buildBusyFallbackReply(messages) {
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
 
   if (activeContext) {
-    return `Our AI assistant is temporarily assisting many visitors right now.
-
-For ${activeContext.name} pricing or booking assistance, please WhatsApp us directly:
-+27 65 970 4101
-
-You can also view the relevant page here:
-${joinUrl(activeContext.categoryRoute || activeContext.route)}
-${activeContext.pageSectionLabel}
-
-Or visit our Contact page:
-${CONTACT_PAGE_URL}
-
-Our team will assist you personally with pricing, bookings, and service information.`;
+    return buildContextFallbackReply(activeContext, {
+      summary: `${activeContext.description} Our assistant is a little busy right now, but we can still help you personally.`,
+      bookingGuidance:
+        `You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly. If you prefer, you can also use our contact page here:
+${CONTACT_PAGE_URL}`,
+      followUpQuestion:
+        "Would you like help checking pricing or availability for this service?",
+    });
   }
 
-  return `Our AI assistant is temporarily assisting many visitors right now.
+  const tone = getContextTone(null);
 
-To continue immediately, please contact us directly on WhatsApp:
-+27 65 970 4101
+  return `${tone.lead}
 
-Or visit our Contact page:
+Our assistant is a little busy right now, but our team can still help with service details, pricing, and bookings.
+
+You can also check out more details here:
 ${CONTACT_PAGE_URL}
 
-Our team will assist you personally with pricing, bookings, and service information.`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+What would you like help with today?`;
 }
 
 function buildFallbackReply(messages, knowledge) {
@@ -782,15 +847,27 @@ function buildFallbackReply(messages, knowledge) {
 
   const intent = detectIntent(latestUserMessage);
   const info = buildFallbackServiceInfo(intent, knowledge);
+  const followUpQuestionByIntent = {
+    funeral: "Would you like me to help you check availability for the date and location?",
+    visual: "Do you already have a date and venue in mind?",
+    web_design:
+      "Would you like to share what kind of website or app you need?",
+    digital_marketing:
+      "Are you looking for help with branding, content, ads, or overall digital marketing?",
+    audio: "What kind of audio project would you like help with?",
+    default: "What kind of service would you like help with?",
+  };
 
   return `${info.intro}
 
-${info.description}
+${info.serviceName}: ${info.description}
 
-You can learn more here:
+You can also check out more details here:
 ${info.url}
 
-To get pricing and availability, please WhatsApp us at +27659704101.`;
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+${followUpQuestionByIntent[intent] || followUpQuestionByIntent.default}`;
 }
 
 async function callGeminiWithRetry(url, payload) {
@@ -849,7 +926,14 @@ export default async function handler(req, res) {
 
   if (req.method !== "POST") {
     return res.status(200).json({
-      reply: "If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 and we'll assist you.",
+      reply: `I can help with service information, pricing, and bookings.
+
+You can also check out more details here:
+${CONTACT_PAGE_URL}
+
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+What would you like help with today?`,
       fallback: true,
       model: GEMINI_MODEL,
     });
@@ -866,7 +950,16 @@ export default async function handler(req, res) {
 
     if (!messages.length) {
       return res.status(200).json({
-        reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
+        reply: `I can help you find the right KMP service.
+
+KMP Services: We offer visual production, audio production, and digital solutions for different kinds of projects and events.
+
+You can also check out more details here:
+${CONTACT_PAGE_URL}
+
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+What kind of service are you looking for?`,
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -890,7 +983,16 @@ export default async function handler(req, res) {
     } catch (e) {
       console.error("[ai-chat] Failed to load knowledge file:", e);
       return res.status(200).json({
-        reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
+        reply: `I can still help point you in the right direction.
+
+KMP Services: We offer support across visual production, audio production, and digital solutions.
+
+You can also check out more details here:
+${CONTACT_PAGE_URL}
+
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+What would you like help with today?`,
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -979,7 +1081,16 @@ ${JSON.stringify(knowledge)}`;
   } catch (error) {
     console.error("[ai-chat] Unhandled error:", error);
     return res.status(200).json({
-      reply: `If you'd like more information or pricing, please contact us on WhatsApp at +27659704101 or visit ${CONTACT_PAGE_URL} and we'll assist you.`,
+      reply: `I can still help with service information, pricing, and bookings.
+
+KMP Services: We handle a mix of visual production, audio work, and digital solutions.
+
+You can also check out more details here:
+${CONTACT_PAGE_URL}
+
+You can also message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll assist you directly.
+
+What would you like help with today?`,
       fallback: true,
       model: GEMINI_MODEL,
       state: {
