@@ -775,8 +775,44 @@ function isPricingQuestion(text) {
     normalized.includes("pricing") ||
     normalized.includes("how much") ||
     normalized.includes("quote") ||
-    normalized.includes("cost")
+    normalized.includes("cost") ||
+    normalized.includes("starting price") ||
+    normalized.includes("rates")
   );
+}
+
+function detectPriceIntent(text) {
+  const normalized = normalizeIntentText(text);
+  const priceKeywords = [
+    "price",
+    "cost",
+    "how much",
+    "starting price",
+    "rates",
+    "pricing",
+    "quote",
+    "expensive",
+    "afford",
+    "budget",
+  ];
+  return priceKeywords.some((keyword) => normalized.includes(keyword));
+}
+
+function detectNavigationIntent(text) {
+  const normalized = normalizeIntentText(text);
+  const navigationKeywords = [
+    "take me",
+    "show me",
+    "open page",
+    "go to",
+    "link me",
+    "page link",
+    "where page",
+    "send me",
+    "visit",
+    "navigate",
+  ];
+  return navigationKeywords.some((keyword) => normalized.includes(keyword));
 }
 
 function isAvailabilityQuestion(text) {
@@ -1048,9 +1084,9 @@ function getBookingQuestion(context, state) {
 
   if (nextField === "location") {
     if (context?.id === "funeral_photography" || bookingService === "funeral") {
-      return "What location should I note for the service?";
+      return "What venue or exact address is the service at?";
     }
-    return "What location or venue should I note?";
+    return "What venue or exact address should I note?";
   }
 
   if (nextField === "scope") {
@@ -1460,17 +1496,40 @@ function buildBusyFallbackReply(messages) {
     return buildCompactContextReply(activeContext, state, {
       stage: "busy",
       bookingFocused: true,
-      summary: "Our assistant is a little busy right now, but we can still help you personally with pricing and availability.",
+      summary: "We can help you with pricing and availability. Let me gather the details to move forward.",
       question: "What date should I check for you?",
     });
   }
 
   return compactReplyLines([
-    "You're in the right place, and we can still help you personally.",
-    "Our assistant is a little busy right now, but our team can help with pricing and bookings.",
+    "You're in the right place, and we can help you with pricing and bookings.",
+    "Let me get the details so we can move forward with your request.",
     `More details: ${CONTACT_PAGE_URL}`,
     `${getWhatsAppGuidance(null, state, true)} What kind of service do you need help with?`,
   ]);
+}
+
+function buildPriceIntentResponse(context, knowledge) {
+  if (!context) return null;
+
+  if (context.pricingType === "exact" && Array.isArray(context.exactPricing)) {
+    return `Starting prices for ${context.name}: ${getStartingPriceSummary(context)}`;
+  }
+
+  if (context.pricingType === "hybrid") {
+    if (context.id === "web_development") {
+      return "Web projects typically start from R4,500 for landing pages, R12,000 for business websites, and R25,000+ for custom web apps.";
+    }
+  }
+
+  return null;
+}
+
+function buildNavigationIntentResponse(context) {
+  if (!context) return null;
+
+  const url = joinUrl(context.categoryRoute || context.route);
+  return `I'll point you to ${context.name}. Check it out here: ${url}`;
 }
 
 function buildFallbackReply(messages, knowledge) {
@@ -1478,6 +1537,24 @@ function buildFallbackReply(messages, knowledge) {
   const state = inferConversationState(messages);
   const activeContextId = resolveActiveServiceContext(messages);
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
+
+  // Check for explicit price intent
+  if (detectPriceIntent(latestUserMessage) && activeContext) {
+    const priceResponse = buildPriceIntentResponse(activeContext, knowledge);
+    if (priceResponse) {
+      return `${priceResponse}\n\nWhat date and details should I work with to give you a complete quote?`;
+    }
+    return buildPricingReply(activeContext, state);
+  }
+
+  // Check for explicit navigation intent
+  if (detectNavigationIntent(latestUserMessage) && activeContext) {
+    const navResponse = buildNavigationIntentResponse(activeContext);
+    if (navResponse) {
+      return `${navResponse}\n\nNeed help with details or booking?`;
+    }
+    return buildPageReply(activeContext, state);
+  }
 
   if (activeContext) {
     switch (state.conversationStage) {
