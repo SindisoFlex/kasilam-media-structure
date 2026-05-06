@@ -456,6 +456,299 @@ function resolveLastDetectedIntent(messages) {
   return lastIntent;
 }
 
+function createEmptyBookingMemory() {
+  return {
+    service: null,
+    date: null,
+    location: null,
+    scope: null,
+  };
+}
+
+function mapServiceToBookingService(serviceId, lastIntent = null) {
+  if (serviceId === "funeral_photography") return "funeral";
+  if (
+    serviceId === "birthday_photography" ||
+    serviceId === "wedding_coverage"
+  ) {
+    return "visual";
+  }
+  if (serviceId === "audio_production") return "audio";
+  if (
+    serviceId === "web_development" ||
+    serviceId === "branding_marketing"
+  ) {
+    return "digital";
+  }
+
+  if (lastIntent === "funeral") return "funeral";
+  if (lastIntent === "visual") return "visual";
+  if (lastIntent === "audio") return "audio";
+  if (
+    lastIntent === "web_design" ||
+    lastIntent === "digital_marketing"
+  ) {
+    return "digital";
+  }
+
+  return null;
+}
+
+function extractDateValue(text) {
+  if (typeof text !== "string") return null;
+
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+
+  const monthPattern = /\b(\d{1,2}\s+(?:jan|january|feb|february|mar|march|apr|april|may|jun|june|jul|july|aug|august|sep|sept|september|oct|october|nov|november|dec|december)(?:\s+\d{2,4})?)\b/i;
+  const slashPattern = /\b(\d{1,2}[\/-]\d{1,2}(?:[\/-]\d{2,4})?)\b/;
+  const isoPattern = /\b(\d{4}-\d{2}-\d{2})\b/;
+  const relativePattern = /\b(today|tomorrow|this weekend|next weekend|next week|this friday|this saturday|this sunday|monday|tuesday|wednesday|thursday|friday|saturday|sunday)\b/i;
+
+  return (
+    trimmed.match(isoPattern)?.[1] ||
+    trimmed.match(monthPattern)?.[1] ||
+    trimmed.match(slashPattern)?.[1] ||
+    trimmed.match(relativePattern)?.[1] ||
+    null
+  );
+}
+
+function extractScopeValue(text, serviceId = null) {
+  if (typeof text !== "string") return null;
+  const normalized = normalizeIntentText(text);
+
+  if (
+    normalized.includes("photo and video") ||
+    normalized.includes("photos and video") ||
+    normalized.includes("photography and videography") ||
+    normalized.includes("both") ||
+    normalized.includes("full coverage")
+  ) {
+    return "photo and video";
+  }
+
+  if (
+    normalized.includes("photo + video") ||
+    (normalized.includes("photo") && normalized.includes("video"))
+  ) {
+    return "photo and video";
+  }
+
+  if (
+    serviceId === "web_development" ||
+    normalized.includes("landing page") ||
+    normalized.includes("business website") ||
+    normalized.includes("custom web app") ||
+    normalized.includes("redesign") ||
+    normalized.includes("new website")
+  ) {
+    if (normalized.includes("landing page")) return "landing page";
+    if (normalized.includes("business website")) return "business website";
+    if (normalized.includes("custom web app")) return "custom web app";
+    if (normalized.includes("redesign")) return "redesign";
+    if (normalized.includes("new website")) return "new website";
+  }
+
+  if (
+    serviceId === "branding_marketing" ||
+    normalized.includes("branding") ||
+    normalized.includes("content") ||
+    normalized.includes("social media") ||
+    normalized.includes("ads") ||
+    normalized.includes("advertising")
+  ) {
+    if (normalized.includes("branding")) return "branding";
+    if (normalized.includes("social media")) return "social media";
+    if (normalized.includes("content")) return "content";
+    if (normalized.includes("ads") || normalized.includes("advertising")) {
+      return "paid ads";
+    }
+  }
+
+  if (
+    serviceId === "audio_production" ||
+    normalized.includes("recording") ||
+    normalized.includes("mixing") ||
+    normalized.includes("mastering") ||
+    normalized.includes("voiceover") ||
+    normalized.includes("podcast")
+  ) {
+    if (normalized.includes("voiceover")) return "voiceover";
+    if (normalized.includes("podcast")) return "podcast";
+    if (normalized.includes("mixing")) return "mixing";
+    if (normalized.includes("mastering")) return "mastering";
+    if (normalized.includes("recording")) return "recording";
+  }
+
+  if (
+    normalized.includes("photography") ||
+    normalized.includes("photo") ||
+    normalized.includes("photos")
+  ) {
+    return "photo";
+  }
+
+  if (
+    normalized.includes("videography") ||
+    normalized.includes("video")
+  ) {
+    return "video";
+  }
+
+  return null;
+}
+
+function getScopePriority(scope) {
+  if (!scope) return 0;
+  if (scope === "photo and video") return 4;
+  if (
+    scope === "custom web app" ||
+    scope === "business website" ||
+    scope === "landing page" ||
+    scope === "new website" ||
+    scope === "redesign"
+  ) {
+    return 4;
+  }
+  if (
+    scope === "recording" ||
+    scope === "mixing" ||
+    scope === "mastering" ||
+    scope === "voiceover" ||
+    scope === "podcast" ||
+    scope === "branding" ||
+    scope === "social media" ||
+    scope === "content" ||
+    scope === "paid ads"
+  ) {
+    return 3;
+  }
+  if (scope === "photo" || scope === "video") return 2;
+  return 1;
+}
+
+function cleanLocationCandidate(text) {
+  return text
+    .replace(/^(in|at|from|around|near)\s+/i, "")
+    .replace(/^(venue|location)\s*(is|:)?\s*/i, "")
+    .replace(/[?.!,]+$/g, "")
+    .trim();
+}
+
+function extractLocationValue(text, memory = null) {
+  if (typeof text !== "string") return null;
+
+  const trimmed = text.trim();
+  const normalized = normalizeIntentText(trimmed);
+  if (!trimmed) return null;
+
+  const directPattern = /\b(?:in|at|from|venue is|venue:|location is|location:)\s+([a-zA-Z][a-zA-Z\s'-]{1,60})/i;
+  const directMatch = trimmed.match(directPattern);
+  if (directMatch?.[1]) {
+    return cleanLocationCandidate(directMatch[1]);
+  }
+
+  const looksLikeQuestion =
+    normalized.includes("where") ||
+    normalized.includes("price") ||
+    normalized.includes("available") ||
+    normalized.includes("book");
+  const looksLikeDate = !!extractDateValue(trimmed);
+  const looksLikeScope = !!extractScopeValue(trimmed, memory?.service);
+
+  if (
+    memory?.date &&
+    !looksLikeQuestion &&
+    !looksLikeDate &&
+    !looksLikeScope &&
+    trimmed.split(/\s+/).length <= 4
+  ) {
+    return cleanLocationCandidate(trimmed);
+  }
+
+  return null;
+}
+
+function inferBookingMemory(messages, activeServiceId, lastDetectedIntent) {
+  const memory = createEmptyBookingMemory();
+
+  if (activeServiceId) {
+    memory.service = mapServiceToBookingService(activeServiceId, lastDetectedIntent);
+  }
+
+  for (const message of messages) {
+    if (message?.role !== "user" || typeof message.content !== "string") continue;
+
+    const lowered = normalizeIntentText(message.content);
+    const detectedServiceId = detectServiceContext(lowered);
+    if (detectedServiceId) {
+      memory.service = mapServiceToBookingService(detectedServiceId, lastDetectedIntent);
+    }
+
+    if (!memory.date) {
+      const dateValue = extractDateValue(message.content);
+      if (dateValue) memory.date = dateValue;
+    }
+
+    {
+      const scopeValue = extractScopeValue(message.content, detectedServiceId || activeServiceId);
+      if (getScopePriority(scopeValue) >= getScopePriority(memory.scope)) {
+        memory.scope = scopeValue || memory.scope;
+      }
+    }
+
+    {
+      const locationValue = extractLocationValue(message.content, memory);
+      if (locationValue) memory.location = locationValue;
+    }
+  }
+
+  return memory;
+}
+
+function getRequiredBookingFields(context, bookingMemory) {
+  if (context?.id === "funeral_photography") {
+    return ["service", "date", "location", "scope"];
+  }
+
+  if (
+    context?.id === "birthday_photography" ||
+    context?.id === "wedding_coverage"
+  ) {
+    return ["service", "date", "location", "scope"];
+  }
+
+  if (context?.id === "audio_production") {
+    return ["service", "date", "scope"];
+  }
+
+  if (
+    context?.id === "web_development" ||
+    context?.id === "branding_marketing"
+  ) {
+    return ["service", "scope"];
+  }
+
+  if (bookingMemory?.service === "funeral" || bookingMemory?.service === "visual") {
+    return ["service", "date", "location", "scope"];
+  }
+
+  if (bookingMemory?.service === "audio") {
+    return ["service", "date", "scope"];
+  }
+
+  if (bookingMemory?.service === "digital") {
+    return ["service", "scope"];
+  }
+
+  return ["service"];
+}
+
+function getMissingBookingFields(bookingMemory, requiredFields) {
+  return requiredFields.filter((field) => !bookingMemory?.[field]);
+}
+
 function isShortContextualFollowUp(text) {
   const normalized = normalizeIntentText(text);
   return (
@@ -556,11 +849,18 @@ function inferConversationState(messages) {
   const latestUserMessage = getLatestUserMessage(messages);
   const lastDetectedIntent = resolveLastDetectedIntent(messages);
   const userMessageCount = messages.filter((message) => message?.role === "user").length;
+  const bookingMemory = inferBookingMemory(messages, activeServiceId, lastDetectedIntent);
+  const requiredBookingFields = getRequiredBookingFields(activeContext, bookingMemory);
+  const missingBookingFields = getMissingBookingFields(bookingMemory, requiredBookingFields);
 
   return {
     activeService: activeContext?.slug || null,
     activeCategory: activeContext?.categoryId || null,
     lastDetectedIntent,
+    bookingMemory,
+    requiredBookingFields,
+    missingBookingFields,
+    nextMissingBookingField: missingBookingFields[0] || null,
     conversationStage: detectConversationStage(latestUserMessage),
     hasShortQuery: isShortUserQuery(latestUserMessage),
     userMessageCount,
@@ -698,53 +998,86 @@ function getServiceValueLine(context) {
   return "We tailor the service around what you need so the process feels straightforward from the start.";
 }
 
+function buildBookingMemorySummary(state) {
+  const memory = state?.bookingMemory;
+  if (!memory) return null;
+
+  const parts = [];
+  if (memory.date) parts.push(`date: ${memory.date}`);
+  if (memory.location) parts.push(`location: ${memory.location}`);
+  if (memory.scope) parts.push(`scope: ${memory.scope}`);
+
+  return parts.length ? `So far I have ${parts.join(", ")}.` : null;
+}
+
+function isBookingMemoryComplete(state) {
+  return Array.isArray(state?.requiredBookingFields) && state.requiredBookingFields.length > 0 && state.missingBookingFields?.length === 0;
+}
+
+function getReadyToBookLine(context, state) {
+  const summary = buildBookingMemorySummary(state);
+  const intro = context
+    ? `${context.name}: You're in the right place, and we handle that.`
+    : "You're in the right place, and we can help with that.";
+
+  return compactReplyLines([
+    intro,
+    summary || "I have the main booking details.",
+    `More details: ${joinUrl(context?.route || context?.categoryRoute || "/contact")}`,
+    `You can message us on WhatsApp at ${WHATSAPP_NUMBER} and we'll help you confirm the booking directly.`,
+  ]);
+}
+
 function getBookingQuestion(context, state) {
-  if (context?.id === "funeral_photography") {
-    return "What date and location should I check for you?";
+  const nextField = state?.nextMissingBookingField;
+  const bookingService = state?.bookingMemory?.service;
+
+  if (nextField === "service") {
+    return "What kind of service do you need help with?";
   }
 
-  if (context?.id === "birthday_photography" || context?.id === "wedding_coverage") {
-    return "What date and venue do you have in mind?";
+  if (nextField === "date") {
+    if (context?.id === "funeral_photography" || bookingService === "funeral") {
+      return "What date is the service on?";
+    }
+    if (context?.id === "audio_production" || bookingService === "audio") {
+      return "When would you like to start?";
+    }
+    return "What date do you have in mind?";
   }
 
-  if (context?.id === "web_development") {
-    return "Is this a new website, a redesign, or a custom web app?";
+  if (nextField === "location") {
+    if (context?.id === "funeral_photography" || bookingService === "funeral") {
+      return "What location should I note for the service?";
+    }
+    return "What location or venue should I note?";
   }
 
-  if (context?.id === "branding_marketing") {
-    return "What scope do you need help with: branding, content, ads, or full digital marketing?";
+  if (nextField === "scope") {
+    if (context?.id === "web_development") {
+      return "Is this a new website, a redesign, or a custom web app?";
+    }
+    if (context?.id === "branding_marketing") {
+      return "What scope do you need help with: branding, content, ads, or digital marketing?";
+    }
+    if (context?.id === "audio_production" || bookingService === "audio") {
+      return "Do you need recording, mixing, mastering, voiceover, or podcast support?";
+    }
+    return "Do you need photo, video, or both?";
   }
 
-  if (context?.id === "audio_production") {
-    return "What kind of audio project are you planning?";
-  }
-
-  if (state?.lastDetectedIntent === "funeral") {
-    return "What date and location should I check for you?";
-  }
-
-  if (state?.lastDetectedIntent === "visual") {
-    return "What date and venue do you have in mind?";
-  }
-
-  if (
-    state?.lastDetectedIntent === "web_design" ||
-    state?.lastDetectedIntent === "digital_marketing"
-  ) {
-    return "Is this a new project, a redesign, or ongoing support?";
-  }
-
-  if (state?.lastDetectedIntent === "audio") {
-    return "What kind of audio project do you need help with?";
-  }
-
-  return "What kind of service would you like help with?";
+  return "Would you like me to help you move this booking forward on WhatsApp?";
 }
 
 function buildCompactContextReply(context, state, options = {}) {
+  if (options.useSequentialBookingFlow !== false && isBookingMemoryComplete(state)) {
+    return getReadyToBookLine(context, state);
+  }
+
   const tone = getContextTone(context);
   const bookingFocused = options.bookingFocused || false;
-  const summary = options.summary || compactServiceSummary(context);
+  const memorySummary = buildBookingMemorySummary(state);
+  const summary = options.summary || memorySummary || compactServiceSummary(context);
   const pageUrl = joinUrl(context.categoryRoute || context.route);
   const question = options.question || getBookingQuestion(context, state);
   const lineOne = bookingFocused
@@ -760,14 +1093,19 @@ function buildCompactContextReply(context, state, options = {}) {
 }
 
 function buildCompactGenericReply(info, state, options = {}) {
+  if (options.useSequentialBookingFlow !== false && isBookingMemoryComplete(state)) {
+    return getReadyToBookLine(null, state);
+  }
+
   const bookingFocused = options.bookingFocused || false;
   const question = options.question || getBookingQuestion(null, state);
+  const memorySummary = buildBookingMemorySummary(state);
 
   return compactReplyLines([
     bookingFocused
       ? `${info.serviceName}: You're in the right place, and we handle that.`
       : info.intro,
-    options.summary || `${info.description} ${info.valueLine}`.trim(),
+    options.summary || memorySummary || `${info.description} ${info.valueLine}`.trim(),
     `More details: ${info.url}`,
     `${getWhatsAppGuidance(null, state, bookingFocused)} ${question}`,
   ]);
@@ -778,6 +1116,10 @@ function buildGeneralFallbackReply(options = {}) {
     userMessageCount: options.userMessageCount || 0,
     conversationStage: options.bookingFocused ? "booking" : "interest",
     lastDetectedIntent: null,
+    bookingMemory: createEmptyBookingMemory(),
+    requiredBookingFields: ["service"],
+    missingBookingFields: ["service"],
+    nextMissingBookingField: "service",
   };
 
   return compactReplyLines([
@@ -1156,16 +1498,6 @@ function buildFallbackReply(messages, knowledge) {
 
   const intent = detectIntentOrNull(latestUserMessage) || state.lastDetectedIntent || "default";
   const info = buildFallbackServiceInfo(intent, knowledge);
-  const followUpQuestionByIntent = {
-    funeral: "What date and location should I check for you?",
-    visual: "What date and venue do you have in mind?",
-    web_design:
-      "Is this a new website, a redesign, or a custom web app?",
-    digital_marketing:
-      "What scope do you need help with: branding, content, ads, or full digital marketing support?",
-    audio: "What kind of audio project do you need help with?",
-    default: "What kind of service would you like help with?",
-  };
   const bookingFocused =
     state.conversationStage === "pricing" ||
     state.conversationStage === "availability" ||
@@ -1178,7 +1510,7 @@ function buildFallbackReply(messages, knowledge) {
   return buildCompactGenericReply(info, state, {
     bookingFocused,
     summary,
-    question: followUpQuestionByIntent[intent] || followUpQuestionByIntent.default,
+    question: getBookingQuestion(null, state),
   });
 }
 
