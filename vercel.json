@@ -1,14 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/**/*.js": {
-      "runtime": "@vercel/node",
-      "includeFiles": "public/data/kmp_knowledge.json"
-    }
-  },
   "rewrites": [
     {
-      "source": "/:path((?!api/).*)",
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]

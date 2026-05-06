@@ -1,5 +1,5 @@
 import fs from "fs";
-import path from "path";
+import { fileURLToPath } from "url";
 
 // Use a current, supported Gemini model on the v1beta endpoint.
 // "gemini-pro" on v1 has been deprecated and returns empty candidates.
@@ -159,7 +159,9 @@ const SERVICE_CONTEXTS = {
 let cachedKnowledge = null;
 function loadKnowledge() {
   if (cachedKnowledge) return cachedKnowledge;
-  const filePath = path.join(process.cwd(), "public", "data", "kmp_knowledge.json");
+  const filePath = fileURLToPath(
+    new URL("../public/data/kmp_knowledge.json", import.meta.url)
+  );
   const fileData = fs.readFileSync(filePath, "utf-8");
   cachedKnowledge = JSON.parse(fileData);
   return cachedKnowledge;
