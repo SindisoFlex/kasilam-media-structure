@@ -1,5 +1,10 @@
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { getSession, saveSession } from "./chat-session-store.js";
+import { detectIntent as detectChatIntent } from "./chat-intents.js";
+import { buildContextualFallback } from "./chat-fallbacks.js";
+import { buildBookingCta } from "./chat-handoff.js";
+import { resolveServiceTransition } from "./chat-state.js";
 
 // Use a current, supported Gemini model on the v1beta endpoint.
 // "gemini-pro" on v1 has been deprecated and returns empty candidates.
@@ -9,9 +14,14 @@ const MAX_HISTORY_MESSAGES = 20;
 const RETRYABLE_STATUSES = new Set([429, 500, 502, 503, 504]);
 const MAX_GEMINI_ATTEMPTS = 3;
 const RETRY_DELAY_MS = 400;
+const GEMINI_TIMEOUT_MS = 9000;
+const RATE_LIMIT_WINDOW_MS = 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 20;
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
 const CONTACT_PAGE_URL = `${SITE_BASE_URL}/contact`;
+const IS_DEV = process.env.NODE_ENV !== "production";
+const sessionRateLimitStore = new Map();
 
 const SERVICE_CONTEXTS = {
   funeral_photography: {
@@ -171,6 +181,48 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function cleanupRateLimitEntries(now = Date.now()) {
+  for (const [sessionId, timestamps] of sessionRateLimitStore.entries()) {
+    const recentTimestamps = timestamps.filter(
+      (timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS
+    );
+
+    if (recentTimestamps.length === 0) {
+      sessionRateLimitStore.delete(sessionId);
+      continue;
+    }
+
+    sessionRateLimitStore.set(sessionId, recentTimestamps);
+  }
+}
+
+function checkRateLimit(sessionId) {
+  if (typeof sessionId !== "string" || !sessionId.trim()) {
+    return { allowed: true, remaining: RATE_LIMIT_MAX_REQUESTS };
+  }
+
+  const normalizedSessionId = sessionId.trim();
+  const now = Date.now();
+  cleanupRateLimitEntries(now);
+
+  const existingTimestamps = sessionRateLimitStore.get(normalizedSessionId) || [];
+  if (existingTimestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    const retryAfterMs = RATE_LIMIT_WINDOW_MS - (now - existingTimestamps[0]);
+    return {
+      allowed: false,
+      remaining: 0,
+      retryAfterMs: retryAfterMs > 0 ? retryAfterMs : RATE_LIMIT_WINDOW_MS,
+    };
+  }
+
+  const nextTimestamps = [...existingTimestamps, now];
+  sessionRateLimitStore.set(normalizedSessionId, nextTimestamps);
+  return {
+    allowed: true,
+    remaining: Math.max(0, RATE_LIMIT_MAX_REQUESTS - nextTimestamps.length),
+  };
+}
+
 function getRetryDelayMs(retryAfterHeader) {
   if (!retryAfterHeader) return null;
 
@@ -248,6 +300,42 @@ function isFallbackWorthyGeminiError(status, data) {
     lowered.includes("not found") ||
     lowered.includes("unsupported")
   );
+}
+
+function classifyGeminiError(status, data, error = null) {
+  const message = typeof data?.error?.message === "string"
+    ? data.error.message.toLowerCase()
+    : "";
+
+  if (error?.name === "AbortError") {
+    return "timeout";
+  }
+
+  if (
+    status === 429 ||
+    message.includes("quota") ||
+    message.includes("rate limit") ||
+    message.includes("resource exhausted")
+  ) {
+    return "quota_exceeded";
+  }
+
+  if (
+    status === 404 ||
+    message.includes("expired") ||
+    message.includes("deprecated") ||
+    message.includes("not found") ||
+    message.includes("unsupported") ||
+    message.includes("model unavailable")
+  ) {
+    return "model_unavailable";
+  }
+
+  if (error) {
+    return "network";
+  }
+
+  return "model_unavailable";
 }
 
 function getLatestUserMessage(messages) {
@@ -424,8 +512,14 @@ function detectServiceContext(userText) {
   return null;
 }
 
-function resolveActiveServiceContext(messages) {
-  let activeContext = null;
+function resolveActiveServiceContext(messages, session = null) {
+  let activeContext =
+    typeof session?.activeServiceId === "string" ? session.activeServiceId : null;
+  let workingSession = {
+    activeServiceId: activeContext,
+    lockedService: Boolean(session?.lockedService),
+    serviceConfidence: session?.serviceConfidence || 0,
+  };
 
   for (const message of messages) {
     if (message?.role !== "user" || typeof message.content !== "string") continue;
@@ -435,16 +529,23 @@ function resolveActiveServiceContext(messages) {
       activeContext = null;
       continue;
     }
-
-    const detected = detectServiceContext(lowered);
-    if (detected) activeContext = detected;
+    const transition = resolveServiceTransition(workingSession, lowered);
+    if (transition.serviceId) {
+      activeContext = transition.serviceId;
+      workingSession = {
+        activeServiceId: transition.serviceId,
+        lockedService: transition.lockedService,
+        serviceConfidence: transition.confidence,
+      };
+    }
   }
 
   return activeContext;
 }
 
-function resolveLastDetectedIntent(messages) {
-  let lastIntent = null;
+function resolveLastDetectedIntent(messages, session = null) {
+  let lastIntent =
+    typeof session?.lastIntent === "string" ? session.lastIntent : null;
 
   for (const message of messages) {
     if (message?.role !== "user" || typeof message.content !== "string") continue;
@@ -670,10 +771,13 @@ function extractLocationValue(text, memory = null) {
   return null;
 }
 
-function inferBookingMemory(messages, activeServiceId, lastDetectedIntent) {
-  const memory = createEmptyBookingMemory();
+function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, session = null) {
+  const memory = {
+    ...createEmptyBookingMemory(),
+    ...(session?.bookingMemory || {}),
+  };
 
-  if (activeServiceId) {
+  if (activeServiceId && !memory.service) {
     memory.service = mapServiceToBookingService(activeServiceId, lastDetectedIntent);
   }
 
@@ -868,8 +972,12 @@ function isShortUserQuery(text) {
   );
 }
 
-function detectConversationStage(latestUserMessage) {
+function detectConversationStage(latestUserMessage, session = null) {
   const text = normalizeIntentText(latestUserMessage);
+
+  if (!text) {
+    return session?.conversationStage || "discovery";
+  }
 
   if (isBookingIntent(text)) return "booking";
   if (isPageRequest(text)) return "page_reference";
@@ -879,17 +987,23 @@ function detectConversationStage(latestUserMessage) {
   return "interest";
 }
 
-function inferConversationState(messages) {
-  const activeServiceId = resolveActiveServiceContext(messages);
+function inferConversationState(messages, session = null) {
+  const activeServiceId = resolveActiveServiceContext(messages, session);
   const activeContext = activeServiceId ? SERVICE_CONTEXTS[activeServiceId] : null;
   const latestUserMessage = getLatestUserMessage(messages);
-  const lastDetectedIntent = resolveLastDetectedIntent(messages);
+  const lastDetectedIntent = resolveLastDetectedIntent(messages, session);
   const userMessageCount = messages.filter((message) => message?.role === "user").length;
-  const bookingMemory = inferBookingMemory(messages, activeServiceId, lastDetectedIntent);
+  const bookingMemory = inferBookingMemory(
+    messages,
+    activeServiceId,
+    lastDetectedIntent,
+    session
+  );
   const requiredBookingFields = getRequiredBookingFields(activeContext, bookingMemory);
   const missingBookingFields = getMissingBookingFields(bookingMemory, requiredBookingFields);
 
   return {
+    activeServiceId: activeServiceId || null,
     activeService: activeContext?.slug || null,
     activeCategory: activeContext?.categoryId || null,
     lastDetectedIntent,
@@ -897,10 +1011,28 @@ function inferConversationState(messages) {
     requiredBookingFields,
     missingBookingFields,
     nextMissingBookingField: missingBookingFields[0] || null,
-    conversationStage: detectConversationStage(latestUserMessage),
+    conversationStage: detectConversationStage(latestUserMessage, session),
     hasShortQuery: isShortUserQuery(latestUserMessage),
     userMessageCount,
   };
+}
+
+function getBookingReadinessScore(state) {
+  const memory = state?.bookingMemory || {};
+  let score = 0;
+
+  if (memory.service) score += 30;
+  if (memory.date) score += 25;
+  if (memory.location) score += 25;
+  if (memory.scope) score += 20;
+
+  return score;
+}
+
+function getBookingReadinessStage(score) {
+  if (score >= 70) return "handoff_ready";
+  if (score >= 40) return "qualification";
+  return "discovery";
 }
 
 function formatExactPricing(lines) {
@@ -916,6 +1048,17 @@ function pickVariant(options, seed = "") {
 
 function compactReplyLines(lines) {
   return lines.filter(Boolean).slice(0, 4).join("\n");
+}
+
+function combineGuidanceAndQuestion(guidance, question) {
+  const trimmedGuidance = typeof guidance === "string" ? guidance.trim() : "";
+  const trimmedQuestion = typeof question === "string" ? question.trim() : "";
+
+  if (trimmedGuidance && trimmedQuestion) {
+    return `${trimmedGuidance} ${trimmedQuestion}`;
+  }
+
+  return trimmedGuidance || trimmedQuestion;
 }
 
 function compactServiceSummary(context) {
@@ -961,10 +1104,15 @@ function getStartingPriceSummary(context) {
 }
 
 function shouldEncourageWhatsApp(state) {
-  return state?.userMessageCount >= 3;
+  return getBookingReadinessScore(state) >= 70;
 }
 
 function getWhatsAppGuidance(context, state, bookingFocused) {
+  const readinessScore = getBookingReadinessScore(state);
+  if (readinessScore < 70) {
+    return "";
+  }
+
   if (bookingFocused) {
     return `If you'd like to lock this in faster, WhatsApp us on ${WHATSAPP_NUMBER}.`;
   }
@@ -1067,8 +1215,15 @@ function getReadyToBookLine(context, state) {
 function getBookingQuestion(context, state) {
   const nextField = state?.nextMissingBookingField;
   const bookingService = state?.bookingMemory?.service;
+  const lastIntent = state?.lastDetectedIntent;
 
   if (nextField === "service") {
+    if (lastIntent === "pricing" || lastIntent === "price") {
+      return "Which service can I give you specific pricing for? (e.g., Photography, Web Design, or Audio)";
+    }
+    if (lastIntent === "page_reference" || lastIntent === "navigation") {
+      return "Which service page would you like to see?";
+    }
     return "What kind of service do you need help with?";
   }
 
@@ -1124,7 +1279,10 @@ function buildCompactContextReply(context, state, options = {}) {
     lineOne,
     summary,
     `More details: ${pageUrl}`,
-    `${getWhatsAppGuidance(context, state, bookingFocused)} ${question}`,
+    combineGuidanceAndQuestion(
+      getWhatsAppGuidance(context, state, bookingFocused),
+      question
+    ),
   ]);
 }
 
@@ -1143,7 +1301,10 @@ function buildCompactGenericReply(info, state, options = {}) {
       : info.intro,
     options.summary || memorySummary || `${info.description} ${info.valueLine}`.trim(),
     `More details: ${info.url}`,
-    `${getWhatsAppGuidance(null, state, bookingFocused)} ${question}`,
+    combineGuidanceAndQuestion(
+      getWhatsAppGuidance(null, state, bookingFocused),
+      question
+    ),
   ]);
 }
 
@@ -1162,27 +1323,93 @@ function buildGeneralFallbackReply(options = {}) {
     options.lead || "You're in the right place, and we can help with pricing and bookings.",
     options.summary || "KMP covers visual production, audio work, and digital solutions.",
     `More details: ${options.url || CONTACT_PAGE_URL}`,
-    `${getWhatsAppGuidance(null, state, !!options.bookingFocused)} ${options.question || "What kind of service do you need help with?"}`,
+    combineGuidanceAndQuestion(
+      getWhatsAppGuidance(null, state, !!options.bookingFocused),
+      options.question || "What kind of service do you need help with?"
+    ),
   ]);
 }
 
 function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
-  const reply = options.preferBusy
-    ? buildBusyFallbackReply(messages)
-    : knowledge
-      ? buildFallbackReply(messages, knowledge)
-      : buildGeneralFallbackReply({
-          lead: "You're in the right place, and we can still help with service information and bookings.",
-          summary:
-            "KMP handles a mix of visual production, audio work, and digital solutions.",
-        });
+  const session = options.session || null;
+  const effectiveSession = {
+    ...(session || {}),
+    activeServiceId: state?.activeServiceId || session?.activeServiceId || null,
+    conversationStage: state?.conversationStage || session?.conversationStage || "discovery",
+    bookingMemory: {
+      ...createEmptyBookingMemory(),
+      ...(session?.bookingMemory || {}),
+      ...(state?.bookingMemory || {}),
+    },
+  };
+  const latestUserMessage = getLatestUserMessage(messages);
+  const classifiedIntent = detectChatIntent(latestUserMessage, effectiveSession);
+  const contextualReply = buildContextualFallback(effectiveSession, classifiedIntent);
+  const reply = contextualReply || (
+    options.preferBusy
+      ? buildBusyFallbackReply(messages, effectiveSession)
+      : knowledge
+        ? buildFallbackReply(messages, knowledge, effectiveSession)
+        : buildGeneralFallbackReply({
+            lead: "You're in the right place, and we can still help with service information and bookings.",
+            summary:
+              "KMP handles a mix of visual production, audio work, and digital solutions.",
+          })
+  );
 
   return {
     reply,
     fallback: true,
     model: GEMINI_MODEL,
     state,
+    errorType: options.errorType || null,
   };
+}
+
+function buildSessionUpdate(session, state, reply, messages = []) {
+  const latestUserMessage = getLatestUserMessage(messages);
+  const transition = resolveServiceTransition(session || {}, latestUserMessage);
+  const activeServiceId =
+    transition.serviceId || state?.activeServiceId || session?.activeServiceId || null;
+  const bookingReadinessScore = getBookingReadinessScore(state);
+  const readinessStage = getBookingReadinessStage(bookingReadinessScore);
+  const nextSession = {
+    ...(session || {}),
+    activeServiceId,
+    activeCategoryId: state?.activeCategory || session?.activeCategoryId || null,
+    serviceConfidence: transition.confidence || (activeServiceId ? 1 : 0),
+    lockedService: Boolean(transition.lockedService),
+    lastIntent: state?.lastDetectedIntent || session?.lastIntent || null,
+    conversationStage: readinessStage,
+    bookingReadinessScore,
+    bookingMemory: {
+      ...createEmptyBookingMemory(),
+      ...(session?.bookingMemory || {}),
+      ...(state?.bookingMemory || {}),
+    },
+    nextMissingBookingField: state?.nextMissingBookingField || null,
+    lastAssistantQuestion:
+      state?.nextMissingBookingField && activeServiceId
+        ? getBookingQuestion(SERVICE_CONTEXTS[activeServiceId] || null, state)
+        : state?.nextMissingBookingField
+          ? getBookingQuestion(null, state)
+          : session?.lastAssistantQuestion || null,
+  };
+
+  const nextEvent = {
+    type: "turn",
+    activeServiceId,
+    stage: nextSession.conversationStage,
+    fallback: Boolean(reply && typeof reply === "string"),
+    at: Date.now(),
+  };
+
+  nextSession.events = [
+    ...(Array.isArray(session?.events) ? session.events : []),
+    ...(Array.isArray(transition.events) ? transition.events : []),
+    nextEvent,
+  ].slice(-20);
+  return nextSession;
 }
 
 function getContextTone(context) {
@@ -1487,9 +1714,9 @@ function buildFallbackServiceInfo(intent, knowledge) {
   }
 }
 
-function buildBusyFallbackReply(messages) {
-  const state = inferConversationState(messages);
-  const activeContextId = resolveActiveServiceContext(messages);
+function buildBusyFallbackReply(messages, session = null) {
+  const state = inferConversationState(messages, session);
+  const activeContextId = resolveActiveServiceContext(messages, session);
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
 
   if (activeContext) {
@@ -1505,12 +1732,17 @@ function buildBusyFallbackReply(messages) {
     "You're in the right place, and we can help you with pricing and bookings.",
     "Let me get the details so we can move forward with your request.",
     `More details: ${CONTACT_PAGE_URL}`,
-    `${getWhatsAppGuidance(null, state, true)} What kind of service do you need help with?`,
+    combineGuidanceAndQuestion(
+      getWhatsAppGuidance(null, state, true),
+      "What kind of service do you need help with?"
+    ),
   ]);
 }
 
 function buildPriceIntentResponse(context, knowledge) {
-  if (!context) return null;
+  if (!context) {
+    return "Pricing at KMP starts from R1,500 for memorial photography, R4,500 for basic web projects, and R4,500 for essential wedding coverage.";
+  }
 
   if (context.pricingType === "exact" && Array.isArray(context.exactPricing)) {
     return `Starting prices for ${context.name}: ${getStartingPriceSummary(context)}`;
@@ -1522,36 +1754,44 @@ function buildPriceIntentResponse(context, knowledge) {
     }
   }
 
-  return null;
+  return "Pricing depends on the specific scope, duration, and location of your project.";
 }
 
 function buildNavigationIntentResponse(context) {
-  if (!context) return null;
+  if (!context) {
+    return `I can point you to our full services list here: ${SITE_BASE_URL}/services`;
+  }
 
   const url = joinUrl(context.categoryRoute || context.route);
   return `I'll point you to ${context.name}. Check it out here: ${url}`;
 }
 
-function buildFallbackReply(messages, knowledge) {
+function buildFallbackReply(messages, knowledge, session = null) {
   const latestUserMessage = getLatestUserMessage(messages);
-  const state = inferConversationState(messages);
-  const activeContextId = resolveActiveServiceContext(messages);
+  const state = inferConversationState(messages, session);
+  const activeContextId = resolveActiveServiceContext(messages, session);
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
 
   // Check for explicit price intent
-  if (detectPriceIntent(latestUserMessage) && activeContext) {
+  if (detectPriceIntent(latestUserMessage)) {
     const priceResponse = buildPriceIntentResponse(activeContext, knowledge);
     if (priceResponse) {
-      return `${priceResponse}\n\nWhat date and details should I work with to give you a complete quote?`;
+      const followUp = activeContext
+        ? "What date and details should I work with to give you a complete quote?"
+        : "Which of our services are you interested in so I can give you more specific rates?";
+      return `${priceResponse}\n\n${followUp}`;
     }
     return buildPricingReply(activeContext, state);
   }
 
   // Check for explicit navigation intent
-  if (detectNavigationIntent(latestUserMessage) && activeContext) {
+  if (detectNavigationIntent(latestUserMessage)) {
     const navResponse = buildNavigationIntentResponse(activeContext);
     if (navResponse) {
-      return `${navResponse}\n\nNeed help with details or booking?`;
+      const followUp = activeContext
+        ? "Need help with details or booking?"
+        : "Is there a specific service you'd like to see more details for?";
+      return `${navResponse}\n\n${followUp}`;
     }
     return buildPageReply(activeContext, state);
   }
@@ -1594,13 +1834,32 @@ function buildFallbackReply(messages, knowledge) {
 async function callGeminiWithRetry(url, payload) {
   let lastStatus = 502;
   let lastData = null;
+  let lastErrorType = "model_unavailable";
 
   for (let attempt = 0; attempt < MAX_GEMINI_ATTEMPTS; attempt += 1) {
-    const geminiRes = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+    let geminiRes;
+    try {
+      geminiRes = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+    } catch (error) {
+      clearTimeout(timeoutId);
+      lastErrorType = classifyGeminiError(null, null, error);
+      console.error("[ai-chat] Gemini request transport error", error);
+
+      return {
+        ok: false,
+        status: error?.name === "AbortError" ? 504 : 503,
+        data: { error: { message: error?.message || "Gemini request failed" } },
+        errorType: lastErrorType,
+      };
+    }
+    clearTimeout(timeoutId);
 
     const raw = await geminiRes.text();
     let data;
@@ -1612,28 +1871,30 @@ async function callGeminiWithRetry(url, payload) {
         ok: false,
         status: 502,
         data: { error: { message: "Invalid response from Gemini" }, raw: raw.slice(0, 1000) },
+        errorType: "model_unavailable",
       };
     }
 
     if (geminiRes.ok) {
-      return { ok: true, status: geminiRes.status, data };
+      return { ok: true, status: geminiRes.status, data, errorType: null };
     }
 
     lastStatus = geminiRes.status;
     lastData = data;
+    lastErrorType = classifyGeminiError(geminiRes.status, data);
     const retryAfterMs = getRetryDelayMs(geminiRes.headers.get("retry-after"));
     const shouldRetry =
       attempt < MAX_GEMINI_ATTEMPTS - 1 && isRetryableGeminiError(geminiRes.status, data);
     console.error("[ai-chat] Gemini error", geminiRes.status, data, shouldRetry ? "(retrying)" : "");
 
     if (!shouldRetry) {
-      return { ok: false, status: geminiRes.status, data };
+      return { ok: false, status: geminiRes.status, data, errorType: lastErrorType };
     }
 
     await sleep(retryAfterMs ?? RETRY_DELAY_MS);
   }
 
-  return { ok: false, status: lastStatus, data: lastData };
+  return { ok: false, status: lastStatus, data: lastData, errorType: lastErrorType };
 }
 
 export default async function handler(req, res) {
@@ -1659,11 +1920,55 @@ export default async function handler(req, res) {
     if (typeof body === "string") {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
+    const sessionId =
+      typeof body?.sessionId === "string" && body.sessionId.trim()
+        ? body.sessionId.trim()
+        : null;
+    const rateLimit = checkRateLimit(sessionId);
+    if (!rateLimit.allowed) {
+      const rateLimitedSession = getSession(sessionId);
+      const rateLimitedMessages = normalizeMessages(body);
+      const rateLimitedState = inferConversationState(rateLimitedMessages, rateLimitedSession);
+      return res.status(200).json(
+        buildSafeFallbackResponse(rateLimitedMessages, null, rateLimitedState, {
+          session: rateLimitedSession,
+          errorType: "quota_exceeded",
+        })
+      );
+    }
+    const session = getSession(sessionId);
     const messages = normalizeMessages(body);
-    const state = inferConversationState(messages);
+    const state = inferConversationState(messages, session);
+    const finalizeResponse = (payload, nextState = state) => {
+      if (sessionId) {
+        const savedSession = saveSession(
+          buildSessionUpdate(session, nextState, payload?.reply, messages)
+        );
+        const cta =
+          savedSession.bookingReadinessScore >= 70
+            ? buildBookingCta(savedSession)
+            : null;
+        const nextPayload = cta ? { ...payload, cta } : payload;
+
+        if (IS_DEV) {
+          return res.status(200).json({
+            ...nextPayload,
+            _debug: {
+              activeServiceId: savedSession.activeServiceId,
+              stage: savedSession.conversationStage,
+              errorType: payload?.errorType || null,
+            },
+          });
+        }
+
+        return res.status(200).json(nextPayload);
+      }
+
+      return res.status(200).json(payload);
+    };
 
     if (!messages.length) {
-      return res.status(200).json({
+      return finalizeResponse({
         reply: buildGeneralFallbackReply({
           lead: "You're in the right place, and I can help you find the right KMP service.",
           summary:
@@ -1679,8 +1984,8 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       console.error("[ai-chat] GEMINI_API_KEY is not set");
-      return res.status(200).json({
-        reply: buildFallbackReply(messages, loadKnowledge()),
+      return finalizeResponse({
+        reply: buildFallbackReply(messages, loadKnowledge(), session),
         fallback: true,
         model: GEMINI_MODEL,
         state,
@@ -1692,7 +1997,7 @@ export default async function handler(req, res) {
       knowledge = loadKnowledge();
     } catch (e) {
       console.error("[ai-chat] Failed to load knowledge file:", e);
-      return res.status(200).json({
+      return finalizeResponse({
         reply: buildGeneralFallbackReply({
           lead: "You're in the right place, and I can still point you in the right direction.",
           summary:
@@ -1704,7 +2009,7 @@ export default async function handler(req, res) {
       });
     }
 
-    const activeContextId = resolveActiveServiceContext(messages);
+    const activeContextId = resolveActiveServiceContext(messages, session);
     const activeContextSummary = buildContextSummary(activeContextId);
 
     const systemInstruction = `You are the AI assistant for Kasilam Media Productions (KMP).
@@ -1750,16 +2055,29 @@ ${JSON.stringify(knowledge)}`;
 
       if (!geminiResult?.ok) {
         console.log("[ai-chat] Gemini fallback triggered from HTTP/model error:", geminiResult?.status);
-        return res.status(200).json(
-          buildSafeFallbackResponse(messages, knowledge, state, {
-            preferBusy: isFallbackWorthyGeminiError(geminiResult?.status, data),
-          })
+        return finalizeResponse(
+          {
+            ...buildSafeFallbackResponse(messages, knowledge, state, {
+              preferBusy: isFallbackWorthyGeminiError(geminiResult?.status, data),
+              session,
+              errorType: geminiResult?.errorType,
+            }),
+            errorType: geminiResult?.errorType,
+          }
         );
       }
 
       if (!data || !Array.isArray(data?.candidates) || data.candidates.length === 0) {
         console.log("[ai-chat] Gemini fallback triggered from missing candidates.");
-        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+        return finalizeResponse(
+          {
+            ...buildSafeFallbackResponse(messages, knowledge, state, {
+              session,
+              errorType: "model_unavailable",
+            }),
+            errorType: "model_unavailable",
+          }
+        );
       }
 
       const candidate = data.candidates[0];
@@ -1768,19 +2086,43 @@ ${JSON.stringify(knowledge)}`;
 
       if (!Array.isArray(parts) || parts.length === 0) {
         console.log("[ai-chat] Gemini fallback triggered from missing content parts.", finishReason);
-        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+        return finalizeResponse(
+          {
+            ...buildSafeFallbackResponse(messages, knowledge, state, {
+              session,
+              errorType: "model_unavailable",
+            }),
+            errorType: "model_unavailable",
+          }
+        );
       }
 
       const reply = parts.map((p) => p?.text || "").join("").trim();
       if (!reply) {
         console.log("[ai-chat] Gemini fallback triggered from empty reply.", finishReason);
-        return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+        return finalizeResponse(
+          {
+            ...buildSafeFallbackResponse(messages, knowledge, state, {
+              session,
+              errorType: "model_unavailable",
+            }),
+            errorType: "model_unavailable",
+          }
+        );
       }
 
-      return res.status(200).json({ reply, finishReason, model: GEMINI_MODEL, state });
+      return finalizeResponse({ reply, finishReason, model: GEMINI_MODEL, state });
     } catch (error) {
       console.log("[ai-chat] Gemini request failed, using fallback:", error);
-      return res.status(200).json(buildSafeFallbackResponse(messages, knowledge, state));
+      return finalizeResponse(
+        {
+          ...buildSafeFallbackResponse(messages, knowledge, state, {
+            session,
+            errorType: classifyGeminiError(null, null, error),
+          }),
+          errorType: classifyGeminiError(null, null, error),
+        }
+      );
     }
   } catch (error) {
     console.error("[ai-chat] Unhandled error:", error);

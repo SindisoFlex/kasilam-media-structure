@@ -5,13 +5,36 @@ import { cn } from "@/lib/utils";
 
 type Msg = { role: "user" | "assistant"; content: string };
 const MAX_HISTORY_MESSAGES = 20;
+const SESSION_STORAGE_KEY = "kmp_chat_session_id";
 const SAFE_FALLBACK_MESSAGE =
   "You're in the right place, and we can still help. You can message us on WhatsApp at +27659704101 for direct assistance.";
+
+const generateSessionId = () => {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+
+  return `kmp-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+};
+
+const getOrCreateSessionId = () => {
+  if (typeof window === "undefined") {
+    return generateSessionId();
+  }
+
+  const existing = window.sessionStorage.getItem(SESSION_STORAGE_KEY);
+  if (existing) return existing;
+
+  const nextSessionId = generateSessionId();
+  window.sessionStorage.setItem(SESSION_STORAGE_KEY, nextSessionId);
+  return nextSessionId;
+};
 
 const AIChatWidget = () => {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [sessionId] = useState(() => getOrCreateSessionId());
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
@@ -24,6 +47,12 @@ const AIChatWidget = () => {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading, open]);
+
+  useEffect(() => {
+    if (import.meta.env.DEV) {
+      console.log("[AI Session]", sessionId);
+    }
+  }, [sessionId]);
 
   const send = async () => {
     const text = input.trim();
@@ -39,6 +68,7 @@ const AIChatWidget = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          sessionId,
           messages: nextMessages.slice(-MAX_HISTORY_MESSAGES),
         }),
       });
