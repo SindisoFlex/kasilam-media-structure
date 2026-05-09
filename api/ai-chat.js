@@ -1927,6 +1927,9 @@ export default async function handler(req, res) {
     const rateLimit = checkRateLimit(sessionId);
     if (!rateLimit.allowed) {
       const rateLimitedSession = getSession(sessionId);
+      if (IS_DEV) {
+        console.log("[AI Session Load]", { sessionId, reason: "rate_limit_check", stage: rateLimitedSession?.conversationStage });
+      }
       const rateLimitedMessages = normalizeMessages(body);
       const rateLimitedState = inferConversationState(rateLimitedMessages, rateLimitedSession);
       return res.status(200).json(
@@ -1936,14 +1939,25 @@ export default async function handler(req, res) {
         })
       );
     }
+    if (IS_DEV) {
+      console.log("[AI Session Load]", { sessionId, stage: "initial_load" });
+    }
     const session = getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
     const finalizeResponse = (payload, nextState = state) => {
       if (sessionId) {
-        const savedSession = saveSession(
-          buildSessionUpdate(session, nextState, payload?.reply, messages)
-        );
+        const sessionUpdate = buildSessionUpdate(session, nextState, payload?.reply, messages);
+        const savedSession = saveSession(sessionUpdate);
+        if (IS_DEV) {
+          console.log("[AI Session Save]", {
+            sessionId,
+            stage: savedSession.conversationStage,
+            activeServiceId: savedSession.activeServiceId,
+            bookingReadinessScore: savedSession.bookingReadinessScore,
+            lockedService: savedSession.lockedService,
+          });
+        }
         const cta =
           savedSession.bookingReadinessScore >= 70
             ? buildBookingCta(savedSession)
@@ -1954,14 +1968,25 @@ export default async function handler(req, res) {
           return res.status(200).json({
             ...nextPayload,
             _debug: {
+              sessionId,
               activeServiceId: savedSession.activeServiceId,
               stage: savedSession.conversationStage,
+              lockedService: savedSession.lockedService,
+              bookingReadinessScore: savedSession.bookingReadinessScore,
               errorType: payload?.errorType || null,
             },
           });
         }
 
         return res.status(200).json(nextPayload);
+      }
+
+      if (IS_DEV) {
+        console.log("[AI Session Note]", {
+          sessionId,
+          reason: "No sessionId provided - temporary request-scoped session only",
+          stage: state?.conversationStage,
+        });
       }
 
       return res.status(200).json(payload);
