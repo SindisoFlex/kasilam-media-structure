@@ -1,3 +1,16 @@
+import {
+  BOOKING_CONFIRMATION_SCORE_THRESHOLD,
+  BOOKING_PHASE,
+  buildConfirmationBannerText,
+  computeBookingValidation,
+  getBookingFieldQuestion,
+  getBookingReadinessScore,
+  getMissingBookingFields,
+  getRequiredBookingFields,
+  hasBookingCorrectionIntentNormalized,
+  hasBookingFinalizeYesNormalized,
+} from "./chat-booking-shared.js";
+
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
 
@@ -226,64 +239,183 @@ function buildLines(lines) {
   return lines.filter(Boolean).join("\n");
 }
 
-function getBookingReadinessScore(session) {
-  const memory = session?.bookingMemory || {};
-  let score = 0;
-
-  if (memory.service) score += 30;
-  if (memory.date) score += 25;
-  if (memory.location) score += 25;
-  if (memory.scope) score += 20;
-
-  return score;
-}
-
 export function buildContextualFallback(session, intent) {
-  const activeServiceId = session?.activeServiceId || null;
-  const bookingMemoryServiceId = inferServiceIdFromBookingMemory(session);
-  const heuristicServiceId = inferServiceIdFromHeuristics(intent);
-  const serviceId =
-    activeServiceId || bookingMemoryServiceId || heuristicServiceId || null;
-  const confidence = activeServiceId
-    ? 1
-    : bookingMemoryServiceId
-      ? 0.75
-      : heuristicServiceId
-        ? 0.45
-        : 0;
-  const readinessScore = getBookingReadinessScore(session);
+  // BLOCK C: Fallback Context Enforcement
+  // If service is locked, use it directly. Do NOT re-detect via heuristics.
+  // Locked service is authoritative, preventing "photography" keyword from overriding funeral/wedding context.
+  const IS_DEV = process.env.NODE_ENV !== "production";
+  
+  let activeServiceId = session?.activeServiceId || null;
+  let confidence = 0;
+  
+  // Priority 1: Locked service is authoritative
+  if (session?.lockedService && activeServiceId) {
+    if (IS_DEV) {
+      console.log("[Fallback] Using locked service", {
+        activeServiceId,
+        locked: true,
+      });
+    }
+    confidence = 1.0;
+  } else {
+    // Normal inference: try session, then booking memory, then heuristics
+    const bookingMemoryServiceId = inferServiceIdFromBookingMemory(session);
+    const heuristicServiceId = inferServiceIdFromHeuristics(intent);
+    
+    activeServiceId =
+      activeServiceId || bookingMemoryServiceId || heuristicServiceId || null;
+    confidence = activeServiceId
+      ? (activeServiceId === session?.activeServiceId ? 0.95 : bookingMemoryServiceId ? 0.75 : 0.45)
+      : 0;
+  }
 
-  if (!serviceId || !SERVICE_FALLBACKS[serviceId]) {
+  const memory = session?.bookingMemory || {};
+  const bookingValidation = computeBookingValidation(memory);
+
+  const readinessScore = getBookingReadinessScore({
+    bookingMemory: memory,
+    bookingValidation,
+  });
+
+  const phase = session?.bookingPhase || BOOKING_PHASE.COLLECTING;
+  const normalizedUser = normalizeText(intent?.normalizedText || "");
+
+  if (!activeServiceId || !SERVICE_FALLBACKS[activeServiceId]) {
+    const missingGen = missingBookingFieldsGenericPlaceholder(memory);
+    const blockHighPitch =
+      readinessScore >= BOOKING_CONFIRMATION_SCORE_THRESHOLD &&
+      ((phase === BOOKING_PHASE.COLLECTING &&
+        missingGen.length === 0) ||
+        (phase === BOOKING_PHASE.FINALIZED && !session.ctaIssued));
+
+    if (
+      phase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
+      session.confirmationSnapshot
+    ) {
+      return buildLines([
+        buildConfirmationBannerText(session.confirmationSnapshot),
+        `More details: ${SITE_BASE_URL}/services`,
+      ]);
+    }
+
     return buildLines([
       "You're in the right place, and I can narrow this down for you.",
       "Are you looking for funeral coverage, event photography, or another photography service?",
       `More details: ${SITE_BASE_URL}/services`,
-      readinessScore >= 70
+      !blockHighPitch && readinessScore >= BOOKING_CONFIRMATION_SCORE_THRESHOLD
         ? `You can also message us on WhatsApp at ${WHATSAPP_NUMBER}.`
         : null,
     ]);
   }
 
-  const config = SERVICE_FALLBACKS[serviceId];
+  const context = { id: activeServiceId };
+  const requiredFields = getRequiredBookingFields(context, memory);
+  const missingBookingFields = getMissingBookingFields(
+    memory,
+    requiredFields,
+    bookingValidation
+  );
+  const nextMissing = missingBookingFields[0] || null;
+
+  const config = SERVICE_FALLBACKS[activeServiceId];
+
+  if (phase === BOOKING_PHASE.AWAITING_CONFIRMATION) {
+    const snap = session.confirmationSnapshot || memory;
+    const banner = buildConfirmationBannerText(snap);
+    
+    if (!normalizedUser.trim()) {
+      return buildLines([
+        `${config.name}: You're in the right place, and we handle that.`,
+        banner,
+        `More details: ${joinUrl(config.route)}`,
+      ]);
+    }
+    
+    const correction = hasBookingCorrectionIntentNormalized(normalizedUser);
+    const affirm = hasBookingFinalizeYesNormalized(normalizedUser);
+
+    let tail;
+    if (correction) {
+      tail =
+        "What would you like to change? Share the corrected detail (for example date, venue, scope, phone, email, or name).";
+    } else if (affirm) {
+      tail =
+        "Reply YES to confirm\n\nor tell me what to change.";
+    } else {
+      tail =
+        "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
+    }
+
+    return buildLines([
+      `${config.name}: You're in the right place, and we handle that.`,
+      banner,
+      `More details: ${joinUrl(config.route)}`,
+      tail,
+    ]);
+  }
+
+  if (phase === BOOKING_PHASE.FINALIZED && !session.ctaIssued) {
+    const capturedFinalize = [];
+
+    if (memory.date) capturedFinalize.push(`date: ${memory.date}`);
+    if (memory.location) capturedFinalize.push(`location: ${memory.location}`);
+    if (memory.scope) capturedFinalize.push(`scope: ${memory.scope}`);
+    if (memory.customerName) capturedFinalize.push(`name: ${memory.customerName}`);
+    if (memory.customerPhone) capturedFinalize.push(`phone: ${memory.customerPhone}`);
+    if (memory.customerEmail)
+      capturedFinalize.push(`email: ${memory.customerEmail}`);
+
+    const memoryLineFinalize = capturedFinalize.length
+      ? `So far I have ${capturedFinalize.join(", ")}.`
+      : null;
+
+    return buildLines([
+      `${config.name}: You're in the right place, and we handle that.`,
+      memoryLineFinalize ||
+        "You're almost finished — confirming your booking shortly.",
+      `More details: ${joinUrl(config.route)}`,
+      "Reply YES once your summary looks correct, or tell me what to update.",
+    ]);
+  }
+
   const stage = session?.conversationStage || "discovery";
   const intentName = intent?.intent || "general_inquiry";
-  const question = pickQuestion(config, stage, intentName, confidence);
-  const memory = session?.bookingMemory || {};
+  let question = pickQuestion(config, stage, intentName, confidence);
+  if (nextMissing != null) {
+    question = getBookingFieldQuestion(nextMissing, context, {
+      bookingMemory: memory,
+      bookingValidation,
+      lastDetectedIntent: session?.lastIntent || null,
+    });
+  }
+
   const captured = [];
 
   if (memory.date) captured.push(`date: ${memory.date}`);
   if (memory.location) captured.push(`location: ${memory.location}`);
   if (memory.scope) captured.push(`scope: ${memory.scope}`);
+  if (memory.customerName) captured.push(`name: ${memory.customerName}`);
+  if (memory.customerPhone) captured.push(`phone: ${memory.customerPhone}`);
+  if (memory.customerEmail) captured.push(`email: ${memory.customerEmail}`);
 
   const summaryLine =
     intentName === "pricing" ? config.pricing : config.summary;
   const memoryLine = captured.length
     ? `So far I have ${captured.join(", ")}.`
     : null;
-  const ctaLine =
-    readinessScore >= 70
-      ? `If you'd like to move faster, message us on WhatsApp at ${WHATSAPP_NUMBER}. ${question}`
-      : question;
+
+  let ctaLine = question;
+  const suppressWaTeaserCollectComplete =
+    phase === BOOKING_PHASE.COLLECTING &&
+    readinessScore >= BOOKING_CONFIRMATION_SCORE_THRESHOLD &&
+    missingBookingFields.length === 0;
+  if (
+    readinessScore >= BOOKING_CONFIRMATION_SCORE_THRESHOLD &&
+    !suppressWaTeaserCollectComplete &&
+    (phase !== BOOKING_PHASE.FINALIZED || session.ctaIssued)
+  ) {
+    ctaLine = `If you'd like to move faster, message us on WhatsApp at ${WHATSAPP_NUMBER}. ${question}`;
+  }
 
   return buildLines([
     `${config.name}: You're in the right place, and we handle that.`,
@@ -292,4 +424,13 @@ export function buildContextualFallback(session, intent) {
     `More details: ${joinUrl(config.route)}`,
     ctaLine,
   ]);
+}
+
+function missingBookingFieldsGenericPlaceholder(memory) {
+  const bv = computeBookingValidation(memory || {});
+  return getMissingBookingFields(
+    memory || {},
+    getRequiredBookingFields(null, memory),
+    bv
+  );
 }

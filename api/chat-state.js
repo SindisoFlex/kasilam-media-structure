@@ -155,7 +155,26 @@ export function resolveServiceTransition(session, userText) {
   const explicitTopicChange = isExplicitTopicChange(normalizedText);
   const events = [];
 
+  // DEV: Log service transition decision points
+  const IS_DEV = process.env.NODE_ENV !== "production";
+  if (IS_DEV) {
+    console.log("[Service Transition]", {
+      input: userText.slice(0, 50),
+      previousServiceId,
+      wasLocked,
+      detection: { serviceId: detection.serviceId, confidence: detection.confidence },
+      shortFollowUp,
+      explicitTopicChange,
+    });
+  }
+
   if (shortFollowUp && wasLocked && previousServiceId) {
+    if (IS_DEV) {
+      console.log("[Service Transition Outcome] Short follow-up on locked service", {
+        previousServiceId,
+        locked: true,
+      });
+    }
     return {
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
@@ -176,6 +195,12 @@ export function resolveServiceTransition(session, userText) {
   if (!previousServiceId) {
     if (detection.confidence >= 0.8) {
       events.push({ type: "service_locked", service: detection.serviceId });
+      if (IS_DEV) {
+        console.log("[Service Transition Outcome] Service locked (new)", {
+          serviceId: detection.serviceId,
+          confidence: detection.confidence,
+        });
+      }
     }
 
     return {
@@ -207,6 +232,15 @@ export function resolveServiceTransition(session, userText) {
       events,
     };
   }
+    if (IS_DEV) {
+      console.log("[Service Transition Outcome] Service switched", {
+        from: previousServiceId,
+        to: detection.serviceId,
+        confidence: detection.confidence,
+        reason: explicitTopicChange ? "explicit_switch" : "high_confidence",
+        newLock: detection.confidence >= 0.8,
+      });
+    }
 
   if (explicitTopicChange || detection.confidence >= 0.8) {
     events.push({ type: "service_switched", from: previousServiceId, to: detection.serviceId });
@@ -228,4 +262,17 @@ export function resolveServiceTransition(session, userText) {
     lockedService: wasLocked,
     events,
   };
+}
+
+// BLOCK D: Reusable guard to protect short follow-ups on locked services
+// Returns true if service detection logic should be skipped entirely
+export function shouldBypassServiceDetectionLogic(userText, session) {
+  if (!session?.lockedService || !session?.activeServiceId) {
+    return false; // Not locked, detection allowed
+  }
+  
+  const normalized = normalizeServiceText(userText);
+  const isShort = isShortFollowUp(normalized);
+  
+  return isShort; // If locked and short follow-up, skip detection
 }
