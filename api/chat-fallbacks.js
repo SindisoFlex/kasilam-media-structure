@@ -19,6 +19,10 @@ import {
   applyBookingFieldCorrection,
   shouldReopenBookingFromCorrection,
 } from "./chat-booking-shared.js";
+import {
+  buildAdaptivePrompt,
+  hasReferenceableContext,
+} from "./chat-adaptive-prompts.js";
 
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
