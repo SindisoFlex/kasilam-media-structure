@@ -34,6 +34,7 @@ function createDefaultSession(sessionId) {
     bookingPhase: "collecting",
     confirmationSnapshot: null,
     ctaIssued: false,
+    bookingPersisted: false,
     nextMissingBookingField: null,
     lastAssistantQuestion: null,
     events: [],
@@ -96,6 +97,7 @@ export function getSession(sessionId) {
     bookingPhase: existingSession.bookingPhase || "collecting",
     confirmationSnapshot: existingSession.confirmationSnapshot ?? null,
     ctaIssued: Boolean(existingSession.ctaIssued),
+    bookingPersisted: Boolean(existingSession.bookingPersisted),
     events: Array.isArray(existingSession.events) ? [...existingSession.events] : [],
   };
 }
@@ -123,6 +125,7 @@ export function saveSession(session) {
     bookingPhase: session.bookingPhase || "collecting",
     confirmationSnapshot: session.confirmationSnapshot ?? null,
     ctaIssued: Boolean(session.ctaIssued),
+    bookingPersisted: Boolean(session.bookingPersisted),
     events: Array.isArray(session.events) ? [...session.events] : [],
     updatedAt: Date.now(),
   };

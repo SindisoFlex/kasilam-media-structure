@@ -2,13 +2,22 @@ import {
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
   BOOKING_PHASE,
   buildConfirmationBannerText,
+  canBookingBeFinalized,
   computeBookingValidation,
   getBookingFieldQuestion,
   getBookingReadinessScore,
+  getInvalidBookingFields,
   getMissingBookingFields,
   getRequiredBookingFields,
+  hasBookingDeclineNoNormalized,
+  hasExplicitBookingResetIntentNormalized,
   hasBookingCorrectionIntentNormalized,
   hasBookingFinalizeYesNormalized,
+  isBookingAwaitingConfirmation,
+  buildInvalidFieldRecoveryMessage,
+  detectBookingFieldCorrection,
+  applyBookingFieldCorrection,
+  shouldReopenBookingFromCorrection,
 } from "./chat-booking-shared.js";
 
 const SITE_BASE_URL = "https://kasilammedia.co.za";
@@ -269,16 +278,37 @@ export function buildContextualFallback(session, intent) {
       : 0;
   }
 
-  const memory = session?.bookingMemory || {};
+  let memory = session?.bookingMemory || {};
+  const phase = session?.bookingPhase || BOOKING_PHASE.COLLECTING;
+  const normalizedUser = normalizeText(intent?.normalizedText || "");
+  const explicitResetRequested =
+    hasExplicitBookingResetIntentNormalized(normalizedUser);
+  const reopenFromCorrection =
+    shouldReopenBookingFromCorrection(normalizedUser, phase);
+  const declineFromAwait =
+    isBookingAwaitingConfirmation(session) &&
+    hasBookingDeclineNoNormalized(normalizedUser);
+
+  if (explicitResetRequested) {
+    activeServiceId = inferServiceIdFromHeuristics(intent);
+    confidence = activeServiceId ? 0.45 : 0;
+  }
+  
+  const fieldCorrection = detectBookingFieldCorrection(normalizedUser, memory);
+  
+  if (explicitResetRequested) {
+    memory = {};
+  } else if (fieldCorrection) {
+    memory = applyBookingFieldCorrection(memory, fieldCorrection);
+  }
+  
   const bookingValidation = computeBookingValidation(memory);
+  const invalidFields = getInvalidBookingFields(memory, bookingValidation);
 
   const readinessScore = getBookingReadinessScore({
     bookingMemory: memory,
     bookingValidation,
   });
-
-  const phase = session?.bookingPhase || BOOKING_PHASE.COLLECTING;
-  const normalizedUser = normalizeText(intent?.normalizedText || "");
 
   if (!activeServiceId || !SERVICE_FALLBACKS[activeServiceId]) {
     const missingGen = missingBookingFieldsGenericPlaceholder(memory);
@@ -316,10 +346,38 @@ export function buildContextualFallback(session, intent) {
     bookingValidation
   );
   const nextMissing = missingBookingFields[0] || null;
+  const canFinalize = canBookingBeFinalized(
+    bookingValidation,
+    readinessScore,
+    requiredFields,
+    invalidFields
+  );
 
   const config = SERVICE_FALLBACKS[activeServiceId];
 
   if (phase === BOOKING_PHASE.AWAITING_CONFIRMATION) {
+    if (declineFromAwait || reopenFromCorrection || invalidFields.length > 0) {
+      const recoveryPrompt =
+        invalidFields.length > 0
+          ? buildInvalidFieldRecoveryMessage(
+              invalidFields[0],
+              memory[invalidFields[0]]
+            )
+          : nextMissing != null
+            ? getBookingFieldQuestion(nextMissing, context, {
+                bookingMemory: memory,
+                bookingValidation,
+                lastDetectedIntent: session?.lastIntent || null,
+              })
+            : "What would you like to change?";
+      return buildLines([
+        `${config.name}: You're in the right place, and we handle that.`,
+        config.summary,
+        `More details: ${joinUrl(config.route)}`,
+        recoveryPrompt,
+      ]);
+    }
+
     const snap = session.confirmationSnapshot || memory;
     const banner = buildConfirmationBannerText(snap);
     
@@ -330,17 +388,27 @@ export function buildContextualFallback(session, intent) {
         `More details: ${joinUrl(config.route)}`,
       ]);
     }
-    
-    const correction = hasBookingCorrectionIntentNormalized(normalizedUser);
+
+    const correction =
+      hasBookingCorrectionIntentNormalized(normalizedUser) || fieldCorrection;
     const affirm = hasBookingFinalizeYesNormalized(normalizedUser);
 
     let tail;
     if (correction) {
       tail =
         "What would you like to change? Share the corrected detail (for example date, venue, scope, phone, email, or name).";
-    } else if (affirm) {
+    } else if (affirm && canFinalize) {
       tail =
         "Reply YES to confirm\n\nor tell me what to change.";
+    } else if (affirm) {
+      tail =
+        nextMissing != null
+          ? getBookingFieldQuestion(nextMissing, context, {
+              bookingMemory: memory,
+              bookingValidation,
+              lastDetectedIntent: session?.lastIntent || null,
+            })
+          : "I still need one more valid detail before I can confirm this booking.";
     } else {
       tail =
         "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
@@ -354,34 +422,24 @@ export function buildContextualFallback(session, intent) {
     ]);
   }
 
-  if (phase === BOOKING_PHASE.FINALIZED && !session.ctaIssued) {
-    const capturedFinalize = [];
-
-    if (memory.date) capturedFinalize.push(`date: ${memory.date}`);
-    if (memory.location) capturedFinalize.push(`location: ${memory.location}`);
-    if (memory.scope) capturedFinalize.push(`scope: ${memory.scope}`);
-    if (memory.customerName) capturedFinalize.push(`name: ${memory.customerName}`);
-    if (memory.customerPhone) capturedFinalize.push(`phone: ${memory.customerPhone}`);
-    if (memory.customerEmail)
-      capturedFinalize.push(`email: ${memory.customerEmail}`);
-
-    const memoryLineFinalize = capturedFinalize.length
-      ? `So far I have ${capturedFinalize.join(", ")}.`
-      : null;
-
+  if (phase === BOOKING_PHASE.FINALIZED) {
     return buildLines([
       `${config.name}: You're in the right place, and we handle that.`,
-      memoryLineFinalize ||
-        "You're almost finished — confirming your booking shortly.",
+      "Your booking is already finalized.",
       `More details: ${joinUrl(config.route)}`,
-      "Reply YES once your summary looks correct, or tell me what to update.",
+      "To make changes, please start over with a new booking request.",
     ]);
   }
 
   const stage = session?.conversationStage || "discovery";
   const intentName = intent?.intent || "general_inquiry";
   let question = pickQuestion(config, stage, intentName, confidence);
-  if (nextMissing != null) {
+
+  // BLOCK A4: Invalid-field recovery - prioritize over missing-field prompting
+  if (invalidFields.length > 0) {
+    const firstInvalid = invalidFields[0];
+    question = buildInvalidFieldRecoveryMessage(firstInvalid, memory[firstInvalid]);
+  } else if (nextMissing != null) {
     question = getBookingFieldQuestion(nextMissing, context, {
       bookingMemory: memory,
       bookingValidation,

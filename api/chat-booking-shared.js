@@ -63,6 +63,29 @@ export function hasBookingFinalizeYesNormalized(normalizedLower) {
   return false;
 }
 
+export function hasBookingDeclineNoNormalized(normalizedLower) {
+  const n = String(normalizedLower || "").trim();
+  if (!n) return false;
+  if (hasBookingFinalizeYesNormalized(n)) return false;
+  if (/^(no|nope|nah)([!.,]*)$/i.test(n)) return true;
+  if (/^no[,.\s]/i.test(n)) return true;
+  if (/^(don't|dont|do not)\s+(confirm|proceed)/i.test(n)) return true;
+  if (/\b(not correct|not right|incorrect)\b/i.test(n)) return true;
+  return false;
+}
+
+export function hasExplicitBookingResetIntentNormalized(normalizedLower) {
+  const n = String(normalizedLower || "").trim();
+  if (!n) return false;
+
+  return (
+    /\bstart over\b/.test(n) ||
+    /\bcancel booking\b/.test(n) ||
+    /\bnew booking\b/.test(n) ||
+    /\breset booking\b/.test(n)
+  );
+}
+
 export function validateCustomerName(name) {
   if (!name || typeof name !== "string") return false;
   const trimmed = name.trim();
@@ -74,27 +97,382 @@ export function validateCustomerName(name) {
   );
 }
 
+/**
+ * Normalizes South African phone numbers to +27XXXXXXXXX format.
+ *
+ * Conversions:
+ * - 0821234567 → +27821234567
+ * - 27821234567 → +27821234567
+ * - +27821234567 → +27821234567
+ *
+ * Removes spaces, dashes, parentheses.
+ * Preserves leading +.
+ * Rejects malformed prefixes.
+ *
+ * @param {string} value - Raw phone number
+ * @returns {string|null} Normalized phone number or null if invalid
+ */
+export function normalizeCustomerPhone(value) {
+  if (!value || typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+
+  // Remove all non-digit characters except leading +
+  const cleaned = trimmed.replace(/[^\d+]/g, "");
+
+  // Check for alphabetic contamination (after removing + and digits, should be empty)
+  const alphaCheck = trimmed.replace(/[+0-9\s\-\(\)]/g, "");
+  if (alphaCheck.length > 0) return null;
+
+  // Handle different formats
+  if (cleaned.startsWith("+27")) {
+    // Already has country code: +27XXXXXXXXX
+    const digits = cleaned.substring(3);
+    if (digits.length === 9 && /^\d+$/.test(digits)) {
+      return cleaned;
+    }
+    return null;
+  } else if (cleaned.startsWith("27")) {
+    // Has country code without +: 27XXXXXXXXX
+    const digits = cleaned.substring(2);
+    if (digits.length === 9 && /^\d+$/.test(digits)) {
+      return `+${cleaned}`;
+    }
+    return null;
+  } else if (cleaned.startsWith("0")) {
+    // South African format without country code: 0XXXXXXXXX
+    const digits = cleaned.substring(1);
+    if (digits.length === 9 && /^\d+$/.test(digits)) {
+      return `+27${digits}`;
+    }
+    return null;
+  }
+
+  return null;
+}
+
+/**
+ * Validates South African phone numbers using strict format checking.
+ *
+ * Rules:
+ * - Must normalize first
+ * - Final normalized value must equal: +27 followed by exactly 9 digits
+ * - Reject: short numbers, repeated fake digits, alphabetic contamination, malformed country codes
+ *
+ * Valid formats:
+ * - +27XXXXXXXXX (10 digits after +)
+ * - 27XXXXXXXXX (11 digits total)
+ * - 0XXXXXXXXX (10 digits total)
+ *
+ * @param {string} phone - Phone number to validate
+ * @returns {boolean} True if valid SA phone number
+ */
 export function validateCustomerPhone(phone) {
   if (!phone || typeof phone !== "string") return false;
-  const cleaned = phone.replace(/\D/g, "");
-  return /^[1-9]\d{8,14}$/.test(cleaned);
+
+  const normalized = normalizeCustomerPhone(phone);
+  if (!normalized) return false;
+
+  // Must match exact format: +27 followed by exactly 9 digits
+  const pattern = /^\+27\d{9}$/;
+  if (!pattern.test(normalized)) return false;
+
+  // Reject repeated fake digits (e.g., +27111111111)
+  const digits = normalized.substring(3);
+  if (/^(\d)\1+$/.test(digits)) return false;
+
+  return true;
 }
 
+/**
+ * Validates email addresses using strict deterministic validation.
+ *
+ * Rules:
+ * - Must normalize successfully
+ * - Must contain exactly one @
+ * - Must have valid local part
+ * - Must have valid domain
+ * - Must have valid TLD
+ * - Reject: malformed domains, double dots, spaces, missing TLD, invalid symbols, consecutive separators
+ * - Reject obvious placeholders: test@test.com, example@example.com, fake@email.com, none@none.com
+ *
+ * @param {string} email - Email string to validate
+ * @returns {boolean} True if valid email
+ */
 export function validateCustomerEmail(email) {
   if (!email || typeof email !== "string") return false;
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  const normalized = normalizeCustomerEmail(email);
+  if (!normalized) return false;
+
+  // Must contain exactly one @
+  const atCount = (normalized.match(/@/g) || []).length;
+  if (atCount !== 1) return false;
+
+  // Split into local and domain parts
+  const [localPart, domain] = normalized.split("@");
+  if (!localPart || !domain) return false;
+
+  // Local part validation
+  // Allow: alphanumeric, dots, hyphens, underscores
+  // Reject: consecutive dots, starting/ending with dot
+  if (localPart.length === 0 || localPart.length > 64) return false;
+  if (/\.\.|\.$|^\.|\.$/.test(localPart)) return false;
+  if (!/^[a-zA-Z0-9._-]+$/.test(localPart)) return false;
+
+  // Domain validation
+  // Must have at least one dot for TLD
+  if (!domain.includes(".")) return false;
+  if (/\.\.|\.$|^\.|\.$/.test(domain)) return false;
+
+  // Domain parts validation
+  const domainParts = domain.split(".");
+  if (domainParts.length < 2) return false;
+
+  // Each domain part must be valid
+  for (const part of domainParts) {
+    if (part.length === 0 || part.length > 63) return false;
+    if (!/^[a-zA-Z0-9-]+$/.test(part)) return false;
+    if (/^-|-$/.test(part)) return false;
+  }
+
+  // TLD must be at least 2 characters
+  const tld = domainParts[domainParts.length - 1];
+  if (tld.length < 2) return false;
+
+  // Reject obvious placeholder emails
+  const placeholderPatterns = [
+    /^(test@|example@|fake@|none@|dummy@|temp@|noreply@)/i,
+    /^(test\.com|example\.com|fake\.com|none\.com|dummy\.com|temp\.com)$/i,
+  ];
+  for (const pattern of placeholderPatterns) {
+    if (pattern.test(normalized)) return false;
+  }
+
+  return true;
 }
 
+/**
+ * Normalizes booking dates to ISO format (YYYY-MM-DD).
+ *
+ * Accepts:
+ * - ISO format: "2026-01-12"
+ * - Common conversational formats: "12 Jan", "12 January 2026"
+ * - Relative dates: "tomorrow", "next friday"
+ *
+ * Returns normalized YYYY-MM-DD or null for invalid/unrecognized dates.
+ * Uses deterministic parsing only - no AI/NLP.
+ *
+ * @param {string} value - Raw date string
+ * @returns {string|null} Normalized date in YYYY-MM-DD format or null
+ */
+export function normalizeBookingDate(value) {
+  if (!value || typeof value !== "string") return null;
+
+  const trimmed = value.trim().toLowerCase();
+
+  // Reject vague placeholders
+  const vaguePatterns = /\b(someday|later|next time|soon|tbd|to be determined|asap|whenever)\b/;
+  if (vaguePatterns.test(trimmed)) return null;
+
+  // Handle relative dates
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  if (trimmed === "tomorrow") {
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return formatDateToISO(tomorrow);
+  }
+
+  if (trimmed === "today") {
+    return formatDateToISO(today);
+  }
+
+  // Handle "next [day]" pattern
+  const nextDayMatch = trimmed.match(/^next\s+(monday|tuesday|wednesday|thursday|friday|saturday|sunday)$/);
+  if (nextDayMatch) {
+    const dayName = nextDayMatch[1];
+    const targetDay = getDayOfWeek(dayName);
+    const nextDate = getNextDayOfWeek(today, targetDay);
+    return formatDateToISO(nextDate);
+  }
+
+  // Try ISO format first (YYYY-MM-DD)
+  const isoMatch = trimmed.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if (isoMatch) {
+    const [, year, month, day] = isoMatch;
+    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    if (isValidDate(date) && date.getFullYear() === parseInt(year)) {
+      return formatDateToISO(date);
+    }
+    return null;
+  }
+
+  // Try common conversational formats: "12 Jan", "12 January 2026"
+  const monthNames = {
+    jan: 0, january: 0,
+    feb: 1, february: 1,
+    mar: 2, march: 2,
+    apr: 3, april: 3,
+    may: 4,
+    jun: 5, june: 5,
+    jul: 6, july: 6,
+    aug: 7, august: 7,
+    sep: 8, september: 8,
+    oct: 9, october: 9,
+    nov: 10, november: 10,
+    dec: 11, december: 11,
+  };
+
+  // Pattern: "12 Jan" or "12 January 2026"
+  const conversationalMatch = trimmed.match(/^(\d{1,2})\s+([a-z]+)(?:\s+(\d{4}))?$/);
+  if (conversationalMatch) {
+    const [, day, monthStr, yearStr] = conversationalMatch;
+    const month = monthNames[monthStr];
+    if (month === undefined) return null;
+
+    const year = yearStr ? parseInt(yearStr) : today.getFullYear();
+    const date = new Date(year, month, parseInt(day));
+
+    if (isValidDate(date)) {
+      return formatDateToISO(date);
+    }
+    return null;
+  }
+
+  return null;
+}
+
+/**
+ * Formats a Date object to ISO string (YYYY-MM-DD).
+ */
+function formatDateToISO(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * Checks if a Date object represents a valid calendar date.
+ */
+function isValidDate(date) {
+  return date instanceof Date && !isNaN(date.getTime());
+}
+
+/**
+ * Gets the day of week number (0=Sunday, 6=Saturday).
+ */
+function getDayOfWeek(dayName) {
+  const days = {
+    sunday: 0,
+    monday: 1,
+    tuesday: 2,
+    wednesday: 3,
+    thursday: 4,
+    friday: 5,
+    saturday: 6,
+  };
+  return days[dayName];
+}
+
+/**
+ * Gets the next occurrence of a specific day of week.
+ */
+function getNextDayOfWeek(date, targetDay) {
+  const currentDay = date.getDay();
+  const daysUntilTarget = (targetDay - currentDay + 7) % 7;
+  if (daysUntilTarget === 0) {
+    // Same day, go to next week
+    const nextWeek = new Date(date);
+    nextWeek.setDate(nextWeek.getDate() + 7);
+    return nextWeek;
+  }
+  const nextDate = new Date(date);
+  nextDate.setDate(nextDate.getDate() + daysUntilTarget);
+  return nextDate;
+}
+
+/**
+ * Validates booking dates using strict logical validation.
+ *
+ * Rules:
+ * - Date must normalize successfully
+ * - Date must be a real calendar date
+ * - Date must NOT be in the past
+ * - Reject impossible dates (32 January, 2025-13-99, February 30)
+ * - Reject vague placeholders
+ *
+ * @param {string} date - Date string to validate
+ * @returns {boolean} True if valid future date
+ */
 export function validateBookingDate(date) {
   if (!date || typeof date !== "string") return false;
-  const trimmed = date.trim();
-  return trimmed.length >= 4 && trimmed.length <= 30;
+
+  const normalized = normalizeBookingDate(date);
+  if (!normalized) return false;
+
+  // Parse normalized date
+  const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!isoMatch) return false;
+
+  const [, year, month, day] = isoMatch;
+  const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+
+  // Verify it's a valid calendar date
+  if (!isValidDate(parsedDate)) return false;
+
+  // Verify year didn't roll over (e.g., February 30 → March 2)
+  if (parsedDate.getFullYear() !== parseInt(year)) return false;
+  if (parsedDate.getMonth() + 1 !== parseInt(month)) return false;
+  if (parsedDate.getDate() !== parseInt(day)) return false;
+
+  // Check if date is in the past
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  parsedDate.setHours(0, 0, 0, 0);
+
+  if (parsedDate < today) return false;
+
+  return true;
 }
 
 export function validateBookingLocation(location) {
   if (!location || typeof location !== "string") return false;
   const trimmed = location.trim();
   return trimmed.length >= 2 && trimmed.length <= 100;
+}
+
+/**
+ * Normalizes email addresses to consistent format.
+ *
+ * - Trims whitespace
+ * - Converts to lowercase
+ * - Removes surrounding punctuation safely
+ *
+ * Examples:
+ * - " JOHN@GMAIL.COM " → "john@gmail.com"
+ * - "john@gmail.com" → "john@gmail.com"
+ *
+ * @param {string} value - Raw email string
+ * @returns {string|null} Normalized email or null if invalid
+ */
+export function normalizeCustomerEmail(value) {
+  if (!value || typeof value !== "string") return null;
+
+  const trimmed = value.trim();
+
+  // Remove surrounding punctuation (but preserve internal dots, hyphens, etc.)
+  const cleaned = trimmed.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]$/g, "");
+
+  // Convert to lowercase
+  const normalized = cleaned.toLowerCase();
+
+  // Basic structure check - must contain @
+  if (!normalized.includes("@")) return null;
+
+  return normalized;
 }
 
 export function computeBookingValidation(bookingMemory) {
@@ -159,6 +537,235 @@ export function getMissingBookingFields(bookingMemory, requiredFields, bookingVa
     const isValid = bookingValidation[field];
     return !isValid;
   });
+}
+
+/**
+ * Identifies fields that exist in booking memory but fail validation.
+ * This is separate from missing fields - these are fields that have values,
+ * but those values are invalid (e.g., malformed phone, past date, fake email).
+ *
+ * @param {object} bookingMemory - Current booking memory
+ * @param {object} bookingValidation - Validation results from computeBookingValidation
+ * @returns {string[]} Array of invalid field names
+ */
+export function getInvalidBookingFields(bookingMemory, bookingValidation) {
+  if (!bookingMemory || !bookingValidation) return [];
+
+  const invalidFields = [];
+
+  // Check each field that could be invalid
+  const checkableFields = [
+    "customerPhone",
+    "customerEmail",
+    "date",
+  ];
+
+  for (const field of checkableFields) {
+    // Field must exist in memory AND fail validation
+    const hasValue = bookingMemory[field] !== null && bookingMemory[field] !== undefined && bookingMemory[field] !== "";
+    const isValid = bookingValidation[field];
+
+    if (hasValue && !isValid) {
+      invalidFields.push(field);
+    }
+  }
+
+  return invalidFields;
+}
+
+/**
+ * Generates deterministic recovery messages for invalid booking fields.
+ * No AI generation, no Gemini dependency, no generic prompts.
+ *
+ * @param {string} fieldName - Name of the invalid field
+ * @param {string} value - The invalid value (optional, for context)
+ * @returns {string} Deterministic recovery message
+ */
+export function buildInvalidFieldRecoveryMessage(fieldName, value) {
+  const messages = {
+    customerPhone: "That phone number looks invalid. Please send a valid South African mobile number.",
+    customerEmail: "That email address looks invalid. Please send a valid email address.",
+    date: "That booking date looks invalid. Please send a valid future booking date.",
+  };
+
+  return messages[fieldName] || "That information looks invalid. Please provide a valid value.";
+}
+
+/**
+ * Detects field-specific correction intent in user messages.
+ * Deterministic regex/pattern based detection only. No AI/Gemini.
+ *
+ * Detects patterns like:
+ * - "change the date to friday"
+ * - "use this email instead"
+ * - "my new number is..."
+ * - "actually the location is cape town"
+ *
+ * @param {string} message - User message
+ * @param {object} bookingMemory - Current booking memory (for context)
+ * @returns {object|null} Correction object { field, value } or null if no correction detected
+ */
+export function detectBookingFieldCorrection(message, bookingMemory) {
+  if (!message || typeof message !== "string") return null;
+
+  const lowered = message.toLowerCase().trim();
+
+  // Date correction patterns
+  const datePatterns = [
+    /(?:change|update|set|make)\s+(?:the\s+)?(?:booking\s+)?date\s+(?:to\s+)?(.+)/i,
+    /(?:use|try)\s+(?:this\s+)?date\s+(?:instead\s*)?(?:of\s+)?(.+)/i,
+    /(?:the\s+)?(?:booking\s+)?date\s+(?:should\s+)?(?:be|is)\s+(.+)/i,
+    /(?:actually|wait)\s+(?:the\s+)?date\s+(?:is|should\s+be)\s+(.+)/i,
+  ];
+
+  for (const pattern of datePatterns) {
+    const match = lowered.match(pattern);
+    if (match && match[1]) {
+      return { field: "date", value: match[1].trim() };
+    }
+  }
+
+  // Phone correction patterns (must contain phone-related keywords)
+  const phonePatterns = [
+    /(?:change|update)\s+(?:the\s+)?(?:phone\s*|number\s*)?(?:instead\s*)?(?:to\s*)?(?:.+)/i,
+    /(?:use|try)\s+(?:this\s+)?(?:phone\s*|number\s*)(?:instead\s*)?(?:to\s*)?(?:.+)/i,
+    /(?:my\s+)?(?:new\s+)?(?:phone\s*|number\s*)(?:is|should\s+be)\s+(.+)/i,
+    /(?:actually|wait)\s+(?:the\s+)?(?:phone\s*|number\s*)(?:is|should\s+be)\s+(.+)/i,
+  ];
+
+  for (const pattern of phonePatterns) {
+    const match = lowered.match(pattern);
+    if (match && match[1]) {
+      return { field: "customerPhone", value: match[1].trim() };
+    }
+  }
+
+  // Email correction patterns (must contain email-related keywords)
+  const emailPatterns = [
+    /(?:change|update)\s+(?:the\s+)?(?:email|address)\s+(?:to\s+)?(.+)/i,
+    /(?:use|try)\s+(?:this\s+)?(?:email|address)\s+(?:instead\s+)?(.+)/i,
+    /(?:my\s+)?(?:new\s+)?(?:email|address)\s+(?:is|should\s+be)\s+(.+)/i,
+    /(?:actually|wait)\s+(?:the\s+)?(?:email|address)\s+(?:is|should\s+be)\s+(.+)/i,
+  ];
+
+  for (const pattern of emailPatterns) {
+    const match = lowered.match(pattern);
+    if (match && match[1]) {
+      return { field: "customerEmail", value: match[1].trim() };
+    }
+  }
+
+  // Location correction patterns (must contain location-related keywords)
+  const locationPatterns = [
+    /(?:change|update|set|make)\s+(?:the\s+)?(?:booking\s+)?(?:location|venue)\s+(?:to\s+)?(.+)/i,
+    /(?:use|try)\s+(?:this\s+)?(?:location|venue)\s+(?:instead\s*)?(?:of\s+)?(.+)/i,
+    /(?:the\s+)?(?:booking\s+)?(?:location|venue)\s+(?:should\s+)?(?:be|is)\s+(.+)/i,
+    /(?:actually|wait)\s+(?:the\s+)?(?:booking\s+)?(?:location|venue)\s+(?:is|should\s+be)\s+(.+)/i,
+  ];
+
+  for (const pattern of locationPatterns) {
+    const match = lowered.match(pattern);
+    if (match && match[1]) {
+      return { field: "location", value: match[1].trim() };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Safely applies a field correction to booking memory.
+ * Clones the memory and mutates only the target field, preserving all others.
+ *
+ * @param {object} memory - Original booking memory
+ * @param {object} correction - Correction object { field, value }
+ * @returns {object} New booking memory with correction applied
+ */
+export function applyBookingFieldCorrection(memory, correction) {
+  if (!memory || !correction) return memory;
+
+  const { field, value } = correction;
+
+  if (!field || value === undefined) return memory;
+
+  // Clone the memory to avoid mutating the original
+  const newMemory = { ...memory };
+
+  // Apply the correction to the target field only
+  newMemory[field] = value;
+
+  return newMemory;
+}
+
+/**
+ * Determines if a booking is currently in the AWAITING_CONFIRMATION phase.
+ *
+ * @param {object} session - Session object
+ * @returns {boolean} True if booking is awaiting confirmation
+ */
+export function isBookingAwaitingConfirmation(session) {
+  if (!session) return false;
+
+  return (
+    session.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
+    session.confirmationSnapshot !== null &&
+    session.confirmationSnapshot !== undefined
+  );
+}
+
+/**
+ * Determines if a booking can be finalized based on validation and readiness.
+ *
+ * @param {object} validation - Booking validation results
+ * @param {number} readinessScore - Booking readiness score
+ * @returns {boolean} True if booking can be finalized
+ */
+export function canBookingBeFinalized(validation, readinessScore) {
+  const requiredFields = arguments[2];
+  const invalidFields = arguments[3];
+
+  if (!validation || readinessScore === undefined || readinessScore === null) {
+    return false;
+  }
+
+  if (readinessScore < BOOKING_CONFIRMATION_SCORE_THRESHOLD) return false;
+
+  const requiredList = Array.isArray(requiredFields)
+    ? requiredFields
+    : Object.keys(validation);
+  for (const field of requiredList) {
+    if (validation[field] !== true) return false;
+  }
+
+  const invalidList = Array.isArray(invalidFields)
+    ? invalidFields
+    : Object.keys(validation).filter((key) => validation[key] === false);
+  if (invalidList.length > 0) return false;
+
+  return true;
+}
+
+/**
+ * Determines if a booking should be reopened from correction intent.
+ *
+ * @param {string} message - User message
+ * @param {string} currentPhase - Current booking phase
+ * @returns {boolean} True if booking should be reopened from correction
+ */
+export function shouldReopenBookingFromCorrection(message, currentPhase) {
+  if (!message || typeof message !== "string") return false;
+  if (currentPhase !== BOOKING_PHASE.AWAITING_CONFIRMATION) return false;
+
+  const lowered = message.toLowerCase().trim();
+
+  // Check for general correction intent
+  if (hasBookingCorrectionIntentNormalized(lowered)) return true;
+
+  // Check for field-specific correction
+  const fieldCorrection = detectBookingFieldCorrection(lowered, {});
+  if (fieldCorrection) return true;
+
+  return false;
 }
 
 export function getBookingReadinessScore(state) {

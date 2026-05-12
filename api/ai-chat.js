@@ -12,12 +12,28 @@ import {
   cloneBookingSnapshot,
   computeBookingValidation,
   hasBookingCorrectionIntentNormalized,
+  hasBookingDeclineNoNormalized,
+  hasExplicitBookingResetIntentNormalized,
   hasBookingFinalizeYesNormalized,
   getBookingFieldQuestion,
   getBookingReadinessScore,
   getMissingBookingFields as getMissingBookingFieldsShared,
   getRequiredBookingFields as getRequiredBookingFieldsShared,
+  normalizeCustomerPhone,
+  normalizeBookingDate,
+  normalizeCustomerEmail,
+  getInvalidBookingFields,
+  buildInvalidFieldRecoveryMessage,
+  detectBookingFieldCorrection,
+  applyBookingFieldCorrection,
+  isBookingAwaitingConfirmation,
+  canBookingBeFinalized,
+  shouldReopenBookingFromCorrection,
 } from "./chat-booking-shared.js";
+import {
+  saveFinalizedBooking,
+  hasBookingAlreadyPersisted,
+} from "./chat-booking-persistence.js";
 
 // Use a current, supported Gemini model on the v1beta endpoint.
 // "gemini-pro" on v1 has been deprecated and returns empty candidates.
@@ -817,10 +833,9 @@ function extractCustomerPhone(text) {
   const matches = text.match(phonePattern);
   if (!matches) return null;
 
-  const cleaned = matches[matches.length - 1].replace(/\D/g, "");
-  if (/^[1-9]\d{8,14}$/.test(cleaned)) return cleaned;
-
-  return null;
+  // Use normalization for consistent storage
+  const normalized = normalizeCustomerPhone(matches[matches.length - 1]);
+  return normalized;
 }
 
 function extractCustomerEmail(text) {
@@ -831,7 +846,9 @@ function extractCustomerEmail(text) {
 
   if (!matches) return null;
 
-  return matches[matches.length - 1].trim();
+  // Use normalization for consistent storage
+  const normalized = normalizeCustomerEmail(matches[matches.length - 1]);
+  return normalized;
 }
 
 function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, session = null) {
@@ -855,7 +872,11 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
 
     if (!memory.date) {
       const dateValue = extractDateValue(message.content);
-      if (dateValue) memory.date = dateValue;
+      if (dateValue) {
+        // Normalize where safe, preserve raw if normalization fails
+        const normalized = normalizeBookingDate(dateValue);
+        memory.date = normalized || dateValue;
+      }
     }
 
     {
@@ -908,6 +929,23 @@ function deriveConversationBookingCore({
   const priorPhase = session?.bookingPhase || BOOKING_PHASE.COLLECTING;
   const normalizedLatest = normalizeLatestUser(messages);
   const snapBefore = session?.confirmationSnapshot ?? null;
+  const explicitResetRequested =
+    hasExplicitBookingResetIntentNormalized(normalizedLatest);
+  const baseBookingMemory = {
+    ...createEmptyBookingMemory(),
+    ...(session?.bookingMemory || {}),
+  };
+  const fieldCorrection = detectBookingFieldCorrection(
+    normalizedLatest,
+    baseBookingMemory
+  );
+  const correctionReopenRequested = shouldReopenBookingFromCorrection(
+    normalizedLatest,
+    priorPhase
+  );
+  const rejectionFromAwait =
+    isBookingAwaitingConfirmation(session) &&
+    hasBookingDeclineNoNormalized(normalizedLatest);
 
   let confirmationSnapshotNext =
     snapBefore == null ? null : cloneBookingSnapshot(snapBefore);
@@ -915,89 +953,68 @@ function deriveConversationBookingCore({
   let issueBookingCta = false;
   let awaitingConfirmationClarification = false;
   let enteredAwaitingConfirmation = false;
-
-  const reopenedFromAwaitingCorrection =
-    priorPhase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
-    hasBookingCorrectionIntentNormalized(normalizedLatest);
-
-  const finalizedFromAwait =
-    priorPhase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
-    hasBookingFinalizeYesNormalized(normalizedLatest);
+  let bookingPersisted =
+    explicitResetRequested ? false : Boolean(session?.bookingPersisted);
+  let finalizedImmutable = false;
 
   const serviceSwitchDuringConfirmation =
-    priorPhase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
+    isBookingAwaitingConfirmation(session) &&
     snapBefore &&
     activeServiceId &&
-    snapBefore.service !== mapServiceToBookingService(activeServiceId, resolveLastDetectedIntent(messages, session));
+    snapBefore.service !==
+      mapServiceToBookingService(
+        activeServiceId,
+        resolveLastDetectedIntent(messages, session)
+      );
 
-  let freezeMemoryFromSnapshotOnly = false;
+  const messagesForInference = explicitResetRequested
+    ? messages.slice(-1)
+    : messages;
+  const shouldUseFrozenSnapshot =
+    isBookingAwaitingConfirmation(session) &&
+    !correctionReopenRequested &&
+    !rejectionFromAwait &&
+    !serviceSwitchDuringConfirmation &&
+    !explicitResetRequested;
 
-  if (priorPhase === BOOKING_PHASE.AWAITING_CONFIRMATION) {
-    if (finalizedFromAwait) {
-      bookingPhaseNext = BOOKING_PHASE.FINALIZED;
-      confirmationSnapshotNext = null;
-      if (!session?.ctaIssued) {
-        issueBookingCta = true;
-      }
-    } else if (reopenedFromAwaitingCorrection || serviceSwitchDuringConfirmation) {
-      bookingPhaseNext = BOOKING_PHASE.COLLECTING;
-      confirmationSnapshotNext = null;
-    } else if (!snapBefore) {
-      bookingPhaseNext = BOOKING_PHASE.COLLECTING;
-      confirmationSnapshotNext = null;
-    } else {
-      bookingPhaseNext = BOOKING_PHASE.AWAITING_CONFIRMATION;
-      freezeMemoryFromSnapshotOnly = true;
-      awaitingConfirmationClarification =
-        normalizedLatest.trim().length > 0 &&
-        !hasBookingFinalizeYesNormalized(normalizedLatest) &&
-        !reopenedFromAwaitingCorrection;
-    }
-  }
+  const sessionLikeForInfer =
+    correctionReopenRequested || explicitResetRequested
+      ? {
+          ...(session || {}),
+          bookingMemory: explicitResetRequested ? createEmptyBookingMemory() : session?.bookingMemory,
+          confirmationSnapshot: null,
+        }
+      : session;
 
-  if (priorPhase === BOOKING_PHASE.FINALIZED) {
-    bookingPhaseNext = BOOKING_PHASE.FINALIZED;
-    confirmationSnapshotNext = null;
-    const merged = cloneBookingSnapshot(session?.bookingMemory);
-    const bookingValidation = computeBookingValidation(merged);
-    const requiredBookingFields = getRequiredBookingFields(
-      activeContext,
-      merged
-    );
-    const missingBookingFields = getMissingBookingFields(
-      merged,
-      requiredBookingFields,
-      bookingValidation
-    );
-    return {
-      bookingMemory: merged,
-      bookingValidation,
-      requiredBookingFields,
-      missingBookingFields,
-      nextMissingBookingField: missingBookingFields[0] || null,
-      bookingPhase: bookingPhaseNext,
-      confirmationSnapshot: confirmationSnapshotNext,
-      issueBookingCta,
-      enteredAwaitingConfirmation,
-      awaitingConfirmationClarification: false,
-    };
-  }
+  let bookingMemoryWorking =
+    shouldUseFrozenSnapshot && snapBefore
+      ? cloneBookingSnapshot(snapBefore)
+      : inferBookingMemory(
+          messagesForInference,
+          activeServiceId,
+          resolveLastDetectedIntent(messages, session),
+          sessionLikeForInfer
+        );
 
-  const sessionLikeForInfer = reopenedFromAwaitingCorrection
-    ? { ...(session || {}), confirmationSnapshot: null }
-    : session;
-
-  let bookingMemoryWorking;
-  if (finalizedFromAwait && snapBefore) {
-    bookingMemoryWorking = cloneBookingSnapshot(snapBefore);
-  } else if (freezeMemoryFromSnapshotOnly && snapBefore) {
-    bookingMemoryWorking = cloneBookingSnapshot(snapBefore);
-  } else {
+  if (explicitResetRequested) {
     bookingMemoryWorking = inferBookingMemory(
-      messages,
+      messagesForInference,
       activeServiceId,
       resolveLastDetectedIntent(messages, session),
-      sessionLikeForInfer
+      {
+        ...(session || {}),
+        bookingMemory: createEmptyBookingMemory(),
+        confirmationSnapshot: null,
+      }
+    );
+    confirmationSnapshotNext = null;
+    bookingPhaseNext = BOOKING_PHASE.COLLECTING;
+  }
+
+  if (fieldCorrection && correctionReopenRequested) {
+    bookingMemoryWorking = applyBookingFieldCorrection(
+      bookingMemoryWorking,
+      fieldCorrection
     );
   }
 
@@ -1011,21 +1028,119 @@ function deriveConversationBookingCore({
     requiredBookingFields,
     bookingValidation
   );
+  const invalidBookingFields = getInvalidBookingFields(
+    bookingMemoryWorking,
+    bookingValidation
+  );
+  const readinessScore = getBookingReadinessScore({
+    bookingMemory: bookingMemoryWorking,
+    bookingValidation,
+  });
+  const finalizedFromAwait =
+    isBookingAwaitingConfirmation(session) &&
+    hasBookingFinalizeYesNormalized(normalizedLatest) &&
+    canBookingBeFinalized(
+      bookingValidation,
+      readinessScore,
+      requiredBookingFields,
+      invalidBookingFields
+    );
+
+  if (priorPhase === BOOKING_PHASE.AWAITING_CONFIRMATION) {
+    if (finalizedFromAwait) {
+      bookingPhaseNext = BOOKING_PHASE.FINALIZED;
+      confirmationSnapshotNext = null;
+      if (!session?.ctaIssued) {
+        issueBookingCta = true;
+      }
+      if (!session?.bookingPersisted) {
+        try {
+          const sessionId = session?.sessionId || null;
+          const existing = hasBookingAlreadyPersisted(sessionId);
+          if (!existing) {
+            saveFinalizedBooking(
+              bookingMemoryWorking,
+              activeContext,
+              BOOKING_PHASE.FINALIZED,
+              sessionId
+            );
+            bookingPersisted = true;
+          } else {
+            bookingPersisted = true;
+          }
+        } catch (err) {
+          console.error(`[Booking Persistence] Failed to save booking: ${err.message}`);
+          // Continue without persistence - don't block finalization
+        }
+      } else {
+        bookingPersisted = true;
+      }
+    } else if (
+      rejectionFromAwait ||
+      correctionReopenRequested ||
+      serviceSwitchDuringConfirmation ||
+      invalidBookingFields.length > 0
+    ) {
+      bookingPhaseNext = BOOKING_PHASE.COLLECTING;
+      confirmationSnapshotNext = null;
+    } else if (!snapBefore) {
+      bookingPhaseNext = BOOKING_PHASE.COLLECTING;
+      confirmationSnapshotNext = null;
+    } else {
+      bookingPhaseNext = BOOKING_PHASE.AWAITING_CONFIRMATION;
+      awaitingConfirmationClarification =
+        normalizedLatest.trim().length > 0 &&
+        !hasBookingFinalizeYesNormalized(normalizedLatest) &&
+        !correctionReopenRequested &&
+        !hasBookingDeclineNoNormalized(normalizedLatest);
+    }
+  }
+
+  if (priorPhase === BOOKING_PHASE.FINALIZED && !explicitResetRequested) {
+    bookingPhaseNext = BOOKING_PHASE.FINALIZED;
+    confirmationSnapshotNext = null;
+    bookingPersisted = Boolean(session?.bookingPersisted);
+    finalizedImmutable = true;
+    const merged = cloneBookingSnapshot(baseBookingMemory);
+    const finalizedValidation = computeBookingValidation(merged);
+    const finalizedRequiredBookingFields = getRequiredBookingFields(
+      activeContext,
+      merged
+    );
+    const finalizedMissingBookingFields = getMissingBookingFields(
+      merged,
+      finalizedRequiredBookingFields,
+      finalizedValidation
+    );
+    return {
+      bookingMemory: merged,
+      bookingValidation: finalizedValidation,
+      requiredBookingFields: finalizedRequiredBookingFields,
+      missingBookingFields: finalizedMissingBookingFields,
+      nextMissingBookingField: finalizedMissingBookingFields[0] || null,
+      bookingPhase: bookingPhaseNext,
+      confirmationSnapshot: confirmationSnapshotNext,
+      issueBookingCta,
+      bookingPersisted,
+      enteredAwaitingConfirmation,
+      awaitingConfirmationClarification: false,
+      finalizedImmutable,
+    };
+  }
 
   if (
     bookingPhaseNext === BOOKING_PHASE.COLLECTING &&
     !finalizedFromAwait &&
-    !reopenedFromAwaitingCorrection
+    !correctionReopenRequested
   ) {
-    const score = getBookingReadinessScore({
-      bookingMemory: bookingMemoryWorking,
-      bookingValidation,
-    });
-    const canAwait =
-      missingBookingFields.length === 0 &&
-      score >= BOOKING_CONFIRMATION_SCORE_THRESHOLD;
-
-    if (canAwait) {
+    if (
+      canBookingBeFinalized(
+        bookingValidation,
+        readinessScore,
+        requiredBookingFields,
+        invalidBookingFields
+      )
+    ) {
       bookingPhaseNext = BOOKING_PHASE.AWAITING_CONFIRMATION;
       confirmationSnapshotNext = cloneBookingSnapshot(bookingMemoryWorking);
       enteredAwaitingConfirmation = true;
@@ -1041,7 +1156,9 @@ function deriveConversationBookingCore({
     bookingPhase: bookingPhaseNext,
     confirmationSnapshot: confirmationSnapshotNext,
     issueBookingCta,
+    bookingPersisted,
     enteredAwaitingConfirmation,
+    finalizedImmutable,
     awaitingConfirmationClarification:
       awaitingConfirmationClarification &&
       bookingPhaseNext === BOOKING_PHASE.AWAITING_CONFIRMATION &&
@@ -1194,6 +1311,8 @@ function detectConversationStage(latestUserMessage, session = null) {
 
 function inferConversationState(messages, session = null) {
   const latestUserMessage = getLatestUserMessage(messages);
+  const explicitResetRequested =
+    hasExplicitBookingResetIntentNormalized(normalizeLatestUser(messages));
   
   // BLOCK B: Fast path for locked services with short follow-ups
   // If service is locked and user sent a short follow-up like "price?" or "available?",
@@ -1201,6 +1320,7 @@ function inferConversationState(messages, session = null) {
   // This prevents generic keywords like "photo" from overriding locked funeral/wedding context.
   const IS_DEV = process.env.NODE_ENV !== "production";
   const isLockedWithShortFollowUp = 
+    !explicitResetRequested &&
     session?.lockedService === true && 
     session?.activeServiceId && 
     isShortUserQuery(latestUserMessage);
@@ -1236,19 +1356,25 @@ function inferConversationState(messages, session = null) {
       bookingPhase: bookingCore.bookingPhase,
       confirmationSnapshot: bookingCore.confirmationSnapshot,
       issueBookingCta: bookingCore.issueBookingCta,
+      bookingPersisted: bookingCore.bookingPersisted,
       enteredAwaitingConfirmation: bookingCore.enteredAwaitingConfirmation,
       awaitingConfirmationClarification:
         bookingCore.awaitingConfirmationClarification,
+      finalizedImmutable: bookingCore.finalizedImmutable,
       conversationStage: detectConversationStage(latestUserMessage, session),
       hasShortQuery: true,
       userMessageCount: messages.filter((message) => message?.role === "user").length,
       ctaIssued:
-        Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta),
+        bookingCore.bookingPhase === BOOKING_PHASE.FINALIZED
+          ? Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta)
+          : false,
     };
   }
   
   // Normal path: resolve service from message history
-  const activeServiceId = resolveActiveServiceContext(messages, session);
+  const activeServiceId = explicitResetRequested
+    ? detectServiceContext(latestUserMessage)
+    : resolveActiveServiceContext(messages, session);
   const activeContext = activeServiceId ? SERVICE_CONTEXTS[activeServiceId] : null;
   const lastDetectedIntent = resolveLastDetectedIntent(messages, session);
   const userMessageCount = messages.filter((message) => message?.role === "user").length;
@@ -1272,13 +1398,17 @@ function inferConversationState(messages, session = null) {
     bookingPhase: bookingCore.bookingPhase,
     confirmationSnapshot: bookingCore.confirmationSnapshot,
     issueBookingCta: bookingCore.issueBookingCta,
+    bookingPersisted: bookingCore.bookingPersisted,
     enteredAwaitingConfirmation: bookingCore.enteredAwaitingConfirmation,
     awaitingConfirmationClarification: bookingCore.awaitingConfirmationClarification,
+    finalizedImmutable: bookingCore.finalizedImmutable,
     conversationStage: detectConversationStage(latestUserMessage, session),
     hasShortQuery: isShortUserQuery(latestUserMessage),
     userMessageCount,
     ctaIssued:
-      Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta),
+      bookingCore.bookingPhase === BOOKING_PHASE.FINALIZED
+        ? Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta)
+        : false,
   };
 }
 
@@ -1521,6 +1651,14 @@ function getBookingQuestion(context, state) {
   if (phase === BOOKING_PHASE.AWAITING_CONFIRMATION) {
     return "Reply YES to confirm\n\nor tell me what to change.";
   }
+
+  // BLOCK A3: Invalid-field recovery - prioritize over missing-field prompting
+  const invalidFields = getInvalidBookingFields(state?.bookingMemory, state?.bookingValidation);
+  if (invalidFields.length > 0) {
+    const firstInvalid = invalidFields[0];
+    return buildInvalidFieldRecoveryMessage(firstInvalid, state?.bookingMemory?.[firstInvalid]);
+  }
+
   const nextField = state?.nextMissingBookingField;
   if (!nextField) {
     return "Would you like me to help you move this booking forward on WhatsApp?";
@@ -1621,7 +1759,11 @@ function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
       state?.confirmationSnapshot !== undefined
         ? state.confirmationSnapshot
         : session?.confirmationSnapshot ?? null,
-    ctaIssued: Boolean(session?.ctaIssued),
+    ctaIssued:
+      state?.bookingPhase === BOOKING_PHASE.FINALIZED
+        ? Boolean(session?.ctaIssued || state?.issueBookingCta)
+        : false,
+    bookingPersisted: Boolean(session?.bookingPersisted),
     bookingMemory: {
       ...createEmptyBookingMemory(),
       ...(session?.bookingMemory || {}),
@@ -1648,6 +1790,7 @@ function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
     enteredAwaitingConfirmation: state.enteredAwaitingConfirmation,
     awaitingConfirmationClarification: state.awaitingConfirmationClarification,
     confirmationSnapshot: state.confirmationSnapshot,
+    finalizedImmutable: state.finalizedImmutable,
   });
 
   return {
@@ -1663,6 +1806,10 @@ function tuneConfirmationAssistantReply(reply, nextState) {
   const r = typeof reply === "string" ? reply : "";
   const phase =
     nextState?.bookingPhase || BOOKING_PHASE.COLLECTING;
+
+  if (nextState?.finalizedImmutable || phase === BOOKING_PHASE.FINALIZED) {
+    return "Your booking is already finalized. To make changes, please start over with a new booking request.";
+  }
 
   if (
     phase === BOOKING_PHASE.AWAITING_CONFIRMATION &&
@@ -1690,7 +1837,8 @@ function buildSessionUpdate(session, state, reply, messages = []) {
   const priorPhase = session?.bookingPhase || BOOKING_PHASE.COLLECTING;
   const normalizedLatest = normalizeLatestUser(messages || []);
   
-  const hasExplicitResetIntent = hasBookingCorrectionIntentNormalized(normalizedLatest);
+  const hasExplicitResetIntent =
+    hasExplicitBookingResetIntentNormalized(normalizedLatest);
   
   let transition;
   if (priorPhase === BOOKING_PHASE.FINALIZED && !hasExplicitResetIntent) {
@@ -1705,7 +1853,9 @@ function buildSessionUpdate(session, state, reply, messages = []) {
   }
   
   const activeServiceId =
-    transition.serviceId || state?.activeServiceId || session?.activeServiceId || null;
+    hasExplicitResetIntent
+      ? transition.serviceId || detectServiceContext(latestUserMessage) || null
+      : transition.serviceId || state?.activeServiceId || session?.activeServiceId || null;
   const bookingReadinessScore = getBookingReadinessScore(state);
   const readinessStage = getBookingReadinessStage(bookingReadinessScore);
   const mergedBookingMemory = {
@@ -1731,10 +1881,17 @@ function buildSessionUpdate(session, state, reply, messages = []) {
         ? state.bookingPhase
         : session?.bookingPhase || BOOKING_PHASE.COLLECTING,
     confirmationSnapshot:
-      state?.confirmationSnapshot !== undefined
-        ? state.confirmationSnapshot
-        : session?.confirmationSnapshot ?? null,
-    ctaIssued: Boolean(session?.ctaIssued || state?.issueBookingCta),
+      state?.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION
+        ? state?.confirmationSnapshot ?? null
+        : null,
+    ctaIssued:
+      state?.issueBookingCta !== undefined
+        ? Boolean(state.issueBookingCta)
+        : Boolean(session?.ctaIssued),
+    bookingPersisted:
+      state?.bookingPersisted !== undefined
+        ? Boolean(state.bookingPersisted)
+        : Boolean(session?.bookingPersisted),
   };
 
   if (nextSession.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION && !nextSession.confirmationSnapshot) {

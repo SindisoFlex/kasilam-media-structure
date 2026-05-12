@@ -1,0 +1,17 @@
+{
+  "booking_1778434975359_c948cda9": {
+    "bookingId": "booking_1778434975359_c948cda9",
+    "status": "pending",
+    "service": "funeral",
+    "customerName": "John Doe",
+    "customerPhone": "+27 123 456 7890",
+    "customerEmail": "john@example.com",
+    "date": "14 June",
+    "location": "Motherwell",
+    "scope": "Full coverage",
+    "createdAt": 1778434975359,
+    "finalizedAt": 1778434975359,
+    "sourceSessionId": "test-session-123",
+    "bookingPhase": "finalized"
+  }
+}
