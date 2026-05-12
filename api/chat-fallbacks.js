@@ -444,11 +444,12 @@ export function buildContextualFallback(session, intent) {
     const firstInvalid = invalidFields[0];
     question = buildInvalidFieldRecoveryMessage(firstInvalid, memory[firstInvalid]);
   } else if (nextMissing != null) {
-    question = getBookingFieldQuestion(nextMissing, context, {
+    const adaptive = buildAdaptivePrompt(nextMissing, context, {
       bookingMemory: memory,
       bookingValidation,
       lastDetectedIntent: session?.lastIntent || null,
     });
+    question = adaptive.prompt;
   }
 
   const captured = [];
@@ -462,9 +463,17 @@ export function buildContextualFallback(session, intent) {
 
   const summaryLine =
     intentName === "pricing" ? config.pricing : config.summary;
-  const memoryLine = captured.length
-    ? `So far I have ${captured.join(", ")}.`
-    : null;
+  // Suppress the verbose "So far I have ..." dump when the adaptive prompt
+  // already echoes the most recent confirmed field naturally — avoids
+  // re-stating information the user just provided.
+  const suppressMemoryLine =
+    invalidFields.length === 0 &&
+    nextMissing != null &&
+    hasReferenceableContext(memory, bookingValidation);
+  const memoryLine =
+    captured.length && !suppressMemoryLine
+      ? `So far I have ${captured.join(", ")}.`
+      : null;
 
   let ctaLine = question;
   const suppressWaTeaserCollectComplete =
