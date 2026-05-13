@@ -444,16 +444,27 @@ export function buildContextualFallback(session, intent) {
   let question = pickQuestion(config, stage, intentName, confidence);
 
   // BLOCK A4: Invalid-field recovery - prioritize over missing-field prompting
+  let clarificationApplied = false;
   if (invalidFields.length > 0) {
     const firstInvalid = invalidFields[0];
     question = buildInvalidFieldRecoveryMessage(firstInvalid, memory[firstInvalid]);
   } else if (nextMissing != null) {
-    const adaptive = buildAdaptivePrompt(nextMissing, context, {
-      bookingMemory: memory,
-      bookingValidation,
-      lastDetectedIntent: session?.lastIntent || null,
-    });
-    question = adaptive.prompt;
+    // Phase 3: Conversational clarification — if the user's latest message
+    // is vague/incomplete for the field we're collecting, swap the adaptive
+    // prompt for a soft, targeted clarification. Detection only — no state
+    // mutation, no validation bypass.
+    const ambiguity = detectFieldAmbiguity(normalizedUser, nextMissing);
+    if (ambiguity) {
+      question = ambiguity.prompt;
+      clarificationApplied = true;
+    } else {
+      const adaptive = buildAdaptivePrompt(nextMissing, context, {
+        bookingMemory: memory,
+        bookingValidation,
+        lastDetectedIntent: session?.lastIntent || null,
+      });
+      question = adaptive.prompt;
+    }
   }
 
   const captured = [];
