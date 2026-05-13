@@ -103,13 +103,13 @@ export function isVagueScope(text) {
 export function isIncompletePhone(text) {
   const n = norm(text);
   if (!n) return false;
-  const digits = n.replace(/\D/g, "");
-  if (digits.length === 0) return false;
-  if (digits.length < 9) return true; // short
-  // "my number is somewhere" / "i'll send it later"
+  // "later", "tbd", "not sure", "i'll send it" etc — flag regardless of digits
   if (/\b(later|tbd|not sure|i['’]?ll send|send it later|will share)\b/.test(n)) {
     return true;
   }
+  const digits = n.replace(/\D/g, "");
+  if (digits.length === 0) return false;
+  if (digits.length < 9) return true; // short
   return false;
 }
 
