@@ -23,6 +23,10 @@ import {
   buildAdaptivePrompt,
   hasReferenceableContext,
 } from "./chat-adaptive-prompts.js";
+import {
+  detectFieldAmbiguity,
+  detectConfirmationAmbiguity,
+} from "./chat-ambiguity.js";
 
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
