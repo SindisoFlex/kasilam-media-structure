@@ -482,9 +482,10 @@ export function buildContextualFallback(session, intent) {
   // already echoes the most recent confirmed field naturally — avoids
   // re-stating information the user just provided.
   const suppressMemoryLine =
-    invalidFields.length === 0 &&
-    nextMissing != null &&
-    hasReferenceableContext(memory, bookingValidation);
+    clarificationApplied ||
+    (invalidFields.length === 0 &&
+      nextMissing != null &&
+      hasReferenceableContext(memory, bookingValidation));
   const memoryLine =
     captured.length && !suppressMemoryLine
       ? `So far I have ${captured.join(", ")}.`
