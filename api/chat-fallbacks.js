@@ -418,8 +418,11 @@ export function buildContextualFallback(session, intent) {
             })
           : "I still need one more valid detail before I can confirm this booking.";
     } else {
-      tail =
-        "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
+      // Phase 3: soft uncertainty handling on confirmation step.
+      const confAmbiguity = detectConfirmationAmbiguity(normalizedUser);
+      tail = confAmbiguity
+        ? confAmbiguity.prompt
+        : "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
     }
 
     return buildLines([
