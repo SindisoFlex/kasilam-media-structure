@@ -23,6 +23,10 @@ import {
   buildAdaptivePrompt,
   hasReferenceableContext,
 } from "./chat-adaptive-prompts.js";
+import {
+  detectFieldAmbiguity,
+  detectConfirmationAmbiguity,
+} from "./chat-ambiguity.js";
 
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_NUMBER = "+27659704101";
@@ -414,8 +418,11 @@ export function buildContextualFallback(session, intent) {
             })
           : "I still need one more valid detail before I can confirm this booking.";
     } else {
-      tail =
-        "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
+      // Phase 3: soft uncertainty handling on confirmation step.
+      const confAmbiguity = detectConfirmationAmbiguity(normalizedUser);
+      tail = confAmbiguity
+        ? confAmbiguity.prompt
+        : "Please reply YES to confirm your booking summary, or tell me specifically what you would like to change.";
     }
 
     return buildLines([
@@ -440,16 +447,27 @@ export function buildContextualFallback(session, intent) {
   let question = pickQuestion(config, stage, intentName, confidence);
 
   // BLOCK A4: Invalid-field recovery - prioritize over missing-field prompting
+  let clarificationApplied = false;
   if (invalidFields.length > 0) {
     const firstInvalid = invalidFields[0];
     question = buildInvalidFieldRecoveryMessage(firstInvalid, memory[firstInvalid]);
   } else if (nextMissing != null) {
-    const adaptive = buildAdaptivePrompt(nextMissing, context, {
-      bookingMemory: memory,
-      bookingValidation,
-      lastDetectedIntent: session?.lastIntent || null,
-    });
-    question = adaptive.prompt;
+    // Phase 3: Conversational clarification — if the user's latest message
+    // is vague/incomplete for the field we're collecting, swap the adaptive
+    // prompt for a soft, targeted clarification. Detection only — no state
+    // mutation, no validation bypass.
+    const ambiguity = detectFieldAmbiguity(normalizedUser, nextMissing);
+    if (ambiguity) {
+      question = ambiguity.prompt;
+      clarificationApplied = true;
+    } else {
+      const adaptive = buildAdaptivePrompt(nextMissing, context, {
+        bookingMemory: memory,
+        bookingValidation,
+        lastDetectedIntent: session?.lastIntent || null,
+      });
+      question = adaptive.prompt;
+    }
   }
 
   const captured = [];
@@ -467,9 +485,10 @@ export function buildContextualFallback(session, intent) {
   // already echoes the most recent confirmed field naturally — avoids
   // re-stating information the user just provided.
   const suppressMemoryLine =
-    invalidFields.length === 0 &&
-    nextMissing != null &&
-    hasReferenceableContext(memory, bookingValidation);
+    clarificationApplied ||
+    (invalidFields.length === 0 &&
+      nextMissing != null &&
+      hasReferenceableContext(memory, bookingValidation));
   const memoryLine =
     captured.length && !suppressMemoryLine
       ? `So far I have ${captured.join(", ")}.`
