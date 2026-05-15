@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { CalendarIcon, ArrowRight, ArrowLeft, CheckCircle, Download, MessageCircle, MapPin, Navigation, Package, Clock } from "lucide-react";
 import jsPDF from "jspdf";
-import { useBooking } from "@/contexts/BookingContext";
+import { useBooking, type SnapshotDraft } from "@/contexts/BookingContext";
 import logo from "@/images/kmp.svg";
 
 const serviceAddOns = {
@@ -58,7 +58,7 @@ const getServiceCategory = (service: string): "audio" | "visual" | "digital" => 
 };
 
 const BookingFlow = () => {
-  const { isOpen, bookingInfo, closeBooking } = useBooking();
+  const { isOpen, bookingInfo, closeBooking, prepareConfirmation, finalizeBooking } = useBooking();
 
   const [step, setStep] = useState(1);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
@@ -132,9 +132,42 @@ const BookingFlow = () => {
     return msg;
   };
 
+  const buildSnapshotDraft = (ref: string): SnapshotDraft | null => {
+    if (!bookingInfo) return null;
+    return {
+      bookingInfo,
+      selectedAddOns: [...selectedAddOns],
+      location,
+      mapsLink,
+      date: date ? date.toISOString() : null,
+      time,
+      clientName,
+      clientPhone,
+      clientEmail,
+      subtotal,
+      vat,
+      total,
+      refNumber: ref,
+    };
+  };
+
+  // Step 5 -> 6: lock a frozen snapshot (collecting -> awaiting_confirmation).
+  // The deterministic phase machine in BookingContext owns the transition;
+  // this component never mutates phase or snapshot directly.
+  const goToSummary = () => {
+    const ref = refNumber || generateRef();
+    if (!refNumber) setRefNumber(ref);
+    const draft = buildSnapshotDraft(ref);
+    if (draft) prepareConfirmation(draft);
+    setStep(6);
+  };
+
   const handleConfirm = () => {
-    const ref = generateRef();
-    setRefNumber(ref);
+    // Idempotent: finalizeBooking returns the existing frozen snapshot
+    // if already finalized, and refuses to transition from any state
+    // other than awaiting_confirmation.
+    const finalized = finalizeBooking();
+    if (finalized?.refNumber) setRefNumber(finalized.refNumber);
     setConfirmed(true);
     setStep(6);
   };
@@ -524,7 +557,7 @@ const BookingFlow = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button variant="red" onClick={() => setStep(6)} disabled={!clientName || !clientPhone} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                  <Button variant="red" onClick={goToSummary} disabled={!clientName || !clientPhone} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
                     REVIEW SUMMARY <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                   <Button variant="ghost" onClick={() => setStep(4)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
