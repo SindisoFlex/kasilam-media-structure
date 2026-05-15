@@ -58,7 +58,7 @@ const getServiceCategory = (service: string): "audio" | "visual" | "digital" => 
 };
 
 const BookingFlow = () => {
-  const { isOpen, bookingInfo, closeBooking, prepareConfirmation, finalizeBooking, bookingPhase } = useBooking();
+  const { isOpen, bookingInfo, closeBooking, prepareConfirmation, finalizeBooking } = useBooking();
 
   const [step, setStep] = useState(1);
   const [selectedAddOns, setSelectedAddOns] = useState<string[]>([]);
