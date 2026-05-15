@@ -13,6 +13,7 @@ import { CalendarIcon, ArrowRight, ArrowLeft, CheckCircle, Download, MessageCirc
 import jsPDF from "jspdf";
 import { useBooking, type SnapshotDraft } from "@/contexts/BookingContext";
 import logo from "@/images/kmp.svg";
+import axios from "axios";
 
 const serviceAddOns = {
   audio: [
@@ -162,12 +163,27 @@ const BookingFlow = () => {
     setStep(6);
   };
 
-  const handleConfirm = () => {
-    // Idempotent: finalizeBooking returns the existing frozen snapshot
-    // if already finalized, and refuses to transition from any state
-    // other than awaiting_confirmation.
+  const handleConfirm = async () => {
     const finalized = finalizeBooking();
     if (finalized?.refNumber) setRefNumber(finalized.refNumber);
+
+    try {
+      const response = await axios.post("/api/bookings", finalized);
+      if (response.data?.refNumber) {
+        setRefNumber(response.data.refNumber);
+        toast({
+          title: "Booking Confirmed!",
+          description: `Your booking reference is ${response.data.refNumber}.`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Booking Submission Failed",
+        description: "We encountered an issue while saving your booking. Please try again.",
+        variant: "destructive",
+      });
+    }
+
     setConfirmed(true);
     setStep(6);
   };

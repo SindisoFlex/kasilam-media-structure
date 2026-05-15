@@ -1,3 +1,5 @@
+import { db } from "@/lib/db";
+
 const SESSION_TTL_MS = 30 * 60 * 1000;
 
 const sessionStore = new Map();
@@ -69,40 +71,21 @@ export function getSession(sessionId) {
     if (existingSession) {
       sessionStore.delete(normalizedSessionId);
     }
+
+    // Fetch session from database if not in memory
+    const dbSession = await db.sessions.findUnique({ where: { sessionId: normalizedSessionId } });
+    if (dbSession) {
+      sessionStore.set(normalizedSessionId, dbSession);
+      return dbSession;
+    }
+
     return createDefaultSession(normalizedSessionId);
   }
 
-  return {
-    ...existingSession,
-    bookingMemory: {
-      service: null,
-      date: null,
-      location: null,
-      scope: null,
-      customerName: null,
-      customerPhone: null,
-      customerEmail: null,
-      ...existingSession.bookingMemory,
-    },
-    bookingValidation: {
-      service: false,
-      date: false,
-      location: false,
-      scope: false,
-      customerName: false,
-      customerPhone: false,
-      customerEmail: false,
-      ...(existingSession.bookingValidation || {})
-    },
-    bookingPhase: existingSession.bookingPhase || "collecting",
-    confirmationSnapshot: existingSession.confirmationSnapshot ?? null,
-    ctaIssued: Boolean(existingSession.ctaIssued),
-    bookingPersisted: Boolean(existingSession.bookingPersisted),
-    events: Array.isArray(existingSession.events) ? [...existingSession.events] : [],
-  };
+  return existingSession;
 }
 
-export function saveSession(session) {
+export async function saveSession(session) {
   cleanupExpiredSessions();
 
   if (!session || typeof session.sessionId !== "string" || !session.sessionId.trim()) {
@@ -131,6 +114,14 @@ export function saveSession(session) {
   };
 
   sessionStore.set(normalizedSessionId, nextSession);
+
+  // Persist session to database
+  await db.sessions.upsert({
+    where: { sessionId: normalizedSessionId },
+    update: nextSession,
+    create: nextSession,
+  });
+
   return {
     ...nextSession,
     bookingMemory: { ...nextSession.bookingMemory },
@@ -138,7 +129,7 @@ export function saveSession(session) {
   };
 }
 
-export function clearSession(sessionId) {
+export async function clearSession(sessionId) {
   if (typeof sessionId !== "string" || !sessionId.trim()) {
     return false;
   }

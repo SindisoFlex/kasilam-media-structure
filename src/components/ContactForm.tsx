@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import axios from "axios";
 
 const FormSchema = z.object({
   name: z.string().min(2, {
@@ -43,6 +45,7 @@ const FormSchema = z.object({
 });
 
 export function ContactForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -55,15 +58,24 @@ export function ContactForm() {
     },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "Thanks for reaching out!",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setIsLoading(true);
+    try {
+      await axios.post("/api/contact", data);
+      toast({
+        title: "Thanks for reaching out!",
+        description: "Your message has been successfully sent.",
+      });
+      form.reset();
+    } catch (error) {
+      toast({
+        title: "Submission failed",
+        description: "Something went wrong. Please try again later.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -174,7 +186,9 @@ export function ContactForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isLoading}>
+          {isLoading ? "Submitting..." : "Submit"}
+        </Button>
       </form>
     </Form>
   );
