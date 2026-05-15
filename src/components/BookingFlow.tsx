@@ -557,7 +557,7 @@ const BookingFlow = () => {
                   </div>
                 </div>
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button variant="red" onClick={() => setStep(6)} disabled={!clientName || !clientPhone} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
+                  <Button variant="red" onClick={goToSummary} disabled={!clientName || !clientPhone} className="w-full h-14 font-black uppercase tracking-widest text-xs group disabled:opacity-20">
                     REVIEW SUMMARY <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                   <Button variant="ghost" onClick={() => setStep(4)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
