@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { format, addDays } from "date-fns";
 import { CalendarIcon, ArrowRight, ArrowLeft, CheckCircle, Download, MessageCircle, MapPin, Navigation, Package, Clock } from "lucide-react";
 import jsPDF from "jspdf";
-import { useBooking } from "@/contexts/BookingContext";
+import { useBooking, type SnapshotDraft } from "@/contexts/BookingContext";
 import logo from "@/images/kmp.svg";
 
 const serviceAddOns = {
