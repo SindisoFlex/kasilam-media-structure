@@ -132,9 +132,42 @@ const BookingFlow = () => {
     return msg;
   };
 
+  const buildSnapshotDraft = (ref: string): SnapshotDraft | null => {
+    if (!bookingInfo) return null;
+    return {
+      bookingInfo,
+      selectedAddOns: [...selectedAddOns],
+      location,
+      mapsLink,
+      date: date ? date.toISOString() : null,
+      time,
+      clientName,
+      clientPhone,
+      clientEmail,
+      subtotal,
+      vat,
+      total,
+      refNumber: ref,
+    };
+  };
+
+  // Step 5 -> 6: lock a frozen snapshot (collecting -> awaiting_confirmation).
+  // The deterministic phase machine in BookingContext owns the transition;
+  // this component never mutates phase or snapshot directly.
+  const goToSummary = () => {
+    const ref = refNumber || generateRef();
+    if (!refNumber) setRefNumber(ref);
+    const draft = buildSnapshotDraft(ref);
+    if (draft) prepareConfirmation(draft);
+    setStep(6);
+  };
+
   const handleConfirm = () => {
-    const ref = generateRef();
-    setRefNumber(ref);
+    // Idempotent: finalizeBooking returns the existing frozen snapshot
+    // if already finalized, and refuses to transition from any state
+    // other than awaiting_confirmation.
+    const finalized = finalizeBooking();
+    if (finalized?.refNumber) setRefNumber(finalized.refNumber);
     setConfirmed(true);
     setStep(6);
   };
