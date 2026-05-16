@@ -45,6 +45,28 @@ const AIChatWidget = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const restoreSession = async () => {
+      if (!sessionId) return;
+      try {
+        const response = await fetch(`/api/ai-chat?sessionId=${encodeURIComponent(sessionId)}`);
+        if (!response.ok) {
+          return;
+        }
+        const data = await response.json();
+        if (Array.isArray(data?.session?.conversationHistory) && data.session.conversationHistory.length > 0) {
+          setMessages(data.session.conversationHistory);
+        }
+      } catch (err) {
+        console.error("[AIChatWidget] restore failed", err);
+      } finally {
+        setHasRestored(true);
+      }
+    };
+
+    restoreSession();
+  }, [sessionId]);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading, open]);
 

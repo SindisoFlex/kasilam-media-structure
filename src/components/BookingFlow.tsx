@@ -72,6 +72,7 @@ const BookingFlow = () => {
   const [clientEmail, setClientEmail] = useState("");
   const [confirmed, setConfirmed] = useState(false);
   const [refNumber, setRefNumber] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [locatingUser, setLocatingUser] = useState(false);
 
   const resetState = () => {
@@ -165,27 +166,46 @@ const BookingFlow = () => {
 
   const handleConfirm = async () => {
     const finalized = finalizeBooking();
-    if (finalized?.refNumber) setRefNumber(finalized.refNumber);
+    if (!finalized) {
+      toast({
+        title: "Booking Confirmation Failed",
+        description: "Please complete the booking flow before confirming.",
+        variant: "destructive",
+      });
+      return;
+    }
 
+    const ref = finalized.refNumber || refNumber || generateRef();
+    if (!finalized.refNumber) {
+      setRefNumber(ref);
+    }
+
+    const payload = { ...finalized, refNumber: finalized.refNumber || ref };
+
+    setIsSubmitting(true);
     try {
-      const response = await axios.post("/api/bookings", finalized);
-      if (response.data?.refNumber) {
-        setRefNumber(response.data.refNumber);
-        toast({
-          title: "Booking Confirmed!",
-          description: `Your booking reference is ${response.data.refNumber}.`,
-        });
+      const response = await axios.post("/api/bookings", payload);
+      if (!response.data?.refNumber) {
+        throw new Error(response.data?.error || "Missing refNumber from backend");
       }
+
+      setRefNumber(response.data.refNumber);
+      toast({
+        title: "Booking Confirmed!",
+        description: `Your booking reference is ${response.data.refNumber}.`,
+      });
+      setConfirmed(true);
+      setStep(6);
     } catch (error) {
+      console.error("[BookingFlow] submit error", error);
       toast({
         title: "Booking Submission Failed",
         description: "We encountered an issue while saving your booking. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setConfirmed(true);
-    setStep(6);
   };
 
   const getPDFBlob = async (): Promise<Blob> => {
@@ -657,8 +677,8 @@ const BookingFlow = () => {
                 </div>
 
                 <div className="flex flex-col gap-3 pt-4">
-                  <Button variant="red" onClick={handleConfirm} className="w-full h-16 uppercase tracking-[0.2em] text-xs shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] transition-all">
-                    CONFIRM PRODUCTION BOOKING
+                  <Button variant="red" onClick={handleConfirm} disabled={isSubmitting} className="w-full h-16 uppercase tracking-[0.2em] text-xs shadow-[0_0_30px_rgba(220,38,38,0.3)] hover:scale-[1.02] transition-all disabled:opacity-60">
+                    {isSubmitting ? "CONFIRMING..." : "CONFIRM PRODUCTION BOOKING"}
                   </Button>
                   <Button variant="ghost" onClick={() => setStep(5)} className="w-full text-foreground/40 hover:text-foreground hover:bg-foreground/5 font-black uppercase tracking-widest text-[10px] dark:text-white/40 dark:hover:text-white dark:hover:bg-white/5">
                     BACK TO DETAILS
