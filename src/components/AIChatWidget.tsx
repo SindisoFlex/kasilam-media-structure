@@ -58,8 +58,6 @@ const AIChatWidget = () => {
         }
       } catch (err) {
         console.error("[AIChatWidget] restore failed", err);
-      } finally {
-        setHasRestored(true);
       }
     };
 

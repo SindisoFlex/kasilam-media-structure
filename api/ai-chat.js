@@ -31,8 +31,7 @@ import {
   shouldReopenBookingFromCorrection,
 } from "./chat-booking-shared.js";
 import {
-  saveFinalizedBooking,
-  hasBookingAlreadyPersisted,
+  persistFinalizedBookingPrimary,
 } from "./chat-booking-persistence.js";
 
 // Use a current, supported Gemini model on the v1beta endpoint.
@@ -1053,31 +1052,7 @@ function deriveConversationBookingCore({
       if (!session?.ctaIssued) {
         issueBookingCta = true;
       }
-      if (!session?.bookingPersisted) {
-        try {
-          const sessionId = session?.sessionId || null;
-          const existing = hasBookingAlreadyPersisted(sessionId);
-          if (!existing) {
-            const result = saveFinalizedBooking(
-              bookingMemoryWorking,
-              activeContext,
-              BOOKING_PHASE.FINALIZED
-            );
-            if (result.success) {
-              bookingPersisted = true;
-            } else {
-              console.error(`[Booking Persistence] Failed to save booking: ${result.error}`);
-            }
-          } else {
-            bookingPersisted = true;
-          }
-        } catch (err) {
-          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
-          // Continue without persistence - don't block finalization
-        }
-      } else {
-        bookingPersisted = true;
-      }
+      bookingPersisted = Boolean(session?.bookingPersisted);
     } else if (
       rejectionFromAwait ||
       correctionReopenRequested ||
@@ -2477,7 +2452,29 @@ export default async function handler(req, res) {
     const session = await getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
-    const finalizeResponse = (payload, nextState = state) => {
+    const finalizeResponse = async (payload, nextState = state) => {
+      if (
+        sessionId &&
+        nextState?.bookingPhase === BOOKING_PHASE.FINALIZED &&
+        !nextState?.bookingPersisted
+      ) {
+        try {
+          const persistResult = await persistFinalizedBookingPrimary(
+            nextState.bookingMemory,
+            nextState.activeContext,
+            BOOKING_PHASE.FINALIZED,
+            sessionId
+          );
+          if (persistResult.success) {
+            nextState.bookingPersisted = true;
+          } else {
+            console.error(`[Booking Persistence] Failed to save booking: ${persistResult.error}`);
+          }
+        } catch (err) {
+          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
+        }
+      }
+
       const tunedReply = tuneConfirmationAssistantReply(
         typeof payload?.reply === "string" ? payload.reply : "",
         nextState
@@ -2491,7 +2488,7 @@ export default async function handler(req, res) {
           typeof payloadOut?.reply === "string" ? payloadOut.reply : tunedReply,
           messages
         );
-        const savedSession = saveSession(sessionUpdate);
+        const savedSession = await saveSession(sessionUpdate);
         if (IS_DEV) {
           console.log("[AI Session Save]", {
             sessionId,
@@ -2541,7 +2538,7 @@ export default async function handler(req, res) {
     };
 
     if (!messages.length) {
-      return finalizeResponse({
+      return await finalizeResponse({
         reply: buildGeneralFallbackReply({
           lead: "You're in the right place, and I can help you find the right KMP service.",
           summary:
@@ -2557,7 +2554,7 @@ export default async function handler(req, res) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
       console.error("[ai-chat] GEMINI_API_KEY is not set");
-      return finalizeResponse({
+      return await finalizeResponse({
         reply: buildFallbackReply(messages, loadKnowledge(), session),
         fallback: true,
         model: GEMINI_MODEL,
@@ -2570,7 +2567,7 @@ export default async function handler(req, res) {
       knowledge = loadKnowledge();
     } catch (e) {
       console.error("[ai-chat] Failed to load knowledge file:", e);
-      return finalizeResponse({
+      return await finalizeResponse({
         reply: buildGeneralFallbackReply({
           lead: "You're in the right place, and I can still point you in the right direction.",
           summary:
@@ -2640,7 +2637,7 @@ ${JSON.stringify(knowledge)}`;
 
       if (!geminiResult?.ok) {
         console.log("[ai-chat] Gemini fallback triggered from HTTP/model error:", geminiResult?.status);
-        return finalizeResponse(
+        return await finalizeResponse(
           {
             ...buildSafeFallbackResponse(messages, knowledge, state, {
               preferBusy: isFallbackWorthyGeminiError(geminiResult?.status, data),
@@ -2654,7 +2651,7 @@ ${JSON.stringify(knowledge)}`;
 
       if (!data || !Array.isArray(data?.candidates) || data.candidates.length === 0) {
         console.log("[ai-chat] Gemini fallback triggered from missing candidates.");
-        return finalizeResponse(
+        return await finalizeResponse(
           {
             ...buildSafeFallbackResponse(messages, knowledge, state, {
               session,
@@ -2671,7 +2668,7 @@ ${JSON.stringify(knowledge)}`;
 
       if (!Array.isArray(parts) || parts.length === 0) {
         console.log("[ai-chat] Gemini fallback triggered from missing content parts.", finishReason);
-        return finalizeResponse(
+        return await finalizeResponse(
           {
             ...buildSafeFallbackResponse(messages, knowledge, state, {
               session,
@@ -2685,7 +2682,7 @@ ${JSON.stringify(knowledge)}`;
       const reply = parts.map((p) => p?.text || "").join("").trim();
       if (!reply) {
         console.log("[ai-chat] Gemini fallback triggered from empty reply.", finishReason);
-        return finalizeResponse(
+        return await finalizeResponse(
           {
             ...buildSafeFallbackResponse(messages, knowledge, state, {
               session,
@@ -2696,10 +2693,10 @@ ${JSON.stringify(knowledge)}`;
         );
       }
 
-      return finalizeResponse({ reply, finishReason, model: GEMINI_MODEL, state });
+      return await finalizeResponse({ reply, finishReason, model: GEMINI_MODEL, state });
     } catch (error) {
       console.log("[ai-chat] Gemini request failed, using fallback:", error);
-      return finalizeResponse(
+      return await finalizeResponse(
         {
           ...buildSafeFallbackResponse(messages, knowledge, state, {
             session,

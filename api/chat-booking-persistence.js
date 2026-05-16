@@ -25,6 +25,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
+import { db } from "./lib/db.js";
 import {
   computeBookingValidation,
   getRequiredBookingFields,
@@ -205,6 +206,70 @@ export function saveFinalizedBooking(
   saveBookingArchive(archive);
 
   return { success: true };
+}
+
+function buildDbBookingPayload(bookingMemory, sourceSessionId) {
+  const timestamp = Date.now();
+  return {
+    refNumber: `KMP-${timestamp}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`,
+    sourceSessionId: sourceSessionId || null,
+    bookingInfo: {
+      status: "pending",
+      service: bookingMemory?.service || null,
+      scope: bookingMemory?.scope || null,
+      bookingPhase: "finalized",
+      finalizedAt: new Date().toISOString(),
+    },
+    selectedAddOns: [],
+    location: bookingMemory?.location || null,
+    mapsLink: null,
+    date: bookingMemory?.date || null,
+    time: null,
+    clientName: bookingMemory?.customerName || "Unknown",
+    clientPhone: bookingMemory?.customerPhone || "Unknown",
+    clientEmail: bookingMemory?.customerEmail || null,
+    subtotal: 0,
+    vat: 0,
+    total: 0,
+  };
+}
+
+export async function hasBookingAlreadyPersistedPrimary(sourceSessionId) {
+  if (!sourceSessionId) return null;
+  return db.bookings.findBySourceSessionId(sourceSessionId);
+}
+
+export async function persistFinalizedBookingPrimary(
+  bookingMemory,
+  activeContext,
+  bookingPhase,
+  sourceSessionId
+) {
+  const validation = validateBookingForPersistence(
+    bookingMemory,
+    activeContext,
+    bookingPhase
+  );
+  if (!validation.isValid) {
+    return { success: false, error: validation.error };
+  }
+
+  const existing = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
+  if (existing) {
+    return { success: true, duplicate: true, refNumber: existing.ref_number };
+  }
+
+  const payload = buildDbBookingPayload(bookingMemory, sourceSessionId);
+  const inserted = await db.bookings.insert(payload);
+
+  // Optional archive backup path (non-blocking)
+  try {
+    saveFinalizedBooking(bookingMemory, activeContext, bookingPhase);
+  } catch (err) {
+    console.error(`[Persistence Backup] Archive write failed: ${err.message}`);
+  }
+
+  return { success: true, refNumber: inserted?.ref_number || payload.refNumber };
 }
 
 /**
