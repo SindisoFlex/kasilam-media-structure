@@ -262,7 +262,20 @@ export async function persistFinalizedBookingPrimary(
   }
 
   const payload = buildDbBookingPayload(bookingMemory, sourceSessionId);
-  const inserted = await db.bookings.insert(payload);
+  let inserted;
+  try {
+    inserted = await db.bookings.insert(payload);
+  } catch (err) {
+    // Race-safe duplicate handling when concurrent finalize requests
+    // attempt to persist the same source session.
+    if (err?.code === "23505" && sourceSessionId) {
+      const winner = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
+      if (winner) {
+        return { success: true, duplicate: true, refNumber: winner.ref_number };
+      }
+    }
+    throw err;
+  }
 
   // Optional archive backup path (non-blocking)
   try {

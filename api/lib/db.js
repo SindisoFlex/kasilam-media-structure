@@ -59,6 +59,12 @@ async function ensureSchema() {
     );
   `);
 
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS bookings_source_session_id_unique
+    ON bookings (source_session_id)
+    WHERE source_session_id IS NOT NULL;
+  `);
+
   schemaInitialized = true;
 }
 
