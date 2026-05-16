@@ -1058,18 +1058,21 @@ function deriveConversationBookingCore({
           const sessionId = session?.sessionId || null;
           const existing = hasBookingAlreadyPersisted(sessionId);
           if (!existing) {
-            saveFinalizedBooking(
+            const result = saveFinalizedBooking(
               bookingMemoryWorking,
               activeContext,
-              BOOKING_PHASE.FINALIZED,
-              sessionId
+              BOOKING_PHASE.FINALIZED
             );
-            bookingPersisted = true;
+            if (result.success) {
+              bookingPersisted = true;
+            } else {
+              console.error(`[Booking Persistence] Failed to save booking: ${result.error}`);
+            }
           } else {
             bookingPersisted = true;
           }
         } catch (err) {
-          console.error(`[Booking Persistence] Failed to save booking: ${err.message}`);
+          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
           // Continue without persistence - don't block finalization
         }
       } else {
@@ -1756,19 +1759,17 @@ function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
     bookingPhase:
       state?.bookingPhase ?? session?.bookingPhase ?? BOOKING_PHASE.COLLECTING,
     confirmationSnapshot:
-      state?.confirmationSnapshot !== undefined
-        ? state.confirmationSnapshot
-        : session?.confirmationSnapshot ?? null,
+      state?.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION
+        ? state?.confirmationSnapshot ?? null
+        : null,
     ctaIssued:
-      state?.bookingPhase === BOOKING_PHASE.FINALIZED
-        ? Boolean(session?.ctaIssued || state?.issueBookingCta)
-        : false,
-    bookingPersisted: Boolean(session?.bookingPersisted),
-    bookingMemory: {
-      ...createEmptyBookingMemory(),
-      ...(session?.bookingMemory || {}),
-      ...(state?.bookingMemory || {}),
-    },
+      state?.issueBookingCta !== undefined
+        ? Boolean(state.issueBookingCta)
+        : Boolean(session?.ctaIssued),
+    bookingPersisted:
+      state?.bookingPersisted !== undefined
+        ? Boolean(state.bookingPersisted)
+        : Boolean(session?.bookingPersisted),
   };
   const latestUserMessage = getLatestUserMessage(messages);
   const classifiedIntent = detectChatIntent(latestUserMessage, effectiveSession);

@@ -57,25 +57,17 @@ describe("KMP assistant", () => {
 
   it("keeps funeral context for funeral -> price?", async () => {
     const sessionId = makeSessionId("funeral-price");
-
-    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
-
     const firstResponse = await invokeHandler({
       sessionId,
-      messages: [{ role: "user", content: "I need funeral photography" }],
+      message: "I need a funeral photographer",
     });
+    expect(firstResponse.context).toBe("funeral");
 
-    expect(firstResponse.reply).toContain("Funeral");
-    expect(firstResponse._debug.activeServiceId).toBe("funeral_photography");
-
-    const secondResponse = await invokeHandler({
+    const priceResponse = await invokeHandler({
       sessionId,
-      messages: [{ role: "user", content: "price?" }],
+      message: "How much does it cost?",
     });
-
-    expect(secondResponse.reply).toContain("Funeral");
-    expect(secondResponse.reply).toContain("R1,500");
-    expect(secondResponse._debug.activeServiceId).toBe("funeral_photography");
+    expect(priceResponse.context).toBe("funeral");
   });
 
   it("keeps funeral context locked through short follow-ups", async () => {

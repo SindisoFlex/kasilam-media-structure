@@ -162,84 +162,58 @@ export function hasBookingAlreadyPersisted(sourceSessionId) {
       return record;
     }
   }
-
   return null;
 }
 
 /**
- * Persists a finalized booking to permanent storage.
- * 
- * Idempotent:
- * - If booking already exists for session, returns existing record
- * - Safe against concurrent writes (atomic file operations)
- * 
- * @param {Object} bookingMemory - Complete booking memory snapshot
- * @param {Object} activeContext - Service context
- * @param {string} bookingPhase - Current booking phase (must be FINALIZED)
- * @param {string} sourceSessionId - Source session ID
- * @returns {Object} Persisted booking record with bookingId, finalizedAt
- * @throws {Error} If validation fails or persistence cannot complete
+ * Saves a finalized booking to the archive.
+ * Ensures idempotent persistence and validation safety.
+ *
+ * @param {Object} bookingMemory - Booking memory snapshot.
+ * @param {Object} activeContext - Service context.
+ * @param {string} bookingPhase - Current booking phase.
+ * @returns {Object} { success: boolean, error?: string }
  */
 export function saveFinalizedBooking(
   bookingMemory,
   activeContext,
-  bookingPhase,
-  sourceSessionId
+  bookingPhase
 ) {
-  // Idempotency: check if already persisted
-  const existing = hasBookingAlreadyPersisted(sourceSessionId);
-  if (existing) {
-    return existing;
-  }
-
-  // Validate before persistence
   const validation = validateBookingForPersistence(
     bookingMemory,
     activeContext,
     bookingPhase
   );
   if (!validation.isValid) {
-    throw new Error(`Booking validation failed: ${validation.error}`);
+    return { success: false, error: validation.error };
   }
 
-  // Load current archive
   const archive = loadBookingArchive();
+  const bookingId = generateBookingId(bookingMemory);
 
-  // Create booking record
-  const now = Date.now();
-  const bookingId = generateBookingId();
-  const bookingRecord = {
+  if (archive[bookingId]) {
+    return { success: false, error: "Booking already persisted" };
+  }
+
+  const finalizedBooking = {
+    ...bookingMemory,
     bookingId,
-    status: "pending", // Initial status, may be updated via WhatsApp
-    service: bookingMemory.service || null,
-    customerName: bookingMemory.customerName || null,
-    customerPhone: bookingMemory.customerPhone || null,
-    customerEmail: bookingMemory.customerEmail || null,
-    date: bookingMemory.date || null,
-    location: bookingMemory.location || null,
-    scope: bookingMemory.scope || null,
-    createdAt: now,
-    finalizedAt: now,
-    sourceSessionId: sourceSessionId || null,
-    bookingPhase: bookingPhase,
+    finalizedAt: new Date().toISOString(),
   };
 
-  // Add to archive and save
-  archive[bookingId] = bookingRecord;
+  archive[bookingId] = finalizedBooking;
   saveBookingArchive(archive);
 
-  return bookingRecord;
+  return { success: true };
 }
 
 /**
- * Retrieves a booking by ID.
- * 
- * @param {string} bookingId - The booking ID to retrieve
- * @returns {Object|null} Booking record if found, null otherwise
+ * Retrieves a booking by its ID.
+ *
+ * @param {string} bookingId - The booking ID.
+ * @returns {Object|null} - The booking object or null if not found.
  */
 export function getBookingById(bookingId) {
-  if (!bookingId) return null;
-
   const archive = loadBookingArchive();
   return archive[bookingId] || null;
 }

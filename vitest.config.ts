@@ -12,6 +12,9 @@ export default defineConfig({
       "src/test/**/*.{test,spec}.{ts,tsx}",
       "api/tests/**/*.{test,spec}.{js,ts}",
     ],
+    environmentMatchGlobs: [
+      ["api/tests/**/*", "node"],
+    ],
   },
   resolve: {
     alias: { "@": path.resolve(__dirname, "./src") },
