@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "./lib/db.js";
 
 const SESSION_TTL_MS = 30 * 60 * 1000;
 
@@ -37,6 +37,7 @@ function createDefaultSession(sessionId) {
     confirmationSnapshot: null,
     ctaIssued: false,
     bookingPersisted: false,
+    conversationHistory: [],
     nextMissingBookingField: null,
     lastAssistantQuestion: null,
     events: [],
@@ -57,7 +58,7 @@ export function cleanupExpiredSessions() {
   }
 }
 
-export function getSession(sessionId) {
+export async function getSession(sessionId) {
   cleanupExpiredSessions();
 
   if (typeof sessionId !== "string" || !sessionId.trim()) {
@@ -109,6 +110,9 @@ export async function saveSession(session) {
     confirmationSnapshot: session.confirmationSnapshot ?? null,
     ctaIssued: Boolean(session.ctaIssued),
     bookingPersisted: Boolean(session.bookingPersisted),
+    conversationHistory: Array.isArray(session.conversationHistory)
+      ? [...session.conversationHistory]
+      : [],
     events: Array.isArray(session.events) ? [...session.events] : [],
     updatedAt: Date.now(),
   };

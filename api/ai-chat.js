@@ -1893,6 +1893,11 @@ function buildSessionUpdate(session, state, reply, messages = []) {
       state?.bookingPersisted !== undefined
         ? Boolean(state.bookingPersisted)
         : Boolean(session?.bookingPersisted),
+    conversationHistory: Array.isArray(messages)
+      ? messages.slice(-MAX_HISTORY_MESSAGES)
+      : Array.isArray(session?.conversationHistory)
+      ? [...session.conversationHistory]
+      : [],
   };
 
   if (nextSession.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION && !nextSession.confirmationSnapshot) {
@@ -2403,11 +2408,35 @@ async function callGeminiWithRetry(url, payload) {
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS, GET");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     return res.status(204).end();
   }
   res.setHeader("Access-Control-Allow-Origin", "*");
+
+  if (req.method === "GET") {
+    const url = new URL(req.url || "", `http://${req.headers.host || "localhost"}`);
+    const sessionId = url.searchParams.get("sessionId")?.trim() || null;
+
+    if (!sessionId) {
+      return res.status(400).json({ error: "sessionId query parameter is required" });
+    }
+
+    try {
+      const session = await getSession(sessionId);
+      return res.status(200).json({
+        session: {
+          sessionId: session.sessionId,
+          conversationHistory: Array.isArray(session.conversationHistory)
+            ? session.conversationHistory
+            : [],
+        },
+      });
+    } catch (error) {
+      console.error("[ai-chat] session recovery failed", error);
+      return res.status(500).json({ error: "Failed to recover chat session." });
+    }
+  }
 
   if (req.method !== "POST") {
     return res.status(200).json({
@@ -2429,7 +2458,7 @@ export default async function handler(req, res) {
         : null;
     const rateLimit = checkRateLimit(sessionId);
     if (!rateLimit.allowed) {
-      const rateLimitedSession = getSession(sessionId);
+      const rateLimitedSession = await getSession(sessionId);
       if (IS_DEV) {
         console.log("[AI Session Load]", { sessionId, reason: "rate_limit_check", stage: rateLimitedSession?.conversationStage });
       }
@@ -2445,7 +2474,7 @@ export default async function handler(req, res) {
     if (IS_DEV) {
       console.log("[AI Session Load]", { sessionId, stage: "initial_load" });
     }
-    const session = getSession(sessionId);
+    const session = await getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
     const finalizeResponse = (payload, nextState = state) => {
