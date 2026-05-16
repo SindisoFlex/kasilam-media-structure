@@ -30,6 +30,7 @@ import {
   computeBookingValidation,
   getRequiredBookingFields,
   getMissingBookingFields,
+  normalizeBookingDate,
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
 } from "./chat-booking-shared.js";
 
@@ -210,6 +211,7 @@ export function saveFinalizedBooking(
 
 function buildDbBookingPayload(bookingMemory, sourceSessionId) {
   const timestamp = Date.now();
+  const normalizedDate = normalizeBookingDate(bookingMemory?.date);
   return {
     refNumber: `KMP-${timestamp}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`,
     sourceSessionId: sourceSessionId || null,
@@ -223,7 +225,7 @@ function buildDbBookingPayload(bookingMemory, sourceSessionId) {
     selectedAddOns: [],
     location: bookingMemory?.location || null,
     mapsLink: null,
-    date: bookingMemory?.date || null,
+    date: normalizedDate || null,
     time: null,
     clientName: bookingMemory?.customerName || "Unknown",
     clientPhone: bookingMemory?.customerPhone || "Unknown",

@@ -2459,9 +2459,13 @@ export default async function handler(req, res) {
         !nextState?.bookingPersisted
       ) {
         try {
+          const persistenceContext =
+            nextState?.activeServiceId && SERVICE_CONTEXTS[nextState.activeServiceId]
+              ? SERVICE_CONTEXTS[nextState.activeServiceId]
+              : null;
           const persistResult = await persistFinalizedBookingPrimary(
             nextState.bookingMemory,
-            nextState.activeContext,
+            persistenceContext,
             BOOKING_PHASE.FINALIZED,
             sessionId
           );
