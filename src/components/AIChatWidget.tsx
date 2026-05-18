@@ -43,10 +43,12 @@ const AIChatWidget = () => {
     },
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [hasRestored, setHasRestored] = useState(false);
 
   useEffect(() => {
     const restoreSession = async () => {
       if (!sessionId) return;
+      if (!sessionId || hasRestored) return;
       try {
         const response = await fetch(`/api/ai-chat?sessionId=${encodeURIComponent(sessionId)}`);
         if (!response.ok) {
@@ -65,6 +67,7 @@ const AIChatWidget = () => {
 
     restoreSession();
   }, [sessionId]);
+  }, [sessionId, hasRestored]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
