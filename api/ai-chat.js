@@ -637,6 +637,18 @@ function resolveBookingPricingForMemory(activeContext, bookingMemory) {
   return { pricingLabel: line, priceMin, priceMax };
 }
 
+function enrichBookingMemory(bookingMemory, activeContext) {
+  const base = {
+    ...createEmptyBookingMemory(),
+    ...(bookingMemory || {}),
+  };
+  const pricingSnapshot = resolveBookingPricingForMemory(activeContext, base);
+  return {
+    ...base,
+    ...pricingSnapshot,
+  };
+}
+
 function mapServiceToBookingService(serviceId, lastIntent = null) {
   if (serviceId === "funeral_photography") return "funeral";
   if (
@@ -1057,6 +1069,8 @@ function deriveConversationBookingCore({
     );
   }
 
+  bookingMemoryWorking = enrichBookingMemory(bookingMemoryWorking, activeContext);
+
   const bookingValidation = computeBookingValidation(bookingMemoryWorking);
   const requiredBookingFields = getRequiredBookingFields(
     activeContext,
@@ -1075,11 +1089,6 @@ function deriveConversationBookingCore({
     bookingMemory: bookingMemoryWorking,
     bookingValidation,
   });
-  const pricingSnapshot = resolveBookingPricingForMemory(activeContext, bookingMemoryWorking);
-  bookingMemoryWorking = {
-    ...bookingMemoryWorking,
-    ...pricingSnapshot,
-  };
   const finalizedFromAwait =
     isBookingAwaitingConfirmation(session) &&
     hasBookingFinalizeYesNormalized(normalizedLatest) &&
@@ -1148,7 +1157,10 @@ function deriveConversationBookingCore({
     confirmationSnapshotNext = null;
     bookingPersisted = Boolean(session?.bookingPersisted);
     finalizedImmutable = true;
-    const merged = cloneBookingSnapshot(baseBookingMemory);
+    const merged = enrichBookingMemory(
+      cloneBookingSnapshot(baseBookingMemory),
+      activeContext
+    );
     const finalizedValidation = computeBookingValidation(merged);
     const finalizedRequiredBookingFields = getRequiredBookingFields(
       activeContext,
