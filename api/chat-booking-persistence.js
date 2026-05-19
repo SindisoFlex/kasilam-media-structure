@@ -21,6 +21,8 @@
  *   finalizedAt,
  *   sourceSessionId,
  *   bookingPhase
+ *   persistenceSource
+ *   canonicalBookingRef
  * }
  */
 
@@ -203,6 +205,15 @@ export function saveFinalizedBooking(
     pricingLabel: bookingMemory?.pricingLabel || null,
     priceMin: typeof bookingMemory?.priceMin === "number" ? bookingMemory.priceMin : null,
     priceMax: typeof bookingMemory?.priceMax === "number" ? bookingMemory.priceMax : null,
+    bookingPhase,
+    status: "finalized",
+    createdAt:
+      typeof bookingMemory?.createdAt === "string"
+        ? bookingMemory.createdAt
+        : new Date().toISOString(),
+    sourceSessionId: bookingMemory?.sourceSessionId || null,
+    persistenceSource: "chat_archive",
+    canonicalBookingRef: bookingMemory?.canonicalBookingRef || null,
     bookingId,
     finalizedAt: new Date().toISOString(),
   };
