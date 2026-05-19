@@ -46,6 +46,19 @@ export default async function handler(req, res) {
     }
   }
 
+  // Backward-compatible normalization for chatbot-originated payloads.
+  if (body && typeof body === "object") {
+    if (!body.clientName && typeof body.customerName === "string") {
+      body.clientName = body.customerName;
+    }
+    if (!body.clientPhone && typeof body.customerPhone === "string") {
+      body.clientPhone = body.customerPhone;
+    }
+    if (!body.clientEmail && typeof body.customerEmail === "string") {
+      body.clientEmail = body.customerEmail;
+    }
+  }
+
   const parseResult = BookingSchema.safeParse(body);
   if (!parseResult.success) {
     return res.status(400).json({

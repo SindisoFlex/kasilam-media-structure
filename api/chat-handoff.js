@@ -57,6 +57,10 @@ export function buildBookingSummary(session) {
   if (memory.date) lines.push(`Date: ${memory.date}`);
   if (memory.location) lines.push(`Location: ${memory.location}`);
   if (memory.scope) lines.push(`Scope: ${formatScope(memory.scope)}`);
+  if (memory.pricingLabel) lines.push(`Pricing: ${memory.pricingLabel}`);
+  if (typeof memory.priceMin === "number") {
+    lines.push(`Estimated from: R${memory.priceMin.toLocaleString("en-ZA")}`);
+  }
   if (memory.customerName) lines.push(`Name: ${memory.customerName}`);
   if (memory.customerPhone) lines.push(`Phone: ${memory.customerPhone}`);
   if (memory.customerEmail) lines.push(`Email: ${memory.customerEmail}`);

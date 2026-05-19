@@ -14,6 +14,9 @@
  *   date,
  *   location,
  *   scope,
+ *   pricingLabel,
+ *   priceMin,
+ *   priceMax,
  *   createdAt,
  *   finalizedAt,
  *   sourceSessionId,
@@ -197,6 +200,9 @@ export function saveFinalizedBooking(
 
   const finalizedBooking = {
     ...bookingMemory,
+    pricingLabel: bookingMemory?.pricingLabel || null,
+    priceMin: typeof bookingMemory?.priceMin === "number" ? bookingMemory.priceMin : null,
+    priceMax: typeof bookingMemory?.priceMax === "number" ? bookingMemory.priceMax : null,
     bookingId,
     finalizedAt: new Date().toISOString(),
   };

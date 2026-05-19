@@ -592,10 +592,49 @@ function createEmptyBookingMemory() {
     date: null,
     location: null,
     scope: null,
+    pricingLabel: null,
+    priceMin: null,
+    priceMax: null,
     customerName: null,
     customerPhone: null,
     customerEmail: null,
   };
+}
+
+function buildSessionHandoffPayload(session) {
+  if (!session) return null;
+  return {
+    sessionId: session.sessionId || null,
+    activeServiceId: session.activeServiceId || null,
+    bookingPhase: session.bookingPhase || BOOKING_PHASE.COLLECTING,
+    bookingMemory: session.bookingMemory || null,
+  };
+}
+
+function resolveBookingPricingForMemory(activeContext, bookingMemory) {
+  if (!activeContext) {
+    return { pricingLabel: null, priceMin: null, priceMax: null };
+  }
+
+  const scope = String(bookingMemory?.scope || "").toLowerCase();
+  const lines = Array.isArray(activeContext.exactPricing) ? activeContext.exactPricing : [];
+  if (!lines.length) {
+    return { pricingLabel: activeContext.pricingType || "tailored", priceMin: null, priceMax: null };
+  }
+
+  let matchedLine = null;
+  if (scope.includes("photo") && scope.includes("video")) {
+    matchedLine = lines.find((line) => /photo\s*\+\s*video/i.test(line));
+  } else if (scope.includes("video")) {
+    matchedLine = lines.find((line) => /videography/i.test(line));
+  } else if (scope.includes("photo")) {
+    matchedLine = lines.find((line) => /photography/i.test(line));
+  }
+  const line = matchedLine || lines[0];
+  const amounts = (line.match(/R[\d,]+/g) || []).map((raw) => Number(raw.replace(/[^\d]/g, ""))).filter(Boolean);
+  const priceMin = amounts.length ? Math.min(...amounts) : null;
+  const priceMax = amounts.length ? Math.max(...amounts) : null;
+  return { pricingLabel: line, priceMin, priceMax };
 }
 
 function mapServiceToBookingService(serviceId, lastIntent = null) {
@@ -1036,6 +1075,11 @@ function deriveConversationBookingCore({
     bookingMemory: bookingMemoryWorking,
     bookingValidation,
   });
+  const pricingSnapshot = resolveBookingPricingForMemory(activeContext, bookingMemoryWorking);
+  bookingMemoryWorking = {
+    ...bookingMemoryWorking,
+    ...pricingSnapshot,
+  };
   const finalizedFromAwait =
     isBookingAwaitingConfirmation(session) &&
     hasBookingFinalizeYesNormalized(normalizedLatest) &&
@@ -2431,6 +2475,7 @@ export default async function handler(req, res) {
             ? session.conversationHistory
             : [],
         },
+        handoff: buildSessionHandoffPayload(session),
       });
     } catch (error) {
       console.error("[ai-chat] session recovery failed", error);
@@ -2477,7 +2522,7 @@ export default async function handler(req, res) {
     const session = await getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
-    const finalizeResponse = (payload, nextState = state) => {
+    const finalizeResponse = async (payload, nextState = state) => {
       const tunedReply = tuneConfirmationAssistantReply(
         typeof payload?.reply === "string" ? payload.reply : "",
         nextState
@@ -2491,7 +2536,7 @@ export default async function handler(req, res) {
           typeof payloadOut?.reply === "string" ? payloadOut.reply : tunedReply,
           messages
         );
-        const savedSession = saveSession(sessionUpdate);
+        const savedSession = await saveSession(sessionUpdate);
         if (IS_DEV) {
           console.log("[AI Session Save]", {
             sessionId,
@@ -2508,7 +2553,11 @@ export default async function handler(req, res) {
           savedSession.bookingPhase === BOOKING_PHASE.FINALIZED
             ? buildBookingCta(savedSession)
             : null;
-        const nextPayload = cta ? { ...payloadOut, cta } : payloadOut;
+        const nextPayloadBase = cta ? { ...payloadOut, cta } : payloadOut;
+        const nextPayload = {
+          ...nextPayloadBase,
+          handoff: buildSessionHandoffPayload(savedSession),
+        };
 
         if (IS_DEV) {
           return res.status(200).json({
