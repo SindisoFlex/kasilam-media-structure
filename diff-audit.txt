@@ -1,0 +1,317 @@
+﻿diff --git a/api/ai-chat.js b/api/ai-chat.js
+index 3901beb..fe45cf6 100644
+--- a/api/ai-chat.js
++++ b/api/ai-chat.js
+@@ -31,8 +31,7 @@ import {
+   shouldReopenBookingFromCorrection,
+ } from "./chat-booking-shared.js";
+ import {
+-  saveFinalizedBooking,
+-  hasBookingAlreadyPersisted,
++  persistFinalizedBookingPrimary,
+ } from "./chat-booking-persistence.js";
+ 
+ // Use a current, supported Gemini model on the v1beta endpoint.
+@@ -1053,31 +1052,7 @@ function deriveConversationBookingCore({
+       if (!session?.ctaIssued) {
+         issueBookingCta = true;
+       }
+-      if (!session?.bookingPersisted) {
+-        try {
+-          const sessionId = session?.sessionId || null;
+-          const existing = hasBookingAlreadyPersisted(sessionId);
+-          if (!existing) {
+-            const result = saveFinalizedBooking(
+-              bookingMemoryWorking,
+-              activeContext,
+-              BOOKING_PHASE.FINALIZED
+-            );
+-            if (result.success) {
+-              bookingPersisted = true;
+-            } else {
+-              console.error(`[Booking Persistence] Failed to save booking: ${result.error}`);
+-            }
+-          } else {
+-            bookingPersisted = true;
+-          }
+-        } catch (err) {
+-          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
+-          // Continue without persistence - don't block finalization
+-        }
+-      } else {
+-        bookingPersisted = true;
+-      }
++      bookingPersisted = Boolean(session?.bookingPersisted);
+     } else if (
+       rejectionFromAwait ||
+       correctionReopenRequested ||
+@@ -2477,7 +2452,33 @@ export default async function handler(req, res) {
+     const session = await getSession(sessionId);
+     const messages = normalizeMessages(body);
+     const state = inferConversationState(messages, session);
+-    const finalizeResponse = (payload, nextState = state) => {
++    const finalizeResponse = async (payload, nextState = state) => {
++      if (
++        sessionId &&
++        nextState?.bookingPhase === BOOKING_PHASE.FINALIZED &&
++        !nextState?.bookingPersisted
++      ) {
++        try {
++          const persistenceContext =
++            nextState?.activeServiceId && SERVICE_CONTEXTS[nextState.activeServiceId]
++              ? SERVICE_CONTEXTS[nextState.activeServiceId]
++              : null;
++          const persistResult = await persistFinalizedBookingPrimary(
++            nextState.bookingMemory,
++            persistenceContext,
++            BOOKING_PHASE.FINALIZED,
++            sessionId
++          );
++          if (persistResult.success) {
++            nextState.bookingPersisted = true;
++          } else {
++            console.error(`[Booking Persistence] Failed to save booking: ${persistResult.error}`);
++          }
++        } catch (err) {
++          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
++        }
++      }
++
+       const tunedReply = tuneConfirmationAssistantReply(
+         typeof payload?.reply === "string" ? payload.reply : "",
+         nextState
+@@ -2491,7 +2492,7 @@ export default async function handler(req, res) {
+           typeof payloadOut?.reply === "string" ? payloadOut.reply : tunedReply,
+           messages
+         );
+-        const savedSession = saveSession(sessionUpdate);
++        const savedSession = await saveSession(sessionUpdate);
+         if (IS_DEV) {
+           console.log("[AI Session Save]", {
+             sessionId,
+@@ -2541,7 +2542,7 @@ export default async function handler(req, res) {
+     };
+ 
+     if (!messages.length) {
+-      return finalizeResponse({
++      return await finalizeResponse({
+         reply: buildGeneralFallbackReply({
+           lead: "You're in the right place, and I can help you find the right KMP service.",
+           summary:
+@@ -2557,7 +2558,7 @@ export default async function handler(req, res) {
+     const apiKey = process.env.GEMINI_API_KEY;
+     if (!apiKey) {
+       console.error("[ai-chat] GEMINI_API_KEY is not set");
+-      return finalizeResponse({
++      return await finalizeResponse({
+         reply: buildFallbackReply(messages, loadKnowledge(), session),
+         fallback: true,
+         model: GEMINI_MODEL,
+@@ -2570,7 +2571,7 @@ export default async function handler(req, res) {
+       knowledge = loadKnowledge();
+     } catch (e) {
+       console.error("[ai-chat] Failed to load knowledge file:", e);
+-      return finalizeResponse({
++      return await finalizeResponse({
+         reply: buildGeneralFallbackReply({
+           lead: "You're in the right place, and I can still point you in the right direction.",
+           summary:
+@@ -2640,7 +2641,7 @@ ${JSON.stringify(knowledge)}`;
+ 
+       if (!geminiResult?.ok) {
+         console.log("[ai-chat] Gemini fallback triggered from HTTP/model error:", geminiResult?.status);
+-        return finalizeResponse(
++        return await finalizeResponse(
+           {
+             ...buildSafeFallbackResponse(messages, knowledge, state, {
+               preferBusy: isFallbackWorthyGeminiError(geminiResult?.status, data),
+@@ -2654,7 +2655,7 @@ ${JSON.stringify(knowledge)}`;
+ 
+       if (!data || !Array.isArray(data?.candidates) || data.candidates.length === 0) {
+         console.log("[ai-chat] Gemini fallback triggered from missing candidates.");
+-        return finalizeResponse(
++        return await finalizeResponse(
+           {
+             ...buildSafeFallbackResponse(messages, knowledge, state, {
+               session,
+@@ -2671,7 +2672,7 @@ ${JSON.stringify(knowledge)}`;
+ 
+       if (!Array.isArray(parts) || parts.length === 0) {
+         console.log("[ai-chat] Gemini fallback triggered from missing content parts.", finishReason);
+-        return finalizeResponse(
++        return await finalizeResponse(
+           {
+             ...buildSafeFallbackResponse(messages, knowledge, state, {
+               session,
+@@ -2685,7 +2686,7 @@ ${JSON.stringify(knowledge)}`;
+       const reply = parts.map((p) => p?.text || "").join("").trim();
+       if (!reply) {
+         console.log("[ai-chat] Gemini fallback triggered from empty reply.", finishReason);
+-        return finalizeResponse(
++        return await finalizeResponse(
+           {
+             ...buildSafeFallbackResponse(messages, knowledge, state, {
+               session,
+@@ -2696,10 +2697,10 @@ ${JSON.stringify(knowledge)}`;
+         );
+       }
+ 
+-      return finalizeResponse({ reply, finishReason, model: GEMINI_MODEL, state });
++      return await finalizeResponse({ reply, finishReason, model: GEMINI_MODEL, state });
+     } catch (error) {
+       console.log("[ai-chat] Gemini request failed, using fallback:", error);
+-      return finalizeResponse(
++      return await finalizeResponse(
+         {
+           ...buildSafeFallbackResponse(messages, knowledge, state, {
+             session,
+diff --git a/api/chat-booking-persistence.js b/api/chat-booking-persistence.js
+index 655ee14..cde5b06 100644
+--- a/api/chat-booking-persistence.js
++++ b/api/chat-booking-persistence.js
+@@ -25,10 +25,12 @@ import fs from "fs";
+ import path from "path";
+ import { fileURLToPath } from "url";
+ import crypto from "crypto";
++import { db } from "./lib/db.js";
+ import {
+   computeBookingValidation,
+   getRequiredBookingFields,
+   getMissingBookingFields,
++  normalizeBookingDate,
+   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
+ } from "./chat-booking-shared.js";
+ 
+@@ -207,6 +209,84 @@ export function saveFinalizedBooking(
+   return { success: true };
+ }
+ 
++function buildDbBookingPayload(bookingMemory, sourceSessionId) {
++  const timestamp = Date.now();
++  const normalizedDate = normalizeBookingDate(bookingMemory?.date);
++  return {
++    refNumber: `KMP-${timestamp}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`,
++    sourceSessionId: sourceSessionId || null,
++    bookingInfo: {
++      status: "pending",
++      service: bookingMemory?.service || null,
++      scope: bookingMemory?.scope || null,
++      bookingPhase: "finalized",
++      finalizedAt: new Date().toISOString(),
++    },
++    selectedAddOns: [],
++    location: bookingMemory?.location || null,
++    mapsLink: null,
++    date: normalizedDate || null,
++    time: null,
++    clientName: bookingMemory?.customerName || "Unknown",
++    clientPhone: bookingMemory?.customerPhone || "Unknown",
++    clientEmail: bookingMemory?.customerEmail || null,
++    subtotal: 0,
++    vat: 0,
++    total: 0,
++  };
++}
++
++export async function hasBookingAlreadyPersistedPrimary(sourceSessionId) {
++  if (!sourceSessionId) return null;
++  return db.bookings.findBySourceSessionId(sourceSessionId);
++}
++
++export async function persistFinalizedBookingPrimary(
++  bookingMemory,
++  activeContext,
++  bookingPhase,
++  sourceSessionId
++) {
++  const validation = validateBookingForPersistence(
++    bookingMemory,
++    activeContext,
++    bookingPhase
++  );
++  if (!validation.isValid) {
++    return { success: false, error: validation.error };
++  }
++
++  const existing = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
++  if (existing) {
++    return { success: true, duplicate: true, refNumber: existing.ref_number };
++  }
++
++  const payload = buildDbBookingPayload(bookingMemory, sourceSessionId);
++  let inserted;
++  try {
++    inserted = await db.bookings.insert(payload);
++  } catch (err) {
++    // Race-safe duplicate handling when concurrent finalize requests
++    // attempt to persist the same source session.
++    if (err?.code === "23505" && sourceSessionId) {
++      const winner = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
++      if (winner) {
++        return { success: true, duplicate: true, refNumber: winner.ref_number };
++      }
++    }
++    throw err;
++  }
++
++  // Optional archive backup path (non-blocking)
++  try {
++    saveFinalizedBooking(bookingMemory, activeContext, bookingPhase);
++  } catch (err) {
++    console.error(`[Persistence Backup] Archive write failed: ${err.message}`);
++  }
++
++  return { success: true, refNumber: inserted?.ref_number || payload.refNumber };
++}
++
+ /**
+  * Retrieves a booking by its ID.
+  *
+diff --git a/api/lib/db.js b/api/lib/db.js
+index bf80161..24a09dc 100644
+--- a/api/lib/db.js
++++ b/api/lib/db.js
+@@ -59,6 +59,12 @@ async function ensureSchema() {
+     );
+   `);
+ 
++  await pool.query(`
++    CREATE UNIQUE INDEX IF NOT EXISTS bookings_source_session_id_unique
++    ON bookings (source_session_id)
++    WHERE source_session_id IS NOT NULL;
++  `);
++
+   schemaInitialized = true;
+ }
+ 
+@@ -126,6 +132,17 @@ const contacts = {
+ };
+ 
+ const bookings = {
++  async findBySourceSessionId(sourceSessionId) {
++    await ensureSchema();
++    if (!sourceSessionId || typeof sourceSessionId !== "string") {
++      return null;
++    }
++    const result = await pool.query(
++      `SELECT ref_number, source_session_id FROM bookings WHERE source_session_id = $1 LIMIT 1`,
++      [sourceSessionId]
++    );
++    return result.rows[0] || null;
++  },
+   async findByRefNumber(refNumber) {
+     await ensureSchema();
+     const result = await pool.query(
+diff --git a/src/components/AIChatWidget.tsx b/src/components/AIChatWidget.tsx
+index 4b467e7..ac266f6 100644
+--- a/src/components/AIChatWidget.tsx
++++ b/src/components/AIChatWidget.tsx
+@@ -58,8 +58,6 @@ const AIChatWidget = () => {
+         }
+       } catch (err) {
+         console.error("[AIChatWidget] restore failed", err);
+-      } finally {
+-        setHasRestored(true);
+       }
+     };
+ 
