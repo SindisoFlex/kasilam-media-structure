@@ -589,6 +589,7 @@ function resolveLastDetectedIntent(messages, session = null) {
 function createEmptyBookingMemory() {
   return {
     bookingRef: null,
+    canonicalBookingRef: null,
     service: null,
     date: null,
     location: null,
@@ -623,11 +624,16 @@ function shouldAssignBookingRef(memory) {
 
 function buildSessionHandoffPayload(session) {
   if (!session) return null;
+  const memory = session.bookingMemory || null;
+  const canonicalBookingRef =
+    memory?.canonicalBookingRef || memory?.bookingRef || null;
   return {
     sessionId: session.sessionId || null,
     activeServiceId: session.activeServiceId || null,
     bookingPhase: session.bookingPhase || BOOKING_PHASE.COLLECTING,
-    bookingMemory: session.bookingMemory || null,
+    bookingRef: memory?.bookingRef || null,
+    canonicalBookingRef,
+    bookingMemory: memory,
   };
 }
 
@@ -1076,11 +1082,23 @@ function deriveConversationBookingCore({
     bookingMemoryWorking = {
       ...bookingMemoryWorking,
       bookingRef: preservedBookingRef,
+      canonicalBookingRef:
+        bookingMemoryWorking?.canonicalBookingRef || preservedBookingRef,
     };
   } else if (shouldAssignBookingRef(bookingMemoryWorking)) {
+    const generatedBookingRef = generateCanonicalBookingRef();
     bookingMemoryWorking = {
       ...bookingMemoryWorking,
-      bookingRef: generateCanonicalBookingRef(),
+      bookingRef: generatedBookingRef,
+      canonicalBookingRef: generatedBookingRef,
+    };
+  } else if (
+    bookingMemoryWorking?.bookingRef &&
+    !bookingMemoryWorking?.canonicalBookingRef
+  ) {
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      canonicalBookingRef: bookingMemoryWorking.bookingRef,
     };
   }
 

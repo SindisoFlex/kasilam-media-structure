@@ -17,6 +17,7 @@ function createDefaultSession(sessionId) {
     bookingReadinessScore: 0,
     bookingMemory: {
       bookingRef: null,
+      canonicalBookingRef: null,
       service: null,
       date: null,
       location: null,
