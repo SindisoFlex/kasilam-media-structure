@@ -3,7 +3,7 @@ const WHATSAPP_BASE_URL = "https://wa.me/27659704101";
 
 const SERVICE_HANDOFFS = {
   funeral_photography: {
-    label: "Funeral Photography",
+    label: "Funeral & Memorial Coverage",
     route: "/services/visual-production/funeral-coverage",
   },
   wedding_coverage: {
@@ -51,8 +51,10 @@ export function buildBookingSummary(session) {
   const serviceId = session?.activeServiceId || null;
   const config = SERVICE_HANDOFFS[serviceId] || null;
   const memory = session?.bookingMemory || {};
+  const sessionId = session?.sessionId || null;
 
   const lines = [];
+  if (sessionId) lines.push(`Ref: ${sessionId}`);
   if (config?.label) lines.push(`Service: ${config.label}`);
   if (memory.date) lines.push(`Date: ${memory.date}`);
   if (memory.location) lines.push(`Location: ${memory.location}`);
@@ -72,7 +74,7 @@ export function buildWhatsAppPrefillUrl(session) {
   const summary = buildBookingSummary(session);
   const servicePageUrl = getExactServicePageUrl(session?.activeServiceId);
   const messageLines = [
-    "Hi KMP, I'd like to continue this booking.",
+    "Hi KMP! I'd like to continue my booking:",
     summary,
     `Service page: ${servicePageUrl}`,
   ].filter(Boolean);
