@@ -213,7 +213,10 @@ export function saveFinalizedBooking(
         : new Date().toISOString(),
     sourceSessionId: bookingMemory?.sourceSessionId || null,
     persistenceSource: "chat_archive",
-    canonicalBookingRef: bookingMemory?.canonicalBookingRef || null,
+    canonicalBookingRef:
+      bookingMemory?.canonicalBookingRef ||
+      bookingMemory?.bookingRef ||
+      null,
     bookingId,
     finalizedAt: new Date().toISOString(),
   };

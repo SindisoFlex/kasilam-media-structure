@@ -54,7 +54,11 @@ export function buildBookingSummary(session) {
   const sessionId = session?.sessionId || null;
 
   const lines = [];
-  if (sessionId) lines.push(`Ref: ${sessionId}`);
+  if (memory.bookingRef) {
+    lines.push(`Ref: ${memory.bookingRef}`);
+  } else if (sessionId) {
+    lines.push(`Ref: ${sessionId}`);
+  }
   if (config?.label) lines.push(`Service: ${config.label}`);
   if (memory.date) lines.push(`Date: ${memory.date}`);
   if (memory.location) lines.push(`Location: ${memory.location}`);

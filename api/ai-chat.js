@@ -588,6 +588,7 @@ function resolveLastDetectedIntent(messages, session = null) {
 
 function createEmptyBookingMemory() {
   return {
+    bookingRef: null,
     service: null,
     date: null,
     location: null,
@@ -599,6 +600,25 @@ function createEmptyBookingMemory() {
     customerPhone: null,
     customerEmail: null,
   };
+}
+
+function generateCanonicalBookingRef() {
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `KMP-CHAT-${timestamp}-${random}`;
+}
+
+function shouldAssignBookingRef(memory) {
+  if (!memory || memory.bookingRef) return false;
+  return Boolean(
+    memory.service ||
+    memory.date ||
+    memory.location ||
+    memory.scope ||
+    memory.customerName ||
+    memory.customerPhone ||
+    memory.customerEmail
+  );
 }
 
 function buildSessionHandoffPayload(session) {
@@ -1046,6 +1066,23 @@ function deriveConversationBookingCore({
           resolveLastDetectedIntent(messages, session),
           sessionLikeForInfer
         );
+
+  const preservedBookingRef =
+    bookingMemoryWorking?.bookingRef ||
+    session?.bookingMemory?.bookingRef ||
+    session?.confirmationSnapshot?.bookingRef ||
+    null;
+  if (preservedBookingRef) {
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      bookingRef: preservedBookingRef,
+    };
+  } else if (shouldAssignBookingRef(bookingMemoryWorking)) {
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      bookingRef: generateCanonicalBookingRef(),
+    };
+  }
 
   if (explicitResetRequested) {
     bookingMemoryWorking = inferBookingMemory(

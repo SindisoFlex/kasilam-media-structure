@@ -18,6 +18,7 @@ export function cloneBookingSnapshot(memory) {
 export function formatFrozenBookingLines(snapshot) {
   const m = snapshot || {};
   const lines = [];
+  if (m.bookingRef) lines.push(`Booking ref: ${m.bookingRef}`);
   if (m.service) lines.push(`Service type: ${m.service}`);
   if (m.date) lines.push(`Date: ${m.date}`);
   if (m.location) lines.push(`Location: ${m.location}`);

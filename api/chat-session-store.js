@@ -16,6 +16,7 @@ function createDefaultSession(sessionId) {
     conversationStage: "discovery",
     bookingReadinessScore: 0,
     bookingMemory: {
+      bookingRef: null,
       service: null,
       date: null,
       location: null,
