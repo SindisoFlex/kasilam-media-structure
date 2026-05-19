@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type ChatApiResponse = { reply?: string; session?: { conversationHistory?: Msg[] } };
 const MAX_HISTORY_MESSAGES = 20;
 const SESSION_STORAGE_KEY = "kmp_chat_session_id";
 const SAFE_FALLBACK_MESSAGE =
@@ -58,7 +59,7 @@ const AIChatWidget = () => {
         if (!response.ok) {
           return;
         }
-        const data = await response.json();
+        const data = (await response.json()) as ChatApiResponse;
         if (
           !cancelled &&
           Array.isArray(data?.session?.conversationHistory) &&
@@ -113,8 +114,8 @@ const AIChatWidget = () => {
       });
 
       const raw = await res.text();
-      let data: any = {};
-      try { data = raw ? JSON.parse(raw) : {}; } catch {
+      let data: ChatApiResponse = {};
+      try { data = raw ? (JSON.parse(raw) as ChatApiResponse) : {}; } catch {
         console.error("[AIChatWidget] Non-JSON response:", res.status, raw.slice(0, 300));
       }
 
