@@ -38,6 +38,11 @@ import {
 } from "./chat-booking-shared.js";
 import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
 
+const BOOKING_ARCHIVE_AUTHORITY = {
+  source: "chat_archive",
+  role: "advisory",
+};
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOOKING_ARCHIVE_PATH = path.join(__dirname, "..", "booking_archive.json");
 
@@ -214,6 +219,7 @@ export function saveFinalizedBooking(
         : new Date().toISOString(),
     sourceSessionId: bookingMemory?.sourceSessionId || null,
     persistenceSource: "chat_archive",
+    authority: BOOKING_ARCHIVE_AUTHORITY,
     canonicalBookingRef: resolveCanonicalBookingRef(bookingMemory),
     identityTrace: buildIdentityTrace({
       canonicalBookingRef: bookingMemory?.canonicalBookingRef,

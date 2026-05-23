@@ -2,6 +2,11 @@ import { z } from "zod";
 import { db } from "./lib/db.js";
 import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
 
+const BOOKING_AUTHORITY = {
+  source: "website_db",
+  role: "authoritative",
+};
+
 const BookingSchema = z.object({
   refNumber: z.string().min(1),
   sourceSessionId: z.string().optional(),
@@ -87,6 +92,7 @@ export default async function handler(req, res) {
         refNumber: booking.refNumber,
         canonicalBookingRef,
         identity,
+        authority: BOOKING_AUTHORITY,
         message: "Booking already persisted.",
       });
     }
@@ -97,6 +103,7 @@ export default async function handler(req, res) {
       refNumber: saved.ref_number,
       canonicalBookingRef,
       identity,
+      authority: BOOKING_AUTHORITY,
     });
   } catch (error) {
     console.error("[bookings] save failed", error);
