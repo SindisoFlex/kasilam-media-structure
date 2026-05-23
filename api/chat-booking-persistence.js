@@ -14,10 +14,15 @@
  *   date,
  *   location,
  *   scope,
+ *   pricingLabel,
+ *   priceMin,
+ *   priceMax,
  *   createdAt,
  *   finalizedAt,
  *   sourceSessionId,
  *   bookingPhase
+ *   persistenceSource
+ *   canonicalBookingRef
  * }
  */
 
@@ -31,6 +36,12 @@ import {
   getMissingBookingFields,
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
 } from "./chat-booking-shared.js";
+import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
+
+const BOOKING_ARCHIVE_AUTHORITY = {
+  source: "chat_archive",
+  role: "advisory",
+};
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const BOOKING_ARCHIVE_PATH = path.join(__dirname, "..", "booking_archive.json");
@@ -197,6 +208,24 @@ export function saveFinalizedBooking(
 
   const finalizedBooking = {
     ...bookingMemory,
+    pricingLabel: bookingMemory?.pricingLabel || null,
+    priceMin: typeof bookingMemory?.priceMin === "number" ? bookingMemory.priceMin : null,
+    priceMax: typeof bookingMemory?.priceMax === "number" ? bookingMemory.priceMax : null,
+    bookingPhase,
+    status: "finalized",
+    createdAt:
+      typeof bookingMemory?.createdAt === "string"
+        ? bookingMemory.createdAt
+        : new Date().toISOString(),
+    sourceSessionId: bookingMemory?.sourceSessionId || null,
+    persistenceSource: "chat_archive",
+    authority: BOOKING_ARCHIVE_AUTHORITY,
+    canonicalBookingRef: resolveCanonicalBookingRef(bookingMemory),
+    identityTrace: buildIdentityTrace({
+      canonicalBookingRef: bookingMemory?.canonicalBookingRef,
+      bookingRef: bookingMemory?.bookingRef,
+      sessionId: bookingMemory?.sourceSessionId,
+    }),
     bookingId,
     finalizedAt: new Date().toISOString(),
   };

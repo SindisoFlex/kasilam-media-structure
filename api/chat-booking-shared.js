@@ -18,10 +18,13 @@ export function cloneBookingSnapshot(memory) {
 export function formatFrozenBookingLines(snapshot) {
   const m = snapshot || {};
   const lines = [];
+  if (m.bookingRef) lines.push(`Booking ref: ${m.bookingRef}`);
   if (m.service) lines.push(`Service type: ${m.service}`);
   if (m.date) lines.push(`Date: ${m.date}`);
   if (m.location) lines.push(`Location: ${m.location}`);
   if (m.scope) lines.push(`Scope: ${m.scope}`);
+  if (m.pricingLabel) lines.push(`Pricing: ${m.pricingLabel}`);
+  if (typeof m.priceMin === "number") lines.push(`Estimated from: R${m.priceMin.toLocaleString("en-ZA")}`);
   if (m.customerName) lines.push(`Name: ${m.customerName}`);
   if (m.customerPhone) lines.push(`Phone: ${m.customerPhone}`);
   if (m.customerEmail) lines.push(`Email: ${m.customerEmail}`);

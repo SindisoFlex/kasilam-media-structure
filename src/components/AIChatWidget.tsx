@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type ChatApiResponse = { reply?: string; session?: { conversationHistory?: Msg[] } };
 const MAX_HISTORY_MESSAGES = 20;
 const SESSION_STORAGE_KEY = "kmp_chat_session_id";
 const SAFE_FALLBACK_MESSAGE =
@@ -46,27 +47,41 @@ const AIChatWidget = () => {
   const [hasRestored, setHasRestored] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let cancelled = false;
+
     const restoreSession = async () => {
-      if (!sessionId) return;
       if (!sessionId || hasRestored) return;
       try {
-        const response = await fetch(`/api/ai-chat?sessionId=${encodeURIComponent(sessionId)}`);
+        const response = await fetch(`/api/ai-chat?sessionId=${encodeURIComponent(sessionId)}`, {
+          signal: controller.signal,
+        });
         if (!response.ok) {
           return;
         }
-        const data = await response.json();
-        if (Array.isArray(data?.session?.conversationHistory) && data.session.conversationHistory.length > 0) {
+        const data = (await response.json()) as ChatApiResponse;
+        if (
+          !cancelled &&
+          Array.isArray(data?.session?.conversationHistory) &&
+          data.session.conversationHistory.length > 0
+        ) {
           setMessages(data.session.conversationHistory);
         }
       } catch (err) {
-        console.error("[AIChatWidget] restore failed", err);
+        if ((err as Error)?.name !== "AbortError") {
+          console.error("[AIChatWidget] restore failed", err);
+        }
       } finally {
-        setHasRestored(true);
+        if (!cancelled) setHasRestored(true);
       }
     };
 
     restoreSession();
-  }, [sessionId]);
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+    };
   }, [sessionId, hasRestored]);
 
   useEffect(() => {
@@ -99,8 +114,8 @@ const AIChatWidget = () => {
       });
 
       const raw = await res.text();
-      let data: any = {};
-      try { data = raw ? JSON.parse(raw) : {}; } catch {
+      let data: ChatApiResponse = {};
+      try { data = raw ? (JSON.parse(raw) as ChatApiResponse) : {}; } catch {
         console.error("[AIChatWidget] Non-JSON response:", res.status, raw.slice(0, 300));
       }
 

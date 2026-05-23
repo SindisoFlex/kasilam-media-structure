@@ -4,6 +4,7 @@ import { getSession, saveSession } from "./chat-session-store.js";
 import { detectIntent as detectChatIntent } from "./chat-intents.js";
 import { buildContextualFallback } from "./chat-fallbacks.js";
 import { buildBookingCta } from "./chat-handoff.js";
+import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
 import { resolveServiceTransition } from "./chat-state.js";
 import {
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
@@ -588,13 +589,94 @@ function resolveLastDetectedIntent(messages, session = null) {
 
 function createEmptyBookingMemory() {
   return {
+    bookingRef: null,
+    canonicalBookingRef: null,
     service: null,
     date: null,
     location: null,
     scope: null,
+    pricingLabel: null,
+    priceMin: null,
+    priceMax: null,
     customerName: null,
     customerPhone: null,
     customerEmail: null,
+  };
+}
+
+function generateCanonicalBookingRef() {
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `KMP-CHAT-${timestamp}-${random}`;
+}
+
+function shouldAssignBookingRef(memory) {
+  if (!memory || memory.bookingRef) return false;
+  return Boolean(
+    memory.service ||
+    memory.date ||
+    memory.location ||
+    memory.scope ||
+    memory.customerName ||
+    memory.customerPhone ||
+    memory.customerEmail
+  );
+}
+
+function buildSessionHandoffPayload(session) {
+  if (!session) return null;
+  const memory = session.bookingMemory || null;
+  const identity = buildIdentityTrace({
+    canonicalBookingRef: memory?.canonicalBookingRef,
+    bookingRef: memory?.bookingRef,
+    sessionId: session.sessionId,
+  });
+  return {
+    sessionId: session.sessionId || null,
+    activeServiceId: session.activeServiceId || null,
+    bookingPhase: session.bookingPhase || BOOKING_PHASE.COLLECTING,
+    bookingRef: identity.bookingRef,
+    canonicalBookingRef: identity.canonicalBookingRef,
+    identity,
+    bookingMemory: memory,
+  };
+}
+
+function resolveBookingPricingForMemory(activeContext, bookingMemory) {
+  if (!activeContext) {
+    return { pricingLabel: null, priceMin: null, priceMax: null };
+  }
+
+  const scope = String(bookingMemory?.scope || "").toLowerCase();
+  const lines = Array.isArray(activeContext.exactPricing) ? activeContext.exactPricing : [];
+  if (!lines.length) {
+    return { pricingLabel: activeContext.pricingType || "tailored", priceMin: null, priceMax: null };
+  }
+
+  let matchedLine = null;
+  if (scope.includes("photo") && scope.includes("video")) {
+    matchedLine = lines.find((line) => /photo\s*\+\s*video/i.test(line));
+  } else if (scope.includes("video")) {
+    matchedLine = lines.find((line) => /videography/i.test(line));
+  } else if (scope.includes("photo")) {
+    matchedLine = lines.find((line) => /photography/i.test(line));
+  }
+  const line = matchedLine || lines[0];
+  const amounts = (line.match(/R[\d,]+/g) || []).map((raw) => Number(raw.replace(/[^\d]/g, ""))).filter(Boolean);
+  const priceMin = amounts.length ? Math.min(...amounts) : null;
+  const priceMax = amounts.length ? Math.max(...amounts) : null;
+  return { pricingLabel: line, priceMin, priceMax };
+}
+
+function enrichBookingMemory(bookingMemory, activeContext) {
+  const base = {
+    ...createEmptyBookingMemory(),
+    ...(bookingMemory || {}),
+  };
+  const pricingSnapshot = resolveBookingPricingForMemory(activeContext, base);
+  return {
+    ...base,
+    ...pricingSnapshot,
   };
 }
 
@@ -996,6 +1078,43 @@ function deriveConversationBookingCore({
           sessionLikeForInfer
         );
 
+  const preservedBookingRef = resolveCanonicalBookingRef({
+    bookingRef: bookingMemoryWorking?.bookingRef,
+    canonicalBookingRef: bookingMemoryWorking?.canonicalBookingRef,
+    refNumber: bookingMemoryWorking?.refNumber,
+  }) || resolveCanonicalBookingRef({
+    bookingRef: session?.bookingMemory?.bookingRef,
+    canonicalBookingRef: session?.bookingMemory?.canonicalBookingRef,
+    refNumber: session?.bookingMemory?.refNumber,
+  }) || resolveCanonicalBookingRef({
+    bookingRef: session?.confirmationSnapshot?.bookingRef,
+    canonicalBookingRef: session?.confirmationSnapshot?.canonicalBookingRef,
+    refNumber: session?.confirmationSnapshot?.refNumber,
+  });
+  if (preservedBookingRef) {
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      bookingRef: preservedBookingRef,
+      canonicalBookingRef:
+        bookingMemoryWorking?.canonicalBookingRef || preservedBookingRef,
+    };
+  } else if (shouldAssignBookingRef(bookingMemoryWorking)) {
+    const generatedBookingRef = generateCanonicalBookingRef();
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      bookingRef: generatedBookingRef,
+      canonicalBookingRef: generatedBookingRef,
+    };
+  } else if (
+    bookingMemoryWorking?.bookingRef &&
+    !bookingMemoryWorking?.canonicalBookingRef
+  ) {
+    bookingMemoryWorking = {
+      ...bookingMemoryWorking,
+      canonicalBookingRef: bookingMemoryWorking.bookingRef,
+    };
+  }
+
   if (explicitResetRequested) {
     bookingMemoryWorking = inferBookingMemory(
       messagesForInference,
@@ -1017,6 +1136,8 @@ function deriveConversationBookingCore({
       fieldCorrection
     );
   }
+
+  bookingMemoryWorking = enrichBookingMemory(bookingMemoryWorking, activeContext);
 
   const bookingValidation = computeBookingValidation(bookingMemoryWorking);
   const requiredBookingFields = getRequiredBookingFields(
@@ -1104,7 +1225,10 @@ function deriveConversationBookingCore({
     confirmationSnapshotNext = null;
     bookingPersisted = Boolean(session?.bookingPersisted);
     finalizedImmutable = true;
-    const merged = cloneBookingSnapshot(baseBookingMemory);
+    const merged = enrichBookingMemory(
+      cloneBookingSnapshot(baseBookingMemory),
+      activeContext
+    );
     const finalizedValidation = computeBookingValidation(merged);
     const finalizedRequiredBookingFields = getRequiredBookingFields(
       activeContext,
@@ -2431,6 +2555,7 @@ export default async function handler(req, res) {
             ? session.conversationHistory
             : [],
         },
+        handoff: buildSessionHandoffPayload(session),
       });
     } catch (error) {
       console.error("[ai-chat] session recovery failed", error);
@@ -2477,7 +2602,7 @@ export default async function handler(req, res) {
     const session = await getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
-    const finalizeResponse = (payload, nextState = state) => {
+    const finalizeResponse = async (payload, nextState = state) => {
       const tunedReply = tuneConfirmationAssistantReply(
         typeof payload?.reply === "string" ? payload.reply : "",
         nextState
@@ -2491,7 +2616,7 @@ export default async function handler(req, res) {
           typeof payloadOut?.reply === "string" ? payloadOut.reply : tunedReply,
           messages
         );
-        const savedSession = saveSession(sessionUpdate);
+        const savedSession = await saveSession(sessionUpdate);
         if (IS_DEV) {
           console.log("[AI Session Save]", {
             sessionId,
@@ -2508,7 +2633,11 @@ export default async function handler(req, res) {
           savedSession.bookingPhase === BOOKING_PHASE.FINALIZED
             ? buildBookingCta(savedSession)
             : null;
-        const nextPayload = cta ? { ...payloadOut, cta } : payloadOut;
+        const nextPayloadBase = cta ? { ...payloadOut, cta } : payloadOut;
+        const nextPayload = {
+          ...nextPayloadBase,
+          handoff: buildSessionHandoffPayload(savedSession),
+        };
 
         if (IS_DEV) {
           return res.status(200).json({
