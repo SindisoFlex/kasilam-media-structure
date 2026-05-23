@@ -1,16 +1,23 @@
+export const BOOKING_IDENTITY_LOOKUP_ORDER = [
+  "refNumber",
+  "canonicalBookingRef",
+  "bookingRef",
+  "sessionId",
+  "bookingId",
+];
+
+function readIdentityField(identity, field) {
+  const value = identity?.[field];
+  return typeof value === "string" && value.trim() ? value.trim() : null;
+}
+
 export function resolveCanonicalBookingRef(identity = {}) {
   if (!identity || typeof identity !== "object") return null;
-  const candidates = [
-    identity.canonicalBookingRef,
-    identity.bookingRef,
-    identity.refNumber,
-    identity.sessionId,
-    identity.bookingId,
-  ];
 
-  for (const value of candidates) {
-    if (typeof value === "string" && value.trim()) {
-      return value.trim();
+  for (const field of BOOKING_IDENTITY_LOOKUP_ORDER) {
+    const value = readIdentityField(identity, field);
+    if (value) {
+      return value;
     }
   }
 
@@ -18,24 +25,24 @@ export function resolveCanonicalBookingRef(identity = {}) {
 }
 
 export function buildIdentityTrace(identity = {}) {
-  const canonicalBookingRef = resolveCanonicalBookingRef(identity);
+  let resolvedFrom = null;
+  for (const field of BOOKING_IDENTITY_LOOKUP_ORDER) {
+    if (readIdentityField(identity, field)) {
+      resolvedFrom = field;
+      break;
+    }
+  }
+
+  const canonicalBookingRef = resolvedFrom
+    ? readIdentityField(identity, resolvedFrom)
+    : null;
+
   return {
     canonicalBookingRef,
-    bookingRef:
-      typeof identity.bookingRef === "string" && identity.bookingRef.trim()
-        ? identity.bookingRef.trim()
-        : null,
-    refNumber:
-      typeof identity.refNumber === "string" && identity.refNumber.trim()
-        ? identity.refNumber.trim()
-        : null,
-    sessionId:
-      typeof identity.sessionId === "string" && identity.sessionId.trim()
-        ? identity.sessionId.trim()
-        : null,
-    bookingId:
-      typeof identity.bookingId === "string" && identity.bookingId.trim()
-        ? identity.bookingId.trim()
-        : null,
+    resolvedFrom,
+    bookingRef: readIdentityField(identity, "bookingRef"),
+    refNumber: readIdentityField(identity, "refNumber"),
+    sessionId: readIdentityField(identity, "sessionId"),
+    bookingId: readIdentityField(identity, "bookingId"),
   };
 }
