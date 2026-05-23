@@ -1,3 +1,4 @@
+import { buildIdentityTrace } from "./booking-identity.js";
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_BASE_URL = "https://wa.me/27659704101";
 
@@ -53,11 +54,15 @@ export function buildBookingSummary(session) {
   const memory = session?.bookingMemory || {};
   const sessionId = session?.sessionId || null;
 
+  const identity = buildIdentityTrace({
+    canonicalBookingRef: memory?.canonicalBookingRef,
+    bookingRef: memory?.bookingRef,
+    sessionId,
+  });
+
   const lines = [];
-  if (memory.bookingRef) {
-    lines.push(`Ref: ${memory.bookingRef}`);
-  } else if (sessionId) {
-    lines.push(`Ref: ${sessionId}`);
+  if (identity.canonicalBookingRef) {
+    lines.push(`Ref: ${identity.canonicalBookingRef}`);
   }
   if (config?.label) lines.push(`Service: ${config.label}`);
   if (memory.date) lines.push(`Date: ${memory.date}`);

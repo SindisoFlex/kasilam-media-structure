@@ -1,9 +1,12 @@
 import { z } from "zod";
 import { db } from "./lib/db.js";
+import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
 
 const BookingSchema = z.object({
   refNumber: z.string().min(1),
   sourceSessionId: z.string().optional(),
+  bookingRef: z.string().optional(),
+  canonicalBookingRef: z.string().optional(),
   bookingInfo: z.object({
     service: z.string().min(1),
     package: z.string().min(1),
@@ -71,10 +74,19 @@ export default async function handler(req, res) {
 
   try {
     const existing = await db.bookings.findByRefNumber(booking.refNumber);
+    const identity = buildIdentityTrace({
+      refNumber: booking.refNumber,
+      canonicalBookingRef: booking.canonicalBookingRef,
+      bookingRef: booking.bookingRef,
+      sessionId: booking.sourceSessionId,
+    });
+    const canonicalBookingRef = resolveCanonicalBookingRef(identity);
     if (existing) {
       return res.status(200).json({
         success: true,
         refNumber: booking.refNumber,
+        canonicalBookingRef,
+        identity,
         message: "Booking already persisted.",
       });
     }
@@ -83,6 +95,8 @@ export default async function handler(req, res) {
     return res.status(201).json({
       success: true,
       refNumber: saved.ref_number,
+      canonicalBookingRef,
+      identity,
     });
   } catch (error) {
     console.error("[bookings] save failed", error);

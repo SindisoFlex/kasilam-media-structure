@@ -4,6 +4,7 @@ import { getSession, saveSession } from "./chat-session-store.js";
 import { detectIntent as detectChatIntent } from "./chat-intents.js";
 import { buildContextualFallback } from "./chat-fallbacks.js";
 import { buildBookingCta } from "./chat-handoff.js";
+import { buildIdentityTrace, resolveCanonicalBookingRef } from "./booking-identity.js";
 import { resolveServiceTransition } from "./chat-state.js";
 import {
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
@@ -625,14 +626,18 @@ function shouldAssignBookingRef(memory) {
 function buildSessionHandoffPayload(session) {
   if (!session) return null;
   const memory = session.bookingMemory || null;
-  const canonicalBookingRef =
-    memory?.canonicalBookingRef || memory?.bookingRef || null;
+  const identity = buildIdentityTrace({
+    canonicalBookingRef: memory?.canonicalBookingRef,
+    bookingRef: memory?.bookingRef,
+    sessionId: session.sessionId,
+  });
   return {
     sessionId: session.sessionId || null,
     activeServiceId: session.activeServiceId || null,
     bookingPhase: session.bookingPhase || BOOKING_PHASE.COLLECTING,
-    bookingRef: memory?.bookingRef || null,
-    canonicalBookingRef,
+    bookingRef: identity.bookingRef,
+    canonicalBookingRef: identity.canonicalBookingRef,
+    identity,
     bookingMemory: memory,
   };
 }
@@ -1073,11 +1078,19 @@ function deriveConversationBookingCore({
           sessionLikeForInfer
         );
 
-  const preservedBookingRef =
-    bookingMemoryWorking?.bookingRef ||
-    session?.bookingMemory?.bookingRef ||
-    session?.confirmationSnapshot?.bookingRef ||
-    null;
+  const preservedBookingRef = resolveCanonicalBookingRef({
+    bookingRef: bookingMemoryWorking?.bookingRef,
+    canonicalBookingRef: bookingMemoryWorking?.canonicalBookingRef,
+    refNumber: bookingMemoryWorking?.refNumber,
+  }) || resolveCanonicalBookingRef({
+    bookingRef: session?.bookingMemory?.bookingRef,
+    canonicalBookingRef: session?.bookingMemory?.canonicalBookingRef,
+    refNumber: session?.bookingMemory?.refNumber,
+  }) || resolveCanonicalBookingRef({
+    bookingRef: session?.confirmationSnapshot?.bookingRef,
+    canonicalBookingRef: session?.confirmationSnapshot?.canonicalBookingRef,
+    refNumber: session?.confirmationSnapshot?.refNumber,
+  });
   if (preservedBookingRef) {
     bookingMemoryWorking = {
       ...bookingMemoryWorking,
