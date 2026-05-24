@@ -35,6 +35,7 @@ const AIChatWidget = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [sessionId] = useState(() => getOrCreateSessionId());
+  const [refNumber, setRefNumber] = useState<string | null>(null);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
@@ -53,6 +54,10 @@ const AIChatWidget = () => {
           return;
         }
         const data = await response.json();
+        // BRICK A.2.5: Capture refNumber from session for display
+        if (data?.session?.bookingMemory?.refNumber) {
+          setRefNumber(data.session.bookingMemory.refNumber);
+        }
         if (Array.isArray(data?.session?.conversationHistory) && data.session.conversationHistory.length > 0) {
           setMessages(data.session.conversationHistory);
         }
@@ -161,6 +166,10 @@ const AIChatWidget = () => {
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">KMP Assistant</p>
             <p className="text-sm font-bold mt-0.5">Ask anything about our services</p>
+            {/* BRICK A.2.5: Display refNumber for continuity tracking */}
+            {refNumber && (
+              <p className="text-[10px] text-foreground/50 mt-1.5 font-mono">Booking: {refNumber}</p>
+            )}
           </div>
           <button
             onClick={() => setOpen(false)}

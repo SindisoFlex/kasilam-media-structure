@@ -277,6 +277,25 @@ export async function persistFinalizedBookingPrimary(
     throw err;
   }
 
+  // BRICK A.2.1: Log continuity chain for audit trail
+  const continuityChain = {
+    timestamp: new Date().toISOString(),
+    sourceSessionId: sourceSessionId || null,
+    refNumber: inserted?.ref_number || payload.refNumber,
+    bookingPhase: bookingPhase,
+    bookingMemoryKeys: Object.keys(bookingMemory || {}),
+    validationState: {
+      service: validation.service !== false,
+      date: validation.date !== false,
+      location: validation.location !== false,
+      customerName: validation.customerName !== false,
+      customerPhone: validation.customerPhone !== false,
+    },
+    persistenceAttempt: true,
+    success: true,
+  };
+  console.log('[Continuity Chain]', JSON.stringify(continuityChain));
+
   // Optional archive backup path (non-blocking)
   try {
     saveFinalizedBooking(bookingMemory, activeContext, bookingPhase);
