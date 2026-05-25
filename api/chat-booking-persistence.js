@@ -263,6 +263,9 @@ export async function persistFinalizedBookingPrimary(
 
   const payload = buildDbBookingPayload(bookingMemory, sourceSessionId);
   let inserted;
+  
+  // FIX #2: Database persistence is CRITICAL PATH (must succeed)
+  // Archive is non-critical backup only
   try {
     inserted = await db.bookings.insert(payload);
   } catch (err) {
@@ -274,6 +277,15 @@ export async function persistFinalizedBookingPrimary(
         return { success: true, duplicate: true, refNumber: winner.ref_number };
       }
     }
+    
+    // CRITICAL: Database insert failed, this is a real error
+    console.error("[Booking Persistence] CRITICAL: Database insert failed", {
+      sourceSessionId,
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // DO NOT proceed to archive if DB failed
     throw err;
   }
 
@@ -292,18 +304,34 @@ export async function persistFinalizedBookingPrimary(
       customerPhone: validation.customerPhone !== false,
     },
     persistenceAttempt: true,
+    persistedToDB: true,
+    persistedToArchive: false,  // Will be updated if backup succeeds
     success: true,
   };
-  console.log('[Continuity Chain]', JSON.stringify(continuityChain));
 
-  // Optional archive backup path (non-blocking)
+  const refNumber = inserted?.ref_number || payload.refNumber;
+
+  // Optional archive backup path (non-critical, doesn't affect success)
   try {
     saveFinalizedBooking(bookingMemory, activeContext, bookingPhase);
-  } catch (err) {
-    console.error(`[Persistence Backup] Archive write failed: ${err.message}`);
+    continuityChain.persistedToArchive = true;
+  } catch (archiveErr) {
+    // Log but don't fail - DB has the record as backup
+    console.error("[Booking Persistence] Archive backup failed (DB has record)", {
+      refNumber,
+      sourceSessionId,
+      error: archiveErr.message,
+      needsManualArchiveRecovery: true,
+      timestamp: new Date().toISOString(),
+    });
+    
+    continuityChain.archiveBackupFailed = true;
+    continuityChain.archiveError = archiveErr.message;
   }
 
-  return { success: true, refNumber: inserted?.ref_number || payload.refNumber };
+  console.log('[Continuity Chain]', JSON.stringify(continuityChain));
+
+  return { success: true, refNumber };
 }
 
 /**

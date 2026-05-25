@@ -2453,6 +2453,8 @@ export default async function handler(req, res) {
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
     const finalizeResponse = async (payload, nextState = state) => {
+      // FIX #3: Only advance booking phase AFTER successful persistence
+      // This prevents fake confirmations when persistence fails
       if (
         sessionId &&
         nextState?.bookingPhase === BOOKING_PHASE.FINALIZED &&
@@ -2473,9 +2475,28 @@ export default async function handler(req, res) {
             nextState.bookingPersisted = true;
           } else {
             console.error(`[Booking Persistence] Failed to save booking: ${persistResult.error}`);
+            // Persistence failed - roll back phase to awaiting_confirmation
+            nextState.bookingPhase = BOOKING_PHASE.AWAITING_CONFIRMATION;
+            return {
+              ...payload,
+              error: 'Booking confirmation failed',
+              reply: 'Sorry, we encountered an error confirming your booking. Please try again or contact us on WhatsApp.',
+              fallback: false,
+            };
           }
         } catch (err) {
-          console.error(`[Booking Persistence] Unexpected error during save: ${err.message}`);
+          console.error(`[Booking Persistence] CRITICAL error during save: ${err.message}`, {
+            sessionId,
+            timestamp: new Date().toISOString(),
+          });
+          // Persistence failed with exception - roll back phase
+          nextState.bookingPhase = BOOKING_PHASE.AWAITING_CONFIRMATION;
+          return {
+            ...payload,
+            error: 'Booking confirmation failed',
+            reply: 'Sorry, we encountered an error confirming your booking. Please try again or contact us on WhatsApp.',
+            fallback: false,
+          };
         }
       }
 

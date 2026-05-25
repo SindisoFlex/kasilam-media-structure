@@ -4,6 +4,10 @@ const SESSION_TTL_MS = 30 * 60 * 1000;
 
 const sessionStore = new Map();
 
+// FIX #4: Track in-flight session load promises to deduplicate concurrent requests
+// Prevents race condition where two concurrent getSession() calls both create sessions
+const sessionInflightPromises = new Map();
+
 function createDefaultSession(sessionId) {
   return {
     version: 1,
@@ -66,24 +70,48 @@ export async function getSession(sessionId) {
   }
 
   const normalizedSessionId = sessionId.trim();
+  
+  // FIX #4: If already loading this session, wait for in-flight promise
+  // This prevents race condition where two concurrent requests both load from DB
+  if (sessionInflightPromises.has(normalizedSessionId)) {
+    return await sessionInflightPromises.get(normalizedSessionId);
+  }
+  
+  // Check memory cache first (fast path)
   const existingSession = sessionStore.get(normalizedSessionId);
-
-  if (!existingSession || isExpiredSession(existingSession)) {
-    if (existingSession) {
-      sessionStore.delete(normalizedSessionId);
-    }
-
-    // Fetch session from database if not in memory
-    const dbSession = await db.sessions.findUnique({ where: { sessionId: normalizedSessionId } });
-    if (dbSession) {
-      sessionStore.set(normalizedSessionId, dbSession);
-      return dbSession;
-    }
-
-    return createDefaultSession(normalizedSessionId);
+  if (existingSession && !isExpiredSession(existingSession)) {
+    return existingSession;
   }
 
-  return existingSession;
+  // Create promise before starting async work
+  const loadPromise = (async () => {
+    try {
+      // Remove from cache if expired
+      if (existingSession) {
+        sessionStore.delete(normalizedSessionId);
+      }
+
+      // Fetch session from database if not in memory
+      const dbSession = await db.sessions.findUnique({ 
+        where: { sessionId: normalizedSessionId } 
+      });
+      
+      if (dbSession) {
+        sessionStore.set(normalizedSessionId, dbSession);
+        return dbSession;
+      }
+
+      return createDefaultSession(normalizedSessionId);
+    } finally {
+      // Remove promise from tracking to allow future loads
+      sessionInflightPromises.delete(normalizedSessionId);
+    }
+  })();
+  
+  // Track this in-flight load so concurrent requests wait for it
+  sessionInflightPromises.set(normalizedSessionId, loadPromise);
+  
+  return await loadPromise;
 }
 
 export async function saveSession(session) {
@@ -117,20 +145,34 @@ export async function saveSession(session) {
     updatedAt: Date.now(),
   };
 
-  sessionStore.set(normalizedSessionId, nextSession);
-
-  // Persist session to database
-  await db.sessions.upsert({
-    where: { sessionId: normalizedSessionId },
-    update: nextSession,
-    create: nextSession,
-  });
-
-  return {
-    ...nextSession,
-    bookingMemory: { ...nextSession.bookingMemory },
-    events: [...nextSession.events],
-  };
+  // FIX #1: Database persistence is CRITICAL PATH (must succeed before memory cache)
+  // This ensures sessions survive server restart
+  try {
+    const dbSession = await db.sessions.upsert({
+      where: { sessionId: normalizedSessionId },
+      update: nextSession,
+      create: nextSession,
+    });
+    
+    // Only update memory cache AFTER successful DB persist
+    sessionStore.set(normalizedSessionId, dbSession);
+    
+    return {
+      ...dbSession,
+      bookingMemory: { ...dbSession.bookingMemory },
+      events: [...dbSession.events],
+    };
+  } catch (err) {
+    // Critical error: Database persistence failed
+    // DO NOT fall back to memory-only
+    console.error("[SessionPersistence] CRITICAL: Database upsert failed", {
+      sessionId: normalizedSessionId,
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+    
+    throw new Error(`Session persistence failed: ${err.message}`);
+  }
 }
 
 export async function clearSession(sessionId) {
