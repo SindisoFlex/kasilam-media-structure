@@ -25,10 +25,12 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import crypto from "crypto";
+import { db } from "./lib/db.js";
 import {
   computeBookingValidation,
   getRequiredBookingFields,
   getMissingBookingFields,
+  normalizeBookingDate,
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
 } from "./chat-booking-shared.js";
 
@@ -205,6 +207,131 @@ export function saveFinalizedBooking(
   saveBookingArchive(archive);
 
   return { success: true };
+}
+
+function buildDbBookingPayload(bookingMemory, sourceSessionId) {
+  const timestamp = Date.now();
+  const normalizedDate = normalizeBookingDate(bookingMemory?.date);
+  return {
+    refNumber: `KMP-${timestamp}-${crypto.randomBytes(2).toString("hex").toUpperCase()}`,
+    sourceSessionId: sourceSessionId || null,
+    bookingInfo: {
+      status: "pending",
+      service: bookingMemory?.service || null,
+      scope: bookingMemory?.scope || null,
+      bookingPhase: "finalized",
+      finalizedAt: new Date().toISOString(),
+    },
+    selectedAddOns: [],
+    location: bookingMemory?.location || null,
+    mapsLink: null,
+    date: normalizedDate || null,
+    time: null,
+    clientName: bookingMemory?.customerName || "Unknown",
+    clientPhone: bookingMemory?.customerPhone || "Unknown",
+    clientEmail: bookingMemory?.customerEmail || null,
+    subtotal: 0,
+    vat: 0,
+    total: 0,
+  };
+}
+
+export async function hasBookingAlreadyPersistedPrimary(sourceSessionId) {
+  if (!sourceSessionId) return null;
+  return db.bookings.findBySourceSessionId(sourceSessionId);
+}
+
+export async function persistFinalizedBookingPrimary(
+  bookingMemory,
+  activeContext,
+  bookingPhase,
+  sourceSessionId
+) {
+  const validation = validateBookingForPersistence(
+    bookingMemory,
+    activeContext,
+    bookingPhase
+  );
+  if (!validation.isValid) {
+    return { success: false, error: validation.error };
+  }
+
+  const existing = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
+  if (existing) {
+    return { success: true, duplicate: true, refNumber: existing.ref_number };
+  }
+
+  const payload = buildDbBookingPayload(bookingMemory, sourceSessionId);
+  let inserted;
+  
+  // FIX #2: Database persistence is CRITICAL PATH (must succeed)
+  // Archive is non-critical backup only
+  try {
+    inserted = await db.bookings.insert(payload);
+  } catch (err) {
+    // Race-safe duplicate handling when concurrent finalize requests
+    // attempt to persist the same source session.
+    if (err?.code === "23505" && sourceSessionId) {
+      const winner = await hasBookingAlreadyPersistedPrimary(sourceSessionId);
+      if (winner) {
+        return { success: true, duplicate: true, refNumber: winner.ref_number };
+      }
+    }
+    
+    // CRITICAL: Database insert failed, this is a real error
+    console.error("[Booking Persistence] CRITICAL: Database insert failed", {
+      sourceSessionId,
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+    
+    // DO NOT proceed to archive if DB failed
+    throw err;
+  }
+
+  // BRICK A.2.1: Log continuity chain for audit trail
+  const continuityChain = {
+    timestamp: new Date().toISOString(),
+    sourceSessionId: sourceSessionId || null,
+    refNumber: inserted?.ref_number || payload.refNumber,
+    bookingPhase: bookingPhase,
+    bookingMemoryKeys: Object.keys(bookingMemory || {}),
+    validationState: {
+      service: validation.service !== false,
+      date: validation.date !== false,
+      location: validation.location !== false,
+      customerName: validation.customerName !== false,
+      customerPhone: validation.customerPhone !== false,
+    },
+    persistenceAttempt: true,
+    persistedToDB: true,
+    persistedToArchive: false,  // Will be updated if backup succeeds
+    success: true,
+  };
+
+  const refNumber = inserted?.ref_number || payload.refNumber;
+
+  // Optional archive backup path (non-critical, doesn't affect success)
+  try {
+    saveFinalizedBooking(bookingMemory, activeContext, bookingPhase);
+    continuityChain.persistedToArchive = true;
+  } catch (archiveErr) {
+    // Log but don't fail - DB has the record as backup
+    console.error("[Booking Persistence] Archive backup failed (DB has record)", {
+      refNumber,
+      sourceSessionId,
+      error: archiveErr.message,
+      needsManualArchiveRecovery: true,
+      timestamp: new Date().toISOString(),
+    });
+    
+    continuityChain.archiveBackupFailed = true;
+    continuityChain.archiveError = archiveErr.message;
+  }
+
+  console.log('[Continuity Chain]', JSON.stringify(continuityChain));
+
+  return { success: true, refNumber };
 }
 
 /**

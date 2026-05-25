@@ -698,7 +698,11 @@ const BookingFlow = () => {
                 </div>
                 <div>
                   <h3 className="text-3xl font-black text-foreground uppercase tracking-tighter dark:text-white">Production Reserved</h3>
-                  <p className="text-foreground/50 text-sm font-bold mt-2 uppercase tracking-widest dark:text-white/50">Reference No: <span className="text-red-500">{refNumber}</span></p>
+                  <p className="text-foreground/50 text-sm font-bold mt-2 uppercase tracking-widest dark:text-white/50">Reference No: <span className="text-red-500 font-mono">{refNumber}</span></p>
+                  {/* BRICK A.2.6: Display continuity reference for support handoff */}
+                  <p className="text-foreground/40 text-xs font-bold mt-1.5 uppercase tracking-widest dark:text-white/40">
+                    📋 Keep this reference for WhatsApp continuity
+                  </p>
                 </div>
                 
                 <div className="bg-foreground/[0.02] border border-foreground/5 rounded-2xl p-6 space-y-4 text-left dark:bg-white/[0.02] dark:border-white/5">

@@ -59,6 +59,12 @@ async function ensureSchema() {
     );
   `);
 
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS bookings_source_session_id_unique
+    ON bookings (source_session_id)
+    WHERE source_session_id IS NOT NULL;
+  `);
+
   schemaInitialized = true;
 }
 
@@ -126,6 +132,17 @@ const contacts = {
 };
 
 const bookings = {
+  async findBySourceSessionId(sourceSessionId) {
+    await ensureSchema();
+    if (!sourceSessionId || typeof sourceSessionId !== "string") {
+      return null;
+    }
+    const result = await pool.query(
+      `SELECT ref_number, source_session_id FROM bookings WHERE source_session_id = $1 LIMIT 1`,
+      [sourceSessionId]
+    );
+    return result.rows[0] || null;
+  },
   async findByRefNumber(refNumber) {
     await ensureSchema();
     const result = await pool.query(

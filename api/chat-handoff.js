@@ -1,3 +1,8 @@
+import {
+  extractContinuityChain,
+  buildWhatsAppContinuityReference,
+} from './chat-continuity-chain.js';
+
 const SITE_BASE_URL = "https://kasilammedia.co.za";
 const WHATSAPP_BASE_URL = "https://wa.me/27659704101";
 
@@ -76,15 +81,46 @@ export function buildWhatsAppPrefillUrl(session) {
   return `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(messageLines.join("\n"))}`;
 }
 
+/**
+ * BRICK A.2.3: Enhanced WhatsApp prefill URL with continuity reference.
+ * 
+ * Includes refNumber and sourceSessionId in WhatsApp message so operators
+ * can deterministically look up booking without manual pattern matching.
+ * 
+ * Backward compatible: Falls back to standard URL if continuity data unavailable.
+ */
+export function buildWhatsAppPrefillUrlWithContinuity(session) {
+  const summary = buildBookingSummary(session);
+  const servicePageUrl = getExactServicePageUrl(session?.activeServiceId);
+  
+  // Extract continuity chain for deterministic operator lookup
+  const continuityChain = extractContinuityChain(session?.bookingMemory);
+  const continuityRef = buildWhatsAppContinuityReference(continuityChain);
+  
+  const messageLines = [
+    "Hi KMP, I'd like to continue this booking.",
+    summary,
+    `Service page: ${servicePageUrl}`,
+  ];
+  
+  // BRICK A.2.3: Append continuity reference if available
+  if (continuityRef) {
+    messageLines.push(`\n📋 Reference: ${continuityRef}`);
+  }
+
+  return `${WHATSAPP_BASE_URL}?text=${encodeURIComponent(messageLines.join("\n"))}`;
+}
+
 export function buildBookingCta(session) {
   const summary = buildBookingSummary(session);
   if (!summary) return null;
 
   return {
     type: "whatsapp",
-    url: buildWhatsAppPrefillUrl(session),
+    url: buildWhatsAppPrefillUrlWithContinuity(session),
     label: "Continue on WhatsApp",
     summary,
     servicePageUrl: getExactServicePageUrl(session?.activeServiceId),
+    continuityEnabled: true,
   };
 }
