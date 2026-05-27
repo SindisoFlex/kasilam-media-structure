@@ -10,6 +10,7 @@ export const BOOKING_PHASE = Object.freeze({
 });
 
 export const BOOKING_CONFIRMATION_SCORE_THRESHOLD = 70;
+export const BOOKING_VALIDATION_ESCALATION_THRESHOLD = 3;
 
 export function cloneBookingSnapshot(memory) {
   return { ...(memory || {}) };
@@ -655,6 +656,10 @@ export function getInvalidBookingFields(bookingMemory, bookingValidation) {
  * @returns {string} Deterministic recovery message
  */
 export function buildInvalidFieldRecoveryMessage(fieldName, value, streak = 1) {
+  if (isBookingValidationEscalationNeeded(streak)) {
+    return buildBookingValidationEscalationMessage(fieldName);
+  }
+
   const baseMessages = {
     customerPhone: "That phone number looks invalid. Please send a valid South African mobile number.",
     customerEmail: "That email address looks invalid. Please send a valid email address.",
@@ -676,6 +681,29 @@ export function buildInvalidFieldRecoveryMessage(fieldName, value, streak = 1) {
   }
 
   return fallback;
+}
+
+export function isBookingValidationEscalationNeeded(streak) {
+  return (
+    typeof streak === "number" &&
+    streak >= BOOKING_VALIDATION_ESCALATION_THRESHOLD
+  );
+}
+
+export function buildBookingValidationEscalationMessage(fieldName) {
+  const recoveryMessages = {
+    customerPhone:
+      "I may still be misunderstanding the phone number. You can enter it in the booking form or continue the booking directly on WhatsApp so we can help you faster.",
+    customerEmail:
+      "I may still be misunderstanding the email address. You can enter it in the booking form or continue the booking directly on WhatsApp so we can help you faster.",
+    date:
+      "I may still be misunderstanding the date format. You can select the date from the calendar or continue the booking directly on WhatsApp so we can help you faster.",
+  };
+
+  return (
+    recoveryMessages[fieldName] ||
+    "I may still be misunderstanding that detail. You can continue the booking directly on WhatsApp so we can help you faster."
+  );
 }
 
 /**

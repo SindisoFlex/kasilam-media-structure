@@ -214,7 +214,7 @@ const bookings = {
     await ensureSchema();
     if (useJsonFallback) {
       const all = readJson("bookings");
-      const match = Object.values(all).find((b: any) => b.ref_number === refNumber);
+      const match = Object.values(all).find((b) => b.ref_number === refNumber);
       return match || null;
     }
     const result = await pool.query(
@@ -277,7 +277,7 @@ const bookingRecords = {
     await ensureSchema();
     if (useJsonFallback) {
       const all = readJson("booking_records");
-      return Object.values(all).find((b: any) => b.ref_number === ref) || null;
+      return Object.values(all).find((b) => b.ref_number === ref) || null;
     }
     const res = await pool.query(`SELECT * FROM booking_records WHERE ref_number = $1 LIMIT 1`, [ref]);
     return res.rows[0] || null;

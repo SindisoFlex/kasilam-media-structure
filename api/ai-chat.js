@@ -551,6 +551,7 @@ function resolveActiveServiceContext(messages, session = null) {
     activeServiceId: activeContext,
     lockedService: Boolean(session?.lockedService),
     serviceConfidence: session?.serviceConfidence || 0,
+    pendingServiceSwitch: session?.pendingServiceSwitch || null,
   };
 
   for (const message of messages) {
@@ -568,6 +569,7 @@ function resolveActiveServiceContext(messages, session = null) {
         activeServiceId: transition.serviceId,
         lockedService: transition.lockedService,
         serviceConfidence: transition.confidence,
+        pendingServiceSwitch: transition.pendingServiceSwitch || null,
       };
     }
   }
@@ -599,6 +601,24 @@ function createEmptyBookingMemory() {
     customerPhone: null,
     customerEmail: null,
   };
+}
+
+function buildServiceIsolatedBookingMemory(activeServiceId, previousMemory = {}, lastIntent = null) {
+  return {
+    ...createEmptyBookingMemory(),
+    service: mapServiceToBookingService(activeServiceId, lastIntent),
+    customerName: previousMemory?.customerName || null,
+    customerPhone: previousMemory?.customerPhone || null,
+    customerEmail: previousMemory?.customerEmail || null,
+  };
+}
+
+function serviceWorkflowChanged(previousServiceId, nextServiceId) {
+  return (
+    Boolean(previousServiceId) &&
+    Boolean(nextServiceId) &&
+    previousServiceId !== nextServiceId
+  );
 }
 
 function mapServiceToBookingService(serviceId, lastIntent = null) {
@@ -865,8 +885,12 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
     ...(session?.bookingMemory || {}),
   };
 
-  if (activeServiceId && !memory.service) {
-    memory.service = mapServiceToBookingService(activeServiceId, lastDetectedIntent);
+  const expectedBookingService = activeServiceId
+    ? mapServiceToBookingService(activeServiceId, lastDetectedIntent)
+    : null;
+
+  if (expectedBookingService && memory.service !== expectedBookingService) {
+    memory.service = expectedBookingService;
   }
 
   for (const message of messages) {
@@ -949,9 +973,20 @@ function deriveConversationBookingCore({
   const snapBefore = session?.confirmationSnapshot ?? null;
   const explicitResetRequested =
     hasExplicitBookingResetIntentNormalized(normalizedLatest);
+  const lastDetectedIntent = resolveLastDetectedIntent(messages, session);
+  const activeServiceChanged = serviceWorkflowChanged(
+    session?.activeServiceId,
+    activeServiceId
+  );
   const baseBookingMemory = {
     ...createEmptyBookingMemory(),
-    ...(session?.bookingMemory || {}),
+    ...(activeServiceChanged
+      ? buildServiceIsolatedBookingMemory(
+          activeServiceId,
+          session?.bookingMemory,
+          lastDetectedIntent
+        )
+      : session?.bookingMemory || {}),
   };
   const fieldCorrection = detectBookingFieldCorrection(
     normalizedLatest,
@@ -982,10 +1017,10 @@ function deriveConversationBookingCore({
     snapBefore.service !==
       mapServiceToBookingService(
         activeServiceId,
-        resolveLastDetectedIntent(messages, session)
+        lastDetectedIntent
       );
 
-  const messagesForInference = explicitResetRequested
+  const messagesForInference = explicitResetRequested || activeServiceChanged
     ? messages.slice(-1)
     : messages;
   const shouldUseFrozenSnapshot =
@@ -996,10 +1031,19 @@ function deriveConversationBookingCore({
     !explicitResetRequested;
 
   const sessionLikeForInfer =
-    correctionReopenRequested || explicitResetRequested
+    correctionReopenRequested || explicitResetRequested || activeServiceChanged
       ? {
           ...(session || {}),
-          bookingMemory: explicitResetRequested ? createEmptyBookingMemory() : session?.bookingMemory,
+          bookingMemory:
+            explicitResetRequested
+              ? createEmptyBookingMemory()
+              : activeServiceChanged
+                ? buildServiceIsolatedBookingMemory(
+                    activeServiceId,
+                    session?.bookingMemory,
+                    lastDetectedIntent
+                  )
+                : session?.bookingMemory,
           confirmationSnapshot: null,
         }
       : session;
@@ -1010,7 +1054,7 @@ function deriveConversationBookingCore({
       : inferBookingMemory(
           messagesForInference,
           activeServiceId,
-          resolveLastDetectedIntent(messages, session),
+          lastDetectedIntent,
           sessionLikeForInfer
         );
 
@@ -1018,7 +1062,7 @@ function deriveConversationBookingCore({
     bookingMemoryWorking = inferBookingMemory(
       messagesForInference,
       activeServiceId,
-      resolveLastDetectedIntent(messages, session),
+      lastDetectedIntent,
       {
         ...(session || {}),
         bookingMemory: createEmptyBookingMemory(),
@@ -1359,6 +1403,7 @@ function inferConversationState(messages, session = null) {
   const IS_DEV = process.env.NODE_ENV !== "production";
   const isLockedWithShortFollowUp = 
     !explicitResetRequested &&
+    !session?.pendingServiceSwitch &&
     session?.lockedService === true && 
     session?.activeServiceId && 
     isShortUserQuery(latestUserMessage);
@@ -1406,10 +1451,18 @@ function inferConversationState(messages, session = null) {
         bookingCore.bookingPhase === BOOKING_PHASE.FINALIZED
           ? Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta)
           : false,
+      pendingServiceSwitch: null,
+      serviceSwitchConfirmed: false,
+      serviceSwitchCancelled: false,
     };
   }
   
   // Normal path: resolve service from message history
+  const serviceTransition = hasExplicitBookingResetIntentNormalized(
+    normalizeLatestUser(messages)
+  )
+    ? null
+    : resolveServiceTransition(session || {}, latestUserMessage);
   const activeServiceId = explicitResetRequested
     ? detectServiceContext(latestUserMessage)
     : resolveActiveServiceContext(messages, session);
@@ -1447,6 +1500,9 @@ function inferConversationState(messages, session = null) {
       bookingCore.bookingPhase === BOOKING_PHASE.FINALIZED
         ? Boolean(session?.ctaIssued) || Boolean(bookingCore.issueBookingCta)
         : false,
+    pendingServiceSwitch: serviceTransition?.pendingServiceSwitch || null,
+    serviceSwitchConfirmed: Boolean(serviceTransition?.serviceSwitchConfirmed),
+    serviceSwitchCancelled: Boolean(serviceTransition?.serviceSwitchCancelled),
   };
 }
 
@@ -1790,6 +1846,17 @@ function buildGeneralFallbackReply(options = {}) {
 }
 
 function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
+  const pendingSwitchReply = buildPendingServiceSwitchReply(state);
+  if (pendingSwitchReply) {
+    return {
+      reply: pendingSwitchReply,
+      fallback: true,
+      model: GEMINI_MODEL,
+      state,
+      errorType: options.errorType || null,
+    };
+  }
+
   const session = options.session || null;
   const effectiveSession = {
     ...(session || {}),
@@ -1809,6 +1876,12 @@ function buildSafeFallbackResponse(messages, knowledge, state, options = {}) {
       state?.bookingPersisted !== undefined
         ? Boolean(state.bookingPersisted)
         : Boolean(session?.bookingPersisted),
+    bookingMemory: state?.bookingMemory || session?.bookingMemory,
+    bookingValidation: state?.bookingValidation || session?.bookingValidation,
+    pendingServiceSwitch:
+      state?.pendingServiceSwitch !== undefined
+        ? state.pendingServiceSwitch
+        : session?.pendingServiceSwitch || null,
   };
   const latestUserMessage = getLatestUserMessage(messages);
   const classifiedIntent = detectChatIntent(latestUserMessage, effectiveSession);
@@ -1903,6 +1976,10 @@ function buildSessionUpdate(session, state, reply, messages = []) {
     ...(session?.bookingMemory || {}),
     ...(state?.bookingMemory || {}),
   };
+  const priorEvents = Array.isArray(session?.events) ? session.events : [];
+  const transitionEvents = Array.isArray(transition?.events)
+    ? transition.events
+    : [];
 
   const nextSession = {
     ...(session || {}),
@@ -1944,6 +2021,15 @@ function buildSessionUpdate(session, state, reply, messages = []) {
       state?.bookingRecordRef ?? session?.bookingRecordRef ?? null,
     bookingRecordId:
       state?.bookingRecordId ?? session?.bookingRecordId ?? null,
+    pendingServiceSwitch:
+      hasExplicitResetIntent
+        ? null
+        : state?.pendingServiceSwitch !== undefined
+          ? state.pendingServiceSwitch
+          : transition?.pendingServiceSwitch !== undefined
+            ? transition.pendingServiceSwitch
+            : session?.pendingServiceSwitch || null,
+    events: [...priorEvents, ...transitionEvents],
   };
 
   return nextSession;
@@ -2303,11 +2389,31 @@ function buildNavigationIntentResponse(context) {
   return `I'll point you to ${context.name}. Check it out here: ${url}`;
 }
 
+function getServiceDisplayName(serviceId) {
+  return SERVICE_CONTEXTS[serviceId]?.name || serviceId || "that service";
+}
+
+function buildPendingServiceSwitchReply(state) {
+  const pending = state?.pendingServiceSwitch;
+  if (!pending?.from || !pending?.to) return null;
+
+  return compactReplyLines([
+    `You're currently in the ${getServiceDisplayName(pending.from)} booking flow.`,
+    `Do you want to switch this conversation to ${getServiceDisplayName(pending.to)}?`,
+    "Reply YES to switch, or NO to continue with the current booking.",
+  ]);
+}
+
 function buildFallbackReply(messages, knowledge, session = null) {
   const latestUserMessage = getLatestUserMessage(messages);
   const state = inferConversationState(messages, session);
   const activeContextId = resolveActiveServiceContext(messages, session);
   const activeContext = activeContextId ? SERVICE_CONTEXTS[activeContextId] : null;
+
+  const pendingSwitchReply = buildPendingServiceSwitchReply(state);
+  if (pendingSwitchReply) {
+    return pendingSwitchReply;
+  }
 
   // Check for explicit price intent
   if (detectPriceIntent(latestUserMessage)) {
@@ -2577,6 +2683,16 @@ export default async function handler(req, res) {
             "KMP covers visual production, audio production, and digital solutions for different kinds of projects and events.",
           question: "What kind of service are you looking for?",
         }),
+        fallback: true,
+        model: GEMINI_MODEL,
+        state,
+      });
+    }
+
+    const pendingSwitchReply = buildPendingServiceSwitchReply(state);
+    if (pendingSwitchReply) {
+      return finalizeResponse({
+        reply: pendingSwitchReply,
         fallback: true,
         model: GEMINI_MODEL,
         state,

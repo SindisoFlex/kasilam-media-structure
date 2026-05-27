@@ -256,8 +256,28 @@ function buildLines(lines) {
   return lines.filter(Boolean).join("\n");
 }
 
+function getServiceDisplayName(serviceId) {
+  return SERVICE_FALLBACKS[serviceId]?.name || serviceId || "that service";
+}
+
+function buildPendingServiceSwitchReply(session) {
+  const pending = session?.pendingServiceSwitch;
+  if (!pending?.from || !pending?.to) return null;
+
+  return buildLines([
+    `You're currently in the ${getServiceDisplayName(pending.from)} booking flow.`,
+    `Do you want to switch this conversation to ${getServiceDisplayName(pending.to)}?`,
+    "Reply YES to switch, or NO to continue with the current booking.",
+  ]);
+}
+
 export function buildContextualFallback(session, intent) {
   // BLOCK C: Fallback Context Enforcement
+  const pendingSwitchReply = buildPendingServiceSwitchReply(session);
+  if (pendingSwitchReply) {
+    return pendingSwitchReply;
+  }
+
   // If service is locked, use it directly. Do NOT re-detect via heuristics.
   // Locked service is authoritative, preventing "photography" keyword from overriding funeral/wedding context.
   const IS_DEV = process.env.NODE_ENV !== "production";
@@ -451,7 +471,11 @@ export function buildContextualFallback(session, intent) {
   let clarificationApplied = false;
   if (invalidFields.length > 0) {
     const firstInvalid = invalidFields[0];
-    question = buildInvalidFieldRecoveryMessage(firstInvalid, memory[firstInvalid]);
+    question = buildInvalidFieldRecoveryMessage(
+      firstInvalid,
+      memory[firstInvalid],
+      session?.validationFailureStreak || 1
+    );
   } else if (nextMissing != null) {
     // Phase 3: Conversational clarification — if the user's latest message
     // is vague/incomplete for the field we're collecting, swap the adaptive

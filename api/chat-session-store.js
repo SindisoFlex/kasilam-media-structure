@@ -39,6 +39,7 @@ function createDefaultSession(sessionId) {
     bookingPersisted: false,
     validationFailureStreak: 0,
     lastInvalidField: null,
+    pendingServiceSwitch: null,
     bookingRecordRef: null,
     bookingRecordId: null,
     conversationHistory: [],
@@ -114,6 +115,7 @@ export async function saveSession(session) {
     confirmationSnapshot: session.confirmationSnapshot ?? null,
     ctaIssued: Boolean(session.ctaIssued),
     bookingPersisted: Boolean(session.bookingPersisted),
+    pendingServiceSwitch: session.pendingServiceSwitch ?? null,
     conversationHistory: Array.isArray(session.conversationHistory)
       ? [...session.conversationHistory]
       : [],

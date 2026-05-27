@@ -20,6 +20,17 @@ const EXPLICIT_SWITCH_PATTERNS = [
   /\btell me about\b/i,
 ];
 
+const SWITCH_CONFIRM_PATTERNS = [
+  /^(yes|yeah|yep|correct|confirmed?|sure)$/i,
+  /\b(yes|confirm|switch|change|go ahead|move)\b.*\b(service|topic|website|web|audio|marketing|funeral|wedding|birthday|photography)\b/i,
+  /\b(go ahead|switch|change|move)\b/i,
+];
+
+const SWITCH_DECLINE_PATTERNS = [
+  /^(no|nope|nah)$/i,
+  /\b(cancel|keep|stay|continue|don't switch|do not switch)\b/i,
+];
+
 const SERVICE_SIGNAL_MAP = {
   funeral_photography: [
     "funeral photography",
@@ -146,10 +157,19 @@ function isExplicitTopicChange(normalizedText) {
   return EXPLICIT_SWITCH_PATTERNS.some((pattern) => pattern.test(normalizedText));
 }
 
+function confirmsPendingSwitch(normalizedText) {
+  return SWITCH_CONFIRM_PATTERNS.some((pattern) => pattern.test(normalizedText));
+}
+
+function declinesPendingSwitch(normalizedText) {
+  return SWITCH_DECLINE_PATTERNS.some((pattern) => pattern.test(normalizedText));
+}
+
 export function resolveServiceTransition(session, userText) {
   const normalizedText = normalizeServiceText(userText);
   const previousServiceId = session?.activeServiceId || null;
   const wasLocked = Boolean(session?.lockedService);
+  const pendingServiceSwitch = session?.pendingServiceSwitch || null;
   const detection = detectServiceConfidence(normalizedText);
   const shortFollowUp = isShortFollowUp(normalizedText);
   const explicitTopicChange = isExplicitTopicChange(normalizedText);
@@ -165,7 +185,72 @@ export function resolveServiceTransition(session, userText) {
       detection: { serviceId: detection.serviceId, confidence: detection.confidence },
       shortFollowUp,
       explicitTopicChange,
+      pendingServiceSwitch,
     });
+  }
+
+  if (pendingServiceSwitch?.to && previousServiceId) {
+    if (confirmsPendingSwitch(normalizedText)) {
+      events.push({
+        type: "service_switched",
+        from: pendingServiceSwitch.from || previousServiceId,
+        to: pendingServiceSwitch.to,
+        confirmed: true,
+      });
+      events.push({ type: "service_locked", service: pendingServiceSwitch.to });
+
+      return {
+        serviceId: pendingServiceSwitch.to,
+        confidence: Math.max(pendingServiceSwitch.confidence || 0, 0.8),
+        lockedService: true,
+        pendingServiceSwitch: null,
+        serviceSwitchConfirmed: true,
+        events,
+      };
+    }
+
+    if (declinesPendingSwitch(normalizedText)) {
+      events.push({
+        type: "service_switch_cancelled",
+        from: pendingServiceSwitch.from || previousServiceId,
+        to: pendingServiceSwitch.to,
+      });
+
+      return {
+        serviceId: previousServiceId,
+        confidence: session?.serviceConfidence || 1,
+        lockedService: true,
+        pendingServiceSwitch: null,
+        serviceSwitchCancelled: true,
+        events,
+      };
+    }
+
+    if (detection.serviceId && detection.serviceId !== previousServiceId) {
+      const nextPending = {
+        from: previousServiceId,
+        to: detection.serviceId,
+        confidence: detection.confidence,
+        requestedAt: Date.now(),
+      };
+      events.push({ type: "service_switch_pending", ...nextPending });
+
+      return {
+        serviceId: previousServiceId,
+        confidence: session?.serviceConfidence || 1,
+        lockedService: true,
+        pendingServiceSwitch: nextPending,
+        events,
+      };
+    }
+
+    return {
+      serviceId: previousServiceId,
+      confidence: session?.serviceConfidence || 1,
+      lockedService: true,
+      pendingServiceSwitch,
+      events,
+    };
   }
 
   if (shortFollowUp && wasLocked && previousServiceId) {
@@ -179,6 +264,7 @@ export function resolveServiceTransition(session, userText) {
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
+      pendingServiceSwitch: null,
       events,
     };
   }
@@ -188,6 +274,7 @@ export function resolveServiceTransition(session, userText) {
       serviceId: previousServiceId,
       confidence: previousServiceId ? session?.serviceConfidence || 1 : 0,
       lockedService: wasLocked,
+      pendingServiceSwitch: null,
       events,
     };
   }
@@ -207,6 +294,7 @@ export function resolveServiceTransition(session, userText) {
       serviceId: detection.serviceId,
       confidence: detection.confidence,
       lockedService: detection.confidence >= 0.8,
+      pendingServiceSwitch: null,
       events,
     };
   }
@@ -220,6 +308,7 @@ export function resolveServiceTransition(session, userText) {
       serviceId: detection.serviceId,
       confidence: Math.max(session?.serviceConfidence || 0, detection.confidence),
       lockedService: wasLocked || detection.confidence >= 0.8,
+      pendingServiceSwitch: null,
       events,
     };
   }
@@ -229,6 +318,33 @@ export function resolveServiceTransition(session, userText) {
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
+      pendingServiceSwitch: null,
+      events,
+    };
+  }
+
+  if (wasLocked && explicitTopicChange && detection.confidence >= 0.6) {
+    const nextPending = {
+      from: previousServiceId,
+      to: detection.serviceId,
+      confidence: detection.confidence,
+      requestedAt: Date.now(),
+    };
+    events.push({ type: "service_switch_pending", ...nextPending });
+
+    if (IS_DEV) {
+      console.log("[Service Transition Outcome] Service switch pending", {
+        from: previousServiceId,
+        to: detection.serviceId,
+        confidence: detection.confidence,
+      });
+    }
+
+    return {
+      serviceId: previousServiceId,
+      confidence: session?.serviceConfidence || 1,
+      lockedService: true,
+      pendingServiceSwitch: nextPending,
       events,
     };
   }
@@ -252,6 +368,8 @@ export function resolveServiceTransition(session, userText) {
       serviceId: detection.serviceId,
       confidence: detection.confidence,
       lockedService: detection.confidence >= 0.8,
+      pendingServiceSwitch: null,
+      serviceSwitchConfirmed: previousServiceId !== detection.serviceId,
       events,
     };
   }
@@ -260,6 +378,7 @@ export function resolveServiceTransition(session, userText) {
     serviceId: previousServiceId,
     confidence: session?.serviceConfidence || 1,
     lockedService: wasLocked,
+    pendingServiceSwitch: null,
     events,
   };
 }

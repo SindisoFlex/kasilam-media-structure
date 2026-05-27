@@ -1,0 +1,1164 @@
+{
+  "test-session-funeral-price-1779880482357-ukp71p": {
+    "version": 1,
+    "sessionId": "test-session-funeral-price-1779880482357-ukp71p",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482412
+  },
+  "test-session-funeral-lock-1779880482428-zotvkp": {
+    "version": 1,
+    "sessionId": "test-session-funeral-lock-1779880482428-zotvkp",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 70,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": "link me",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482454
+  },
+  "test-session-web-price-1779880482465-1x9hna": {
+    "version": 1,
+    "sessionId": "test-session-web-price-1779880482465-1x9hna",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482479
+  },
+  "test-session-gemini-failure-1779880482481-p94uwc": {
+    "version": 1,
+    "sessionId": "test-session-gemini-failure-1779880482481-p94uwc",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482493
+  },
+  "test-session-reload-1779880482498-e6trns": {
+    "version": 1,
+    "sessionId": "test-session-reload-1779880482498-e6trns",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 100,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": "2026-06-14",
+      "location": "Motherwell",
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": true,
+      "location": true,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482504
+  },
+  "test-session-topic-switch-1779880482508-fa2oem": {
+    "version": 1,
+    "sessionId": "test-session-topic-switch-1779880482508-fa2oem",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [],
+    "updatedAt": 1779880482523
+  },
+  "test-session-funeral-price-1779882012834-b9ppd5": {
+    "version": 1,
+    "sessionId": "test-session-funeral-price-1779882012834-b9ppd5",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882012911
+  },
+  "test-session-funeral-lock-1779882012938-dc3n4w": {
+    "version": 1,
+    "sessionId": "test-session-funeral-lock-1779882012938-dc3n4w",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 70,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": "link me",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882012981
+  },
+  "test-session-web-price-1779882012985-8h4srz": {
+    "version": 1,
+    "sessionId": "test-session-web-price-1779882012985-8h4srz",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779882013002
+  },
+  "test-session-gemini-failure-1779882013005-iuovfu": {
+    "version": 1,
+    "sessionId": "test-session-gemini-failure-1779882013005-iuovfu",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882013022
+  },
+  "test-session-reload-1779882013028-6habpu": {
+    "version": 1,
+    "sessionId": "test-session-reload-1779882013028-6habpu",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 100,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": "2026-06-14",
+      "location": "Motherwell",
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": true,
+      "location": true,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882013042
+  },
+  "test-session-topic-switch-1779882013061-dlhmjk": {
+    "version": 1,
+    "sessionId": "test-session-topic-switch-1779882013061-dlhmjk",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": {
+      "from": "funeral_photography",
+      "to": "web_development",
+      "confidence": 0.85,
+      "requestedAt": 1779882013080
+    },
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      },
+      {
+        "type": "service_switch_pending",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confidence": 0.85,
+        "requestedAt": 1779882013081
+      }
+    ],
+    "updatedAt": 1779882013081
+  },
+  "test-session-funeral-price-1779882098015-pjh5jv": {
+    "version": 1,
+    "sessionId": "test-session-funeral-price-1779882098015-pjh5jv",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882098061
+  },
+  "test-session-funeral-lock-1779882098069-n128ii": {
+    "version": 1,
+    "sessionId": "test-session-funeral-lock-1779882098069-n128ii",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 70,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": "link me",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882098093
+  },
+  "test-session-web-price-1779882098096-obrpa6": {
+    "version": 1,
+    "sessionId": "test-session-web-price-1779882098096-obrpa6",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779882098103
+  },
+  "test-session-gemini-failure-1779882098105-m2wdua": {
+    "version": 1,
+    "sessionId": "test-session-gemini-failure-1779882098105-m2wdua",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882098111
+  },
+  "test-session-reload-1779882098113-zdo9d5": {
+    "version": 1,
+    "sessionId": "test-session-reload-1779882098113-zdo9d5",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 100,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": "2026-06-14",
+      "location": "Motherwell",
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": true,
+      "location": true,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882098134
+  },
+  "test-session-topic-switch-1779882098147-h3sx9p": {
+    "version": 1,
+    "sessionId": "test-session-topic-switch-1779882098147-h3sx9p",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": "yes",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      },
+      {
+        "type": "service_switch_pending",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confidence": 0.85,
+        "requestedAt": 1779882098159
+      },
+      {
+        "type": "service_switched",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confirmed": true
+      },
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779882098169
+  },
+  "test-session-funeral-price-1779882120803-o3rm6u": {
+    "version": 1,
+    "sessionId": "test-session-funeral-price-1779882120803-o3rm6u",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882120852
+  },
+  "test-session-funeral-lock-1779882120868-8i4gms": {
+    "version": 1,
+    "sessionId": "test-session-funeral-lock-1779882120868-8i4gms",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 70,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": "photo",
+      "customerName": "link me",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": true,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882120906
+  },
+  "test-session-web-price-1779882120918-6nfx9m": {
+    "version": 1,
+    "sessionId": "test-session-web-price-1779882120918-6nfx9m",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779882120934
+  },
+  "test-session-gemini-failure-1779882120937-8yzlfp": {
+    "version": 1,
+    "sessionId": "test-session-gemini-failure-1779882120937-8yzlfp",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882120962
+  },
+  "test-session-reload-1779882120965-s6rvoz": {
+    "version": 1,
+    "sessionId": "test-session-reload-1779882120965-s6rvoz",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 100,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": "2026-06-14",
+      "location": "Motherwell",
+      "scope": "photo",
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": true,
+      "location": true,
+      "scope": true,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779882120978
+  },
+  "test-session-topic-switch-1779882120987-x61gdu": {
+    "version": 1,
+    "sessionId": "test-session-topic-switch-1779882120987-x61gdu",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "customerName": "yes",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      },
+      {
+        "type": "service_switch_pending",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confidence": 0.85,
+        "requestedAt": 1779882121005
+      },
+      {
+        "type": "service_switched",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confirmed": true
+      },
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779882121020
+  }
+}

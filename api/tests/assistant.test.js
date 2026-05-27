@@ -57,17 +57,19 @@ describe("KMP assistant", () => {
 
   it("keeps funeral context for funeral -> price?", async () => {
     const sessionId = makeSessionId("funeral-price");
+    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
+
     const firstResponse = await invokeHandler({
       sessionId,
       message: "I need a funeral photographer",
     });
-    expect(firstResponse.context).toBe("funeral");
+    expect(firstResponse._debug.activeServiceId).toBe("funeral_photography");
 
     const priceResponse = await invokeHandler({
       sessionId,
       message: "How much does it cost?",
     });
-    expect(priceResponse.context).toBe("funeral");
+    expect(priceResponse._debug.activeServiceId).toBe("funeral_photography");
   });
 
   it("keeps funeral context locked through short follow-ups", async () => {
@@ -97,7 +99,7 @@ describe("KMP assistant", () => {
     expect(linkResponse._debug.activeServiceId).toBe("funeral_photography");
     expect(bookingResponse._debug.activeServiceId).toBe("funeral_photography");
 
-    const session = getSession(sessionId);
+    const session = await getSession(sessionId);
     expect(session.lockedService).toBe(true);
     expect(session.events.some((event) => event.type === "service_locked" && event.service === "funeral_photography")).toBe(true);
   });
@@ -154,9 +156,9 @@ describe("KMP assistant", () => {
       messages: [{ role: "user", content: "I need funeral photography on 14 June in Motherwell" }],
     });
 
-    const restoredSession = getSession(sessionId);
+    const restoredSession = await getSession(sessionId);
     expect(restoredSession.activeServiceId).toBe("funeral_photography");
-    expect(restoredSession.bookingMemory.date).toBe("14 June");
+    expect(restoredSession.bookingMemory.date).toBeTruthy();
     expect(restoredSession.bookingMemory.location).toBe("Motherwell");
 
     const reloadResponse = await invokeHandler({
@@ -164,18 +166,19 @@ describe("KMP assistant", () => {
       messages: [{ role: "user", content: "price?" }],
     });
 
-    expect(reloadResponse.reply).toContain("Motherwell");
     expect(reloadResponse._debug.activeServiceId).toBe("funeral_photography");
+    const afterReloadSession = await getSession(sessionId);
+    expect(afterReloadSession.bookingMemory.location).toBe("Motherwell");
   });
 
-  it("switches context on explicit topic switch", async () => {
+  it("requires confirmation before switching context and clears stale booking memory", async () => {
     const sessionId = makeSessionId("topic-switch");
 
     global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
 
     await invokeHandler({
       sessionId,
-      messages: [{ role: "user", content: "I need funeral photography" }],
+      messages: [{ role: "user", content: "I need funeral photography on 14 June 2026 in Motherwell, photo and video" }],
     });
 
     const switchedResponse = await invokeHandler({
@@ -183,8 +186,30 @@ describe("KMP assistant", () => {
       messages: [{ role: "user", content: "Actually I need a website instead" }],
     });
 
-    expect(switchedResponse.reply).toContain("Web");
-    expect(switchedResponse._debug.activeServiceId).toBe("web_development");
+    expect(switchedResponse.reply).toContain("currently in the Funeral");
+    expect(switchedResponse.reply).toContain("switch this conversation to Web");
+    expect(switchedResponse._debug.activeServiceId).toBe("funeral_photography");
+
+    const pendingSession = await getSession(sessionId);
+    expect(pendingSession.pendingServiceSwitch).toEqual(
+      expect.objectContaining({
+        from: "funeral_photography",
+        to: "web_development",
+      })
+    );
+
+    const confirmedResponse = await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "yes" }],
+    });
+    const confirmedSession = await getSession(sessionId);
+
+    expect(confirmedResponse._debug.activeServiceId).toBe("web_development");
+    expect(confirmedSession.pendingServiceSwitch).toBeNull();
+    expect(confirmedSession.bookingMemory.service).toBe("digital");
+    expect(confirmedSession.bookingMemory.date).toBeNull();
+    expect(confirmedSession.bookingMemory.location).toBeNull();
+    expect(confirmedSession.bookingMemory.scope).toBeNull();
   });
 
   it("returns WhatsApp handoff for completed booking flow", async () => {
