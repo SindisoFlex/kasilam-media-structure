@@ -116,56 +116,54 @@ export function normalizeCustomerPhone(value) {
   if (!value || typeof value !== "string") return null;
 
   const trimmed = value.trim();
-
-  // Remove all non-digit characters except leading +
   const cleaned = trimmed.replace(/[^\d+]/g, "");
 
-  // Check for alphabetic contamination (after removing + and digits, should be empty)
   const alphaCheck = trimmed.replace(/[+0-9\s\-\(\)]/g, "");
   if (alphaCheck.length > 0) return null;
 
-  // Handle different formats
-  if (cleaned.startsWith("+27")) {
-    // Already has country code: +27XXXXXXXXX
-    const digits = cleaned.substring(3);
-    if (digits.length === 9 && /^\d+$/.test(digits)) {
-      return cleaned;
-    }
-    return null;
-  } else if (cleaned.startsWith("27")) {
-    // Has country code without +: 27XXXXXXXXX
+  if (cleaned.startsWith("00")) {
     const digits = cleaned.substring(2);
-    if (digits.length === 9 && /^\d+$/.test(digits)) {
-      return `+${cleaned}`;
+    if (/^\d{8,15}$/.test(digits)) {
+      return `+${digits}`;
     }
     return null;
-  } else if (cleaned.startsWith("0")) {
-    // South African format without country code: 0XXXXXXXXX
+  }
+
+  if (cleaned.startsWith("+")) {
     const digits = cleaned.substring(1);
-    if (digits.length === 9 && /^\d+$/.test(digits)) {
-      return `+27${digits}`;
+    if (/^\d{8,15}$/.test(digits)) {
+      return `+${digits}`;
     }
     return null;
+  }
+
+  if (cleaned.startsWith("27") && /^\d{11}$/.test(cleaned)) {
+    return `+${cleaned}`;
+  }
+
+  if (cleaned.startsWith("0") && /^\d{10}$/.test(cleaned)) {
+    return `+27${cleaned.substring(1)}`;
   }
 
   return null;
 }
 
 /**
- * Validates South African phone numbers using strict format checking.
+ * Validates phone numbers using strict format checking.
  *
  * Rules:
  * - Must normalize first
- * - Final normalized value must equal: +27 followed by exactly 9 digits
- * - Reject: short numbers, repeated fake digits, alphabetic contamination, malformed country codes
+ * - Supports South African and international E.164 formatted numbers
+ * - Rejects short numbers, repeated fake digits, alphabetic contamination, malformed prefixes
  *
  * Valid formats:
- * - +27XXXXXXXXX (10 digits after +)
- * - 27XXXXXXXXX (11 digits total)
- * - 0XXXXXXXXX (10 digits total)
+ * - +27XXXXXXXXX
+ * - +44XXXXXXXXXX
+ * - +1XXXXXXXXXX
+ * - 00-prefixed international numbers
  *
  * @param {string} phone - Phone number to validate
- * @returns {boolean} True if valid SA phone number
+ * @returns {boolean} True if valid phone number
  */
 export function validateCustomerPhone(phone) {
   if (!phone || typeof phone !== "string") return false;
@@ -173,13 +171,16 @@ export function validateCustomerPhone(phone) {
   const normalized = normalizeCustomerPhone(phone);
   if (!normalized) return false;
 
-  // Must match exact format: +27 followed by exactly 9 digits
-  const pattern = /^\+27\d{9}$/;
-  if (!pattern.test(normalized)) return false;
+  const genericPattern = /^\+\d{8,15}$/;
+  if (!genericPattern.test(normalized)) return false;
 
-  // Reject repeated fake digits (e.g., +27111111111)
-  const digits = normalized.substring(3);
+  const digits = normalized.substring(1);
   if (/^(\d)\1+$/.test(digits)) return false;
+
+  if (normalized.startsWith("+27")) {
+    const southAfricanDigits = normalized.substring(3);
+    if (!/^\d{9}$/.test(southAfricanDigits)) return false;
+  }
 
   return true;
 }
@@ -341,6 +342,32 @@ export function normalizeBookingDate(value) {
     return null;
   }
 
+  // Pattern: "DD/MM/YYYY" or "DD-MM-YYYY" or "YYYY/MM/DD" or "YYYY-MM-DD"
+  const slashMatch = trimmed.match(/^(\d{1,4})[\/\-](\d{1,2})[\/\-](\d{1,4})$/);
+  if (slashMatch) {
+    let first = parseInt(slashMatch[1], 10);
+    const second = parseInt(slashMatch[2], 10);
+    let third = parseInt(slashMatch[3], 10);
+    let year = third;
+    let month = second - 1;
+    let day = first;
+
+    if (first > 31) {
+      year = first;
+      month = second - 1;
+      day = third;
+    }
+
+    if (year < 100) {
+      year += 2000;
+    }
+
+    const date = new Date(year, month, day);
+    if (isValidDate(date)) {
+      return formatDateToISO(date);
+    }
+  }
+
   return null;
 }
 
@@ -413,22 +440,17 @@ export function validateBookingDate(date) {
   const normalized = normalizeBookingDate(date);
   if (!normalized) return false;
 
-  // Parse normalized date
   const isoMatch = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!isoMatch) return false;
 
   const [, year, month, day] = isoMatch;
   const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
-  // Verify it's a valid calendar date
   if (!isValidDate(parsedDate)) return false;
-
-  // Verify year didn't roll over (e.g., February 30 → March 2)
   if (parsedDate.getFullYear() !== parseInt(year)) return false;
   if (parsedDate.getMonth() + 1 !== parseInt(month)) return false;
   if (parsedDate.getDate() !== parseInt(day)) return false;
 
-  // Check if date is in the past
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   parsedDate.setHours(0, 0, 0, 0);
@@ -436,6 +458,57 @@ export function validateBookingDate(date) {
   if (parsedDate < today) return false;
 
   return true;
+}
+
+export function scoreBookingFieldConfidence(field, value, message = "", context = null) {
+  if (!field || !value || typeof value !== "string") return 0;
+  const text = String(message || value).toLowerCase();
+  const trimmedValue = value.trim();
+
+  const containsPhoneHint = /\b(phone|number|call|sms|whatsapp|contact)\b/i.test(text);
+  const containsEmailHint = /\b(email|e-mail|mail|address)\b/i.test(text);
+  const containsDateHint = /\b(date|when|tomorrow|today|next|monday|tuesday|wednesday|thursday|friday|saturday|sunday|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\b/i.test(text);
+  const containsLocationHint = /\b(location|venue|address|at|in|near|site|place)\b/i.test(text);
+  const containsNameHint = /\b(my name is|i'm|i am|this is)\b/i.test(text);
+
+  switch (field) {
+    case "customerName": {
+      if (containsNameHint) return 100;
+      if (/^[a-zA-Z][a-zA-Z'\-]+(?:\s+[a-zA-Z'\-]+){0,3}$/.test(trimmedValue) && !/\b(price|cost|how much|quote|rates|book)\b/i.test(text)) {
+        return 80;
+      }
+      return 0;
+    }
+    case "customerPhone": {
+      if (!validateCustomerPhone(trimmedValue)) return 0;
+      if (containsPhoneHint) return 100;
+      return 80;
+    }
+    case "customerEmail": {
+      if (!validateCustomerEmail(trimmedValue)) return 0;
+      if (containsEmailHint) return 100;
+      return 80;
+    }
+    case "date": {
+      if (!validateBookingDate(trimmedValue)) return 0;
+      if (containsDateHint) return 100;
+      return 90;
+    }
+    case "location": {
+      if (!validateBookingLocation(trimmedValue)) return 0;
+      if (containsLocationHint) return 100;
+      if (trimmedValue.split(/\s+/).length <= 6 && !/\b(price|cost|how much|quote|rates|book|available)\b/i.test(text)) {
+        return 80;
+      }
+      return 60;
+    }
+    default:
+      return 0;
+  }
+}
+
+export function isBookingFieldConfidenceAcceptable(score) {
+  return typeof score === "number" && score >= 80;
 }
 
 export function validateBookingLocation(location) {
@@ -581,14 +654,28 @@ export function getInvalidBookingFields(bookingMemory, bookingValidation) {
  * @param {string} value - The invalid value (optional, for context)
  * @returns {string} Deterministic recovery message
  */
-export function buildInvalidFieldRecoveryMessage(fieldName, value) {
-  const messages = {
+export function buildInvalidFieldRecoveryMessage(fieldName, value, streak = 1) {
+  const baseMessages = {
     customerPhone: "That phone number looks invalid. Please send a valid South African mobile number.",
     customerEmail: "That email address looks invalid. Please send a valid email address.",
     date: "That booking date looks invalid. Please send a valid future booking date.",
   };
 
-  return messages[fieldName] || "That information looks invalid. Please provide a valid value.";
+  const fallback = baseMessages[fieldName] || "That information looks invalid. Please provide a valid value.";
+
+  if (streak >= 2) {
+    const retryAdds = {
+      customerPhone:
+        " Please reply with just the full number, for example +27 82 123 4567.",
+      customerEmail:
+        " Please reply with just the email address, for example john@example.com.",
+      date:
+        " Please reply with just the booking date in a clear format like 2026-12-05.",
+    };
+    return `${fallback}${retryAdds[fieldName] || " Please provide it clearly."}`;
+  }
+
+  return fallback;
 }
 
 /**

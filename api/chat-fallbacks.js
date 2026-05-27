@@ -369,7 +369,8 @@ export function buildContextualFallback(session, intent) {
         invalidFields.length > 0
           ? buildInvalidFieldRecoveryMessage(
               invalidFields[0],
-              memory[invalidFields[0]]
+              memory[invalidFields[0]],
+              session?.validationFailureStreak || 1
             )
           : nextMissing != null
             ? getBookingFieldQuestion(nextMissing, context, {

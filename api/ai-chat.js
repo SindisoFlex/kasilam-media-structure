@@ -23,6 +23,8 @@ import {
   normalizeCustomerPhone,
   normalizeBookingDate,
   normalizeCustomerEmail,
+  scoreBookingFieldConfidence,
+  isBookingFieldConfidenceAcceptable,
   getInvalidBookingFields,
   buildInvalidFieldRecoveryMessage,
   detectBookingFieldCorrection,
@@ -834,9 +836,14 @@ function extractCustomerPhone(text) {
   const matches = text.match(phonePattern);
   if (!matches) return null;
 
-  // Use normalization for consistent storage
   const normalized = normalizeCustomerPhone(matches[matches.length - 1]);
   return normalized;
+}
+
+function acceptExtractedBookingValue(field, value, message, memory = null) {
+  if (!value || typeof value !== "string") return false;
+  const score = scoreBookingFieldConfidence(field, value, message, memory);
+  return isBookingFieldConfidenceAcceptable(score);
 }
 
 function extractCustomerEmail(text) {
@@ -874,9 +881,11 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
     if (!memory.date) {
       const dateValue = extractDateValue(message.content);
       if (dateValue) {
-        // Normalize where safe, preserve raw if normalization fails
         const normalized = normalizeBookingDate(dateValue);
-        memory.date = normalized || dateValue;
+        const candidate = normalized || dateValue;
+        if (acceptExtractedBookingValue("date", candidate, message.content, memory)) {
+          memory.date = candidate;
+        }
       }
     }
 
@@ -889,23 +898,31 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
 
     {
       const locationValue = extractLocationValue(message.content, memory);
-      if (locationValue) memory.location = locationValue;
+      if (locationValue && acceptExtractedBookingValue("location", locationValue, message.content, memory)) {
+        memory.location = locationValue;
+      }
     }
 
     // BLOCK 1: Extract contact fields
     if (!memory.customerName) {
       const nameValue = extractCustomerName(message.content);
-      if (nameValue) memory.customerName = nameValue;
+      if (nameValue && acceptExtractedBookingValue("customerName", nameValue, message.content, memory)) {
+        memory.customerName = nameValue;
+      }
     }
 
     if (!memory.customerPhone) {
       const phoneValue = extractCustomerPhone(message.content);
-      if (phoneValue) memory.customerPhone = phoneValue;
+      if (phoneValue && acceptExtractedBookingValue("customerPhone", phoneValue, message.content, memory)) {
+        memory.customerPhone = phoneValue;
+      }
     }
 
     if (!memory.customerEmail) {
       const emailValue = extractCustomerEmail(message.content);
-      if (emailValue) memory.customerEmail = emailValue;
+      if (emailValue && acceptExtractedBookingValue("customerEmail", emailValue, message.content, memory)) {
+        memory.customerEmail = emailValue;
+      }
     }
   }
 
@@ -1033,6 +1050,19 @@ function deriveConversationBookingCore({
     bookingMemoryWorking,
     bookingValidation
   );
+
+  let validationFailureStreak = 0;
+  let lastInvalidFieldNext = null;
+  if (invalidBookingFields.length > 0) {
+    const firstInvalid = invalidBookingFields[0];
+    if (session?.lastInvalidField === firstInvalid) {
+      validationFailureStreak = (session?.validationFailureStreak || 0) + 1;
+    } else {
+      validationFailureStreak = 1;
+    }
+    lastInvalidFieldNext = firstInvalid;
+  }
+
   const readinessScore = getBookingReadinessScore({
     bookingMemory: bookingMemoryWorking,
     bookingValidation,
@@ -1129,6 +1159,8 @@ function deriveConversationBookingCore({
       enteredAwaitingConfirmation,
       awaitingConfirmationClarification: false,
       finalizedImmutable,
+      validationFailureStreak,
+      lastInvalidField: lastInvalidFieldNext,
     };
   }
 
@@ -1168,6 +1200,8 @@ function deriveConversationBookingCore({
       bookingPhaseNext === BOOKING_PHASE.AWAITING_CONFIRMATION &&
       !enteredAwaitingConfirmation &&
       normalizedLatest.trim().length > 0,
+    validationFailureStreak,
+    lastInvalidField: lastInvalidFieldNext,
   };
 }
 
@@ -1660,7 +1694,11 @@ function getBookingQuestion(context, state) {
   const invalidFields = getInvalidBookingFields(state?.bookingMemory, state?.bookingValidation);
   if (invalidFields.length > 0) {
     const firstInvalid = invalidFields[0];
-    return buildInvalidFieldRecoveryMessage(firstInvalid, state?.bookingMemory?.[firstInvalid]);
+    return buildInvalidFieldRecoveryMessage(
+      firstInvalid,
+      state?.bookingMemory?.[firstInvalid],
+      state?.validationFailureStreak || 1
+    );
   }
 
   const nextField = state?.nextMissingBookingField;
@@ -1906,6 +1944,12 @@ function buildSessionUpdate(session, state, reply, messages = []) {
       state?.bookingRecordRef ?? session?.bookingRecordRef ?? null,
     bookingRecordId:
       state?.bookingRecordId ?? session?.bookingRecordId ?? null,
+  };
+
+  return nextSession;
+}
+
+function getContextTone(context) {
   if (!context) {
     return {
       leadOptions: [
