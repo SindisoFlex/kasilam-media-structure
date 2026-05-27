@@ -597,6 +597,8 @@ function createEmptyBookingMemory() {
     date: null,
     location: null,
     scope: null,
+    packageTier: null,
+    coverageType: null,
     customerName: null,
     customerPhone: null,
     customerEmail: null,
@@ -611,6 +613,16 @@ function buildServiceIsolatedBookingMemory(activeServiceId, previousMemory = {},
     customerPhone: previousMemory?.customerPhone || null,
     customerEmail: previousMemory?.customerEmail || null,
   };
+}
+
+function isVisualServiceWorkflow(serviceIdOrBookingService) {
+  return [
+    "funeral_photography",
+    "wedding_coverage",
+    "birthday_photography",
+    "funeral",
+    "visual",
+  ].includes(serviceIdOrBookingService);
 }
 
 function serviceWorkflowChanged(previousServiceId, nextServiceId) {
@@ -673,22 +685,18 @@ function extractDateValue(text) {
 function extractScopeValue(text, serviceId = null) {
   if (typeof text !== "string") return null;
   const normalized = normalizeIntentText(text);
+  if (isVisualServiceWorkflow(serviceId)) return null;
 
   if (
     normalized.includes("photo and video") ||
     normalized.includes("photos and video") ||
     normalized.includes("photography and videography") ||
-    normalized.includes("both") ||
-    normalized.includes("full coverage")
-  ) {
-    return "photo and video";
-  }
-
-  if (
     normalized.includes("photo + video") ||
-    (normalized.includes("photo") && normalized.includes("video"))
+    /\bboth\b/.test(normalized) ||
+    /\bphoto(?:graphy|s)?\b/.test(normalized) ||
+    /\bvideo(?:graphy)?\b/.test(normalized)
   ) {
-    return "photo and video";
+    return null;
   }
 
   if (
@@ -736,21 +744,51 @@ function extractScopeValue(text, serviceId = null) {
     if (normalized.includes("mastering")) return "mastering";
     if (normalized.includes("recording")) return "recording";
   }
+  return null;
+}
 
+function extractPackageTierValue(text) {
+  if (typeof text !== "string") return null;
+  const normalized = normalizeIntentText(text);
+
+  if (/\b(tier\s*)?1\b/.test(normalized) || /\bbasic\b/.test(normalized)) {
+    return "basic";
+  }
+  if (/\b(tier\s*)?2\b/.test(normalized) || /\bstandard\b/.test(normalized)) {
+    return "standard";
+  }
   if (
-    normalized.includes("photography") ||
-    normalized.includes("photo") ||
-    normalized.includes("photos")
+    /\b(tier\s*)?3\b/.test(normalized) ||
+    /\bpremium\b/.test(normalized) ||
+    /\bcomplete\b/.test(normalized)
   ) {
-    return "photo";
+    return "premium";
   }
 
+  return null;
+}
+
+function extractCoverageTypeValue(text, serviceId = null) {
+  if (typeof text !== "string") return null;
+  if (!isVisualServiceWorkflow(serviceId)) return null;
+
+  const normalized = normalizeIntentText(text);
   if (
-    normalized.includes("videography") ||
-    normalized.includes("video")
+    normalized.includes("photo and video") ||
+    normalized.includes("photos and video") ||
+    normalized.includes("photography and videography") ||
+    normalized.includes("photo + video") ||
+    /\bcombo\b/.test(normalized) ||
+    /\bboth\b/.test(normalized) ||
+    (/\bphoto(?:graphy|s)?\b/.test(normalized) && /\bvideo(?:graphy)?\b/.test(normalized))
   ) {
-    return "video";
+    return "photo and video";
   }
+
+  if (/\b(photo|photos|photography)\s+only\b/.test(normalized)) return "photo";
+  if (/\b(video|videography)\s+only\b/.test(normalized)) return "video";
+  if (/^(photo|photos|photography)$/.test(normalized)) return "photo";
+  if (/^(video|videography)$/.test(normalized)) return "video";
 
   return null;
 }
@@ -893,6 +931,15 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
     memory.service = expectedBookingService;
   }
 
+  const visualWorkflow = isVisualServiceWorkflow(activeServiceId || memory.service);
+  if (visualWorkflow && !memory.coverageType && memory.scope) {
+    const legacyCoverage = extractCoverageTypeValue(memory.scope, activeServiceId || memory.service);
+    if (legacyCoverage) {
+      memory.coverageType = legacyCoverage;
+      memory.scope = null;
+    }
+  }
+
   for (const message of messages) {
     if (message?.role !== "user" || typeof message.content !== "string") continue;
 
@@ -913,10 +960,27 @@ function inferBookingMemory(messages, activeServiceId, lastDetectedIntent, sessi
       }
     }
 
-    {
-      const scopeValue = extractScopeValue(message.content, detectedServiceId || activeServiceId);
-      if (getScopePriority(scopeValue) >= getScopePriority(memory.scope)) {
-        memory.scope = scopeValue || memory.scope;
+    if (isVisualServiceWorkflow(detectedServiceId || activeServiceId || memory.service)) {
+      if (!memory.packageTier) {
+        const packageTierValue = extractPackageTierValue(message.content);
+        if (packageTierValue) {
+          memory.packageTier = packageTierValue;
+        }
+      }
+
+      if (!memory.coverageType) {
+        const coverageTypeValue = extractCoverageTypeValue(
+          message.content,
+          detectedServiceId || activeServiceId || memory.service
+        );
+        if (coverageTypeValue) {
+          memory.coverageType = coverageTypeValue;
+        }
+      }
+    } else {
+      const scopeValue = extractScopeValue(message.content, detectedServiceId || activeServiceId || memory.service);
+      if (scopeValue && getScopePriority(scopeValue) >= getScopePriority(memory.scope)) {
+        memory.scope = scopeValue;
       }
     }
 
@@ -1699,6 +1763,8 @@ function buildBookingMemorySummary(state) {
   if (!memory) return null;
 
   const parts = [];
+  if (memory.packageTier) parts.push(`package: ${memory.packageTier}`);
+  if (memory.coverageType) parts.push(`coverage: ${memory.coverageType}`);
   if (memory.date) parts.push(`date: ${memory.date}`);
   if (memory.location) parts.push(`location: ${memory.location}`);
   if (memory.scope) parts.push(`scope: ${memory.scope}`);

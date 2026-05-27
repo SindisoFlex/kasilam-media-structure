@@ -26,6 +26,8 @@ const FIELD_LABELS = {
   date: "date",
   location: "location",
   scope: "scope",
+  packageTier: "package tier",
+  coverageType: "coverage type",
   customerName: "name",
   customerPhone: "phone number",
   customerEmail: "email",
@@ -49,8 +51,16 @@ const TRANSITIONS_BY_NEXT_FIELD = {
     "what's the venue or address?",
   ],
   scope: [
-    "what scope do you need — photo, video, or both?",
-    "do you want photo only, video only, or both?",
+    "what project scope should I note?",
+    "which project type should I note?",
+  ],
+  packageTier: [
+    "which package tier should I note: Basic, Standard, or Premium?",
+    "which package tier would you like: Basic, Standard, or Premium?",
+  ],
+  coverageType: [
+    "do you want photo only, video only, or photo + video?",
+    "what coverage type should I note?",
   ],
   customerName: [
     "what name should we put on the booking?",
@@ -71,6 +81,8 @@ const RECENT_FIELD_PRIORITY = [
   "customerEmail",
   "customerPhone",
   "customerName",
+  "coverageType",
+  "packageTier",
   "scope",
   "location",
   "date",
@@ -104,6 +116,10 @@ function buildAcknowledgement(field, memory, opener) {
       return `${opener} — ${value} noted as the venue.`;
     case "scope":
       return `${opener} — ${value} for the scope.`;
+    case "packageTier":
+      return `${opener} — ${value} package noted.`;
+    case "coverageType":
+      return `${opener} — ${value} coverage noted.`;
     case "customerName":
       return `${opener}, ${value}.`;
     case "customerPhone":

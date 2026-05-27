@@ -178,7 +178,7 @@ describe("KMP assistant", () => {
 
     await invokeHandler({
       sessionId,
-      messages: [{ role: "user", content: "I need funeral photography on 14 June 2026 in Motherwell, photo and video" }],
+      messages: [{ role: "user", content: "I need basic funeral photography on 14 June 2026 in Motherwell, photo and video. My name is John Smith, phone 0821234567, email john@example.com" }],
     });
 
     const switchedResponse = await invokeHandler({
@@ -207,9 +207,62 @@ describe("KMP assistant", () => {
     expect(confirmedResponse._debug.activeServiceId).toBe("web_development");
     expect(confirmedSession.pendingServiceSwitch).toBeNull();
     expect(confirmedSession.bookingMemory.service).toBe("digital");
+    expect(confirmedSession.bookingMemory.packageTier).toBeNull();
+    expect(confirmedSession.bookingMemory.coverageType).toBeNull();
     expect(confirmedSession.bookingMemory.date).toBeNull();
     expect(confirmedSession.bookingMemory.location).toBeNull();
     expect(confirmedSession.bookingMemory.scope).toBeNull();
+    expect(confirmedSession.bookingMemory.customerName).toBeTruthy();
+    expect(confirmedSession.bookingMemory.customerPhone).toBeTruthy();
+    expect(confirmedSession.bookingMemory.customerEmail).toBe("john@example.com");
+  });
+
+  it("keeps web workflow scope separate from visual coverage wording", async () => {
+    const sessionId = makeSessionId("web-no-visual-scope");
+
+    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
+
+    const firstResponse = await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "I need a website" }],
+    });
+
+    expect(firstResponse.reply.toLowerCase()).not.toContain("photo only");
+    expect(firstResponse.reply.toLowerCase()).not.toContain("video only");
+    expect(firstResponse.reply.toLowerCase()).not.toContain("photo + video");
+
+    await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "both" }],
+    });
+
+    const session = await getSession(sessionId);
+    expect(session.activeServiceId).toBe("web_development");
+    expect(session.bookingMemory.scope).toBeNull();
+    expect(session.bookingMemory.coverageType).toBeNull();
+  });
+
+  it("asks visual workflows for package tier before coverage type", async () => {
+    const sessionId = makeSessionId("visual-package-first");
+
+    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
+
+    const packageResponse = await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "I need funeral photography" }],
+    });
+
+    expect(packageResponse.reply).toContain("Basic");
+    expect(packageResponse.reply).toContain("Standard");
+    expect(packageResponse.reply).toContain("Premium");
+
+    const coverageResponse = await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "Basic" }],
+    });
+
+    expect(coverageResponse.reply.toLowerCase()).toContain("photo only");
+    expect(coverageResponse.reply.toLowerCase()).toContain("video only");
   });
 
   it("returns WhatsApp handoff for completed booking flow", async () => {

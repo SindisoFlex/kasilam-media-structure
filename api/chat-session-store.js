@@ -20,6 +20,8 @@ function createDefaultSession(sessionId) {
       date: null,
       location: null,
       scope: null,
+      packageTier: null,
+      coverageType: null,
       customerName: null,
       customerPhone: null,
       customerEmail: null,
@@ -29,6 +31,8 @@ function createDefaultSession(sessionId) {
       date: false,
       location: false,
       scope: false,
+      packageTier: false,
+      coverageType: false,
       customerName: false,
       customerPhone: false,
       customerEmail: false

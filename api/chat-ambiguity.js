@@ -171,6 +171,7 @@ const FIELD_DETECTORS = {
   date: isVagueDate,
   location: isVagueLocation,
   scope: isVagueScope,
+  coverageType: isVagueScope,
   customerPhone: isIncompletePhone,
   customerEmail: isIncompleteEmail,
   customerName: isVagueName,
@@ -188,6 +189,10 @@ const CLARIFICATION_PROMPTS = {
     "No problem — which neighbourhood or venue are we looking at?",
   ],
   scope: [
+    "Quick check — what project scope should we note for this service?",
+    "To shape the right quote, which project type should I note?",
+  ],
+  coverageType: [
     "Quick check — would you like photo only, video only, or both?",
     "To shape the right quote, are you after photo, video, or both?",
   ],

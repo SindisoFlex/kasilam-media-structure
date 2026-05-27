@@ -497,6 +497,8 @@ export function buildContextualFallback(session, intent) {
 
   const captured = [];
 
+  if (memory.packageTier) captured.push(`package: ${memory.packageTier}`);
+  if (memory.coverageType) captured.push(`coverage: ${memory.coverageType}`);
   if (memory.date) captured.push(`date: ${memory.date}`);
   if (memory.location) captured.push(`location: ${memory.location}`);
   if (memory.scope) captured.push(`scope: ${memory.scope}`);

@@ -20,6 +20,8 @@ export function formatFrozenBookingLines(snapshot) {
   const m = snapshot || {};
   const lines = [];
   if (m.service) lines.push(`Service type: ${m.service}`);
+  if (m.packageTier) lines.push(`Package tier: ${m.packageTier}`);
+  if (m.coverageType) lines.push(`Coverage type: ${m.coverageType}`);
   if (m.date) lines.push(`Date: ${m.date}`);
   if (m.location) lines.push(`Location: ${m.location}`);
   if (m.scope) lines.push(`Scope: ${m.scope}`);
@@ -551,31 +553,70 @@ export function normalizeCustomerEmail(value) {
 
 export function computeBookingValidation(bookingMemory) {
   const m = bookingMemory || {};
-  const hasScope = Boolean(m.scope);
+  const service = m.service || null;
+  const isVisualWorkflow = service === "funeral" || service === "visual";
+  const hasScope = isVisualWorkflow ? false : validateNonVisualScope(service, m.scope);
 
   return {
     service: Boolean(m.service),
     date: m.date ? validateBookingDate(m.date) : false,
     location: m.location ? validateBookingLocation(m.location) : false,
     scope: hasScope,
+    packageTier: validatePackageTier(m.packageTier),
+    coverageType: isVisualWorkflow ? validateCoverageType(m.coverageType) : false,
     customerName: validateCustomerName(m.customerName),
     customerPhone: validateCustomerPhone(m.customerPhone),
     customerEmail: m.customerEmail ? validateCustomerEmail(m.customerEmail) : false,
   };
 }
 
+export function validatePackageTier(value) {
+  if (!value || typeof value !== "string") return false;
+  return ["basic", "standard", "premium"].includes(value.trim().toLowerCase());
+}
+
+export function validateCoverageType(value) {
+  if (!value || typeof value !== "string") return false;
+  return ["photo", "video", "photo and video"].includes(value.trim().toLowerCase());
+}
+
+export function validateNonVisualScope(service, value) {
+  if (!value || typeof value !== "string") return false;
+  const normalized = value.trim().toLowerCase();
+  const scopesByService = {
+    digital: [
+      "landing page",
+      "business website",
+      "custom web app",
+      "new website",
+      "redesign",
+      "branding",
+      "social media",
+      "content",
+      "paid ads",
+    ],
+    audio: ["recording", "mixing", "mastering", "voiceover", "podcast"],
+  };
+
+  const blockedVisualCoverage = ["photo", "video", "photo and video"];
+  if (blockedVisualCoverage.includes(normalized)) return false;
+
+  const allowed = scopesByService[service];
+  return Array.isArray(allowed) ? allowed.includes(normalized) : Boolean(normalized);
+}
+
 export function getRequiredBookingFields(context, bookingMemory) {
   const contactTail = ["customerName", "customerPhone", "customerEmail"];
 
   if (context?.id === "funeral_photography") {
-    return ["service", "date", "location", "scope", ...contactTail];
+    return ["service", "packageTier", "coverageType", "date", "location", ...contactTail];
   }
 
   if (
     context?.id === "birthday_photography" ||
     context?.id === "wedding_coverage"
   ) {
-    return ["service", "date", "location", "scope", ...contactTail];
+    return ["service", "packageTier", "coverageType", "date", "location", ...contactTail];
   }
 
   if (context?.id === "audio_production") {
@@ -590,7 +631,7 @@ export function getRequiredBookingFields(context, bookingMemory) {
   }
 
   if (bookingMemory?.service === "funeral" || bookingMemory?.service === "visual") {
-    return ["service", "date", "location", "scope", ...contactTail];
+    return ["service", "packageTier", "coverageType", "date", "location", ...contactTail];
   }
 
   if (bookingMemory?.service === "audio") {
@@ -632,6 +673,9 @@ export function getInvalidBookingFields(bookingMemory, bookingValidation) {
     "customerPhone",
     "customerEmail",
     "date",
+    "scope",
+    "packageTier",
+    "coverageType",
   ];
 
   for (const field of checkableFields) {
@@ -664,6 +708,9 @@ export function buildInvalidFieldRecoveryMessage(fieldName, value, streak = 1) {
     customerPhone: "That phone number looks invalid. Please send a valid South African mobile number.",
     customerEmail: "That email address looks invalid. Please send a valid email address.",
     date: "That booking date looks invalid. Please send a valid future booking date.",
+    scope: "That project scope does not match this service. Please send the correct project type for this booking.",
+    packageTier: "That package tier looks invalid. Please choose Basic, Standard, or Premium.",
+    coverageType: "That coverage type looks invalid. Please choose photo only, video only, or photo + video.",
   };
 
   const fallback = baseMessages[fieldName] || "That information looks invalid. Please provide a valid value.";
@@ -676,6 +723,10 @@ export function buildInvalidFieldRecoveryMessage(fieldName, value, streak = 1) {
         " Please reply with just the email address, for example john@example.com.",
       date:
         " Please reply with just the booking date in a clear format like 2026-12-05.",
+      packageTier:
+        " Please reply with just Basic, Standard, or Premium.",
+      coverageType:
+        " Please reply with just photo only, video only, or photo + video.",
     };
     return `${fallback}${retryAdds[fieldName] || " Please provide it clearly."}`;
   }
@@ -698,6 +749,12 @@ export function buildBookingValidationEscalationMessage(fieldName) {
       "I may still be misunderstanding the email address. You can enter it in the booking form or continue the booking directly on WhatsApp so we can help you faster.",
     date:
       "I may still be misunderstanding the date format. You can select the date from the calendar or continue the booking directly on WhatsApp so we can help you faster.",
+    packageTier:
+      "I may still be misunderstanding the package tier. You can choose Basic, Standard, or Premium in the booking form or continue directly on WhatsApp so we can help you faster.",
+    coverageType:
+      "I may still be misunderstanding the coverage type. You can choose photo only, video only, or photo + video in the booking form or continue directly on WhatsApp so we can help you faster.",
+    scope:
+      "I may still be misunderstanding the project scope. You can complete that detail in the booking form or continue directly on WhatsApp so we can help you faster.",
   };
 
   return (
@@ -892,6 +949,8 @@ export function getBookingReadinessScore(state) {
   if (memory.date && validation.date) score += 25;
   if (memory.location && validation.location) score += 25;
   if (memory.scope && validation.scope) score += 20;
+  if (memory.packageTier && validation.packageTier) score += 15;
+  if (memory.coverageType && validation.coverageType) score += 20;
   if (memory.customerName && validation.customerName) score += 20;
   if (memory.customerPhone && validation.customerPhone) score += 20;
   if (memory.customerEmail && validation.customerEmail) score += 15;
@@ -948,9 +1007,23 @@ export function getBookingFieldQuestion(nextField, context, state) {
     return "What venue or exact address should I note?";
   }
 
+  if (nextField === "packageTier") {
+    if (hasInvalid("packageTier")) {
+      return "Please choose a valid package tier: Basic, Standard, or Premium.";
+    }
+    return "Which package tier would you like: Basic, Standard, or Premium?";
+  }
+
+  if (nextField === "coverageType") {
+    if (hasInvalid("coverageType")) {
+      return "Please choose the coverage type: photo only, video only, or photo + video.";
+    }
+    return "Do you want photo only, video only, or photo + video?";
+  }
+
   if (nextField === "scope") {
     if (hasInvalid("scope")) {
-      return "Could you clarify the scope (e.g. photo only, video only, photo + video, or the type of site/project)?";
+      return "Could you clarify the project scope for this service?";
     }
     if (context?.id === "web_development") {
       return "Is this a new website, a redesign, or a custom web app?";

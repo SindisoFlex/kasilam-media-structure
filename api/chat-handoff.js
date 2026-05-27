@@ -43,6 +43,11 @@ function formatScope(scope) {
     .join(" ");
 }
 
+function formatPackageTier(packageTier) {
+  if (!packageTier) return null;
+  return packageTier.charAt(0).toUpperCase() + packageTier.slice(1);
+}
+
 export function getExactServicePageUrl(serviceId) {
   return joinUrl(SERVICE_HANDOFFS[serviceId]?.route);
 }
@@ -54,6 +59,8 @@ export function buildBookingSummary(session) {
 
   const lines = [];
   if (config?.label) lines.push(`Service: ${config.label}`);
+  if (memory.packageTier) lines.push(`Package: ${formatPackageTier(memory.packageTier)}`);
+  if (memory.coverageType) lines.push(`Coverage: ${formatScope(memory.coverageType)}`);
   if (memory.date) lines.push(`Date: ${memory.date}`);
   if (memory.location) lines.push(`Location: ${memory.location}`);
   if (memory.scope) lines.push(`Scope: ${formatScope(memory.scope)}`);
