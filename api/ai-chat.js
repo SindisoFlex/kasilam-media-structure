@@ -5,6 +5,7 @@ import { detectIntent as detectChatIntent } from "./chat-intents.js";
 import { buildContextualFallback } from "./chat-fallbacks.js";
 import { buildBookingCta } from "./chat-handoff.js";
 import { resolveServiceTransition } from "./chat-state.js";
+import { db } from "./lib/db.js";
 import {
   BOOKING_CONFIRMATION_SCORE_THRESHOLD,
   BOOKING_PHASE,
@@ -1893,34 +1894,18 @@ function buildSessionUpdate(session, state, reply, messages = []) {
       state?.bookingPersisted !== undefined
         ? Boolean(state.bookingPersisted)
         : Boolean(session?.bookingPersisted),
-    conversationHistory: Array.isArray(messages)
-      ? messages.slice(-MAX_HISTORY_MESSAGES)
-      : Array.isArray(session?.conversationHistory)
-      ? [...session.conversationHistory]
-      : [],
-  };
-
-  if (nextSession.bookingPhase === BOOKING_PHASE.AWAITING_CONFIRMATION && !nextSession.confirmationSnapshot) {
-    nextSession.bookingPhase = BOOKING_PHASE.COLLECTING;
-  }
-
-  const nextEvent = {
-    type: "turn",
-    activeServiceId,
-    stage: nextSession.conversationStage,
-    fallback: Boolean(reply && typeof reply === "string"),
-    at: Date.now(),
-  };
-
-  nextSession.events = [
-    ...(Array.isArray(session?.events) ? session.events : []),
-    ...(Array.isArray(transition.events) ? transition.events : []),
-    nextEvent,
-  ].slice(-20);
-  return nextSession;
-}
-
-function getContextTone(context) {
+    validationFailureStreak:
+      typeof state?.validationFailureStreak === "number"
+        ? state.validationFailureStreak
+        : typeof session?.validationFailureStreak === "number"
+        ? session.validationFailureStreak
+        : 0,
+    lastInvalidField:
+      state?.lastInvalidField ?? session?.lastInvalidField ?? null,
+    bookingRecordRef:
+      state?.bookingRecordRef ?? session?.bookingRecordRef ?? null,
+    bookingRecordId:
+      state?.bookingRecordId ?? session?.bookingRecordId ?? null,
   if (!context) {
     return {
       leadOptions: [
@@ -2477,7 +2462,7 @@ export default async function handler(req, res) {
     const session = await getSession(sessionId);
     const messages = normalizeMessages(body);
     const state = inferConversationState(messages, session);
-    const finalizeResponse = (payload, nextState = state) => {
+    const finalizeResponse = async (payload, nextState = state) => {
       const tunedReply = tuneConfirmationAssistantReply(
         typeof payload?.reply === "string" ? payload.reply : "",
         nextState
@@ -2491,7 +2476,7 @@ export default async function handler(req, res) {
           typeof payloadOut?.reply === "string" ? payloadOut.reply : tunedReply,
           messages
         );
-        const savedSession = saveSession(sessionUpdate);
+            const savedSession = await saveSession(sessionUpdate);
         if (IS_DEV) {
           console.log("[AI Session Save]", {
             sessionId,

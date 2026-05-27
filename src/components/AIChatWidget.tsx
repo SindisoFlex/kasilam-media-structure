@@ -66,7 +66,6 @@ const AIChatWidget = () => {
     };
 
     restoreSession();
-  }, [sessionId]);
   }, [sessionId, hasRestored]);
 
   useEffect(() => {

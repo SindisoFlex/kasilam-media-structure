@@ -156,11 +156,38 @@ const BookingFlow = () => {
   // Step 5 -> 6: lock a frozen snapshot (collecting -> awaiting_confirmation).
   // The deterministic phase machine in BookingContext owns the transition;
   // this component never mutates phase or snapshot directly.
-  const goToSummary = () => {
+  const saveDraftToServer = async (status = "draft") => {
+    const ref = refNumber || generateRef();
+    if (!refNumber) setRefNumber(ref);
+    const payload = {
+      ref_number: ref,
+      session_id: bookingInfo?.sessionId || null,
+      customer_name: clientName || null,
+      phone: clientPhone || null,
+      email: clientEmail || null,
+      service_type: bookingInfo?.service || null,
+      package_tier: bookingInfo?.package || null,
+      event_date: date ? date.toISOString() : null,
+      location_address: location || null,
+      gps_coordinates: mapsLink || null,
+      notes: bookingInfo?.format || null,
+      booking_status: status,
+    };
+
+    try {
+      await axios.post("/api/booking-records", payload);
+    } catch (err) {
+      console.error("[BookingFlow] saveDraft failed", err);
+    }
+  };
+
+  const goToSummary = async () => {
     const ref = refNumber || generateRef();
     if (!refNumber) setRefNumber(ref);
     const draft = buildSnapshotDraft(ref);
     if (draft) prepareConfirmation(draft);
+    // persist draft for conversational memory
+    await saveDraftToServer("awaiting_confirmation");
     setStep(6);
   };
 
@@ -184,6 +211,8 @@ const BookingFlow = () => {
 
     setIsSubmitting(true);
     try {
+      // ensure server has the latest structured record before finalizing
+      await saveDraftToServer("confirmed");
       const response = await axios.post("/api/bookings", payload);
       if (!response.data?.refNumber) {
         throw new Error(response.data?.error || "Missing refNumber from backend");
