@@ -1,6 +1,7 @@
 {
   "$id": "registry.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "1.0.0",
   "title": "Canonical Service Registry",
   "type": "object",
   "properties": {
@@ -13,7 +14,10 @@
     "packages": {
       "type": "array",
       "items": {
-        "$ref": "package.schema.json"
+        "anyOf": [
+          { "$ref": "package.schema.json" },
+          { "$ref": "inquiry.schema.json" }
+        ]
       }
     },
     "mappings": {

@@ -1,19 +1,16 @@
 {
-  "$id": "package.schema.json",
+  "$id": "inquiry.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "schemaVersion": "1.0.0",
-  "title": "Package Definition",
+  "title": "Inquiry Package Definition",
   "type": "object",
   "properties": {
     "productCode": {
       "type": "string",
-      "pattern": "^[A-Z0-9-]+$"
+      "pattern": "^INQ-[A-Z0-9]+$"
     },
     "serviceId": {
-      "anyOf": [
-        { "type": "string", "pattern": "^[a-z0-9_]+$" },
-        { "type": "null" }
-      ]
+      "type": "null"
     },
     "displayName": {
       "type": "string",
@@ -38,16 +35,19 @@
     },
     "entityType": {
       "type": "string",
-      "enum": ["inquiry"]
+      "const": "inquiry"
     },
     "workflowType": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1
     },
     "billable": {
-      "type": "boolean"
+      "type": "boolean",
+      "const": false
     },
     "requiresManualScoping": {
-      "type": "boolean"
+      "type": "boolean",
+      "const": true
     },
     "deprecated": {
       "type": "boolean"
@@ -57,6 +57,14 @@
       "minLength": 1
     }
   },
-  "required": ["productCode", "displayName", "frontendLabels"],
+  "required": [
+    "productCode",
+    "displayName",
+    "frontendLabels",
+    "entityType",
+    "workflowType",
+    "billable",
+    "requiresManualScoping"
+  ],
   "additionalProperties": false
 }

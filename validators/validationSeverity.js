@@ -1,0 +1,11 @@
+export const SEVERITY = {
+  ERROR: "error",
+  WARNING: "warning",
+  INFO: "info",
+};
+
+export const VALIDATION_POLICIES = {
+  COMPATIBILITY: SEVERITY.ERROR,
+  DEPRECATION: SEVERITY.ERROR,
+  ENUM_DIVERGENCE: SEVERITY.ERROR,
+};

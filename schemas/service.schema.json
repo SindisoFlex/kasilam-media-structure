@@ -1,6 +1,7 @@
 {
   "$id": "service.schema.json",
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "1.0.0",
   "title": "Service Definition",
   "type": "object",
   "properties": {

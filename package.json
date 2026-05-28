@@ -11,7 +11,7 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:registry": "node ./validators/registryValidate.js",
+    "validate:registry": "node ./validators/registryValidate.js && node ./validators/schemaCompatibility.js && node ./validators/deprecationValidator.js",
     "test:ci": "npm run validate:registry && npm run test"
   },
   "dependencies": {

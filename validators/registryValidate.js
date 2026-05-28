@@ -7,7 +7,11 @@ const schemaNames = [
   "service.schema.json",
   "package.schema.json",
   "mapping.schema.json",
-  "registry.schema.json"
+  "registry.schema.json",
+  "inquiry.schema.json",
+  "pricing.schema.json",
+  "audit.schema.json",
+  "canonicalBooking.schema.json"
 ];
 
 const schemaDirectory = path.resolve(process.cwd(), "schemas");

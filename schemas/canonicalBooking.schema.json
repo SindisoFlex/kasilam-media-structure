@@ -1,0 +1,66 @@
+{
+  "$id": "canonicalBooking.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "schemaVersion": "1.0.0",
+  "title": "Canonical Booking Contract",
+  "type": "object",
+  "properties": {
+    "bookingId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["collecting", "awaiting_confirmation", "finalized"]
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "finalizedAt": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "customer": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string", "minLength": 1 }
+      },
+      "required": ["name", "email", "phone"],
+      "additionalProperties": false
+    },
+    "bookingInfo": {
+      "type": "object",
+      "properties": {
+        "service": { "type": "string", "minLength": 1 },
+        "package": { "type": "string", "minLength": 1 },
+        "productCode": { "type": "string", "minLength": 1 },
+        "serviceId": { "type": "string", "minLength": 1 },
+        "entityType": { "type": "string", "minLength": 1 },
+        "workflowType": { "type": "string", "minLength": 1 }
+      },
+      "required": ["service", "package", "productCode"],
+      "additionalProperties": false
+    },
+    "pricing": {
+      "$ref": "pricing.schema.json"
+    },
+    "audit": {
+      "$ref": "audit.schema.json"
+    }
+  },
+  "required": ["bookingId", "status", "createdAt", "customer", "bookingInfo", "pricing"],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": { "properties": { "status": { "const": "finalized" } }, "required": ["status"] },
+      "then": { "required": ["finalizedAt"] }
+    },
+    {
+      "if": { "properties": { "status": { "enum": ["collecting", "awaiting_confirmation"] } } },
+      "then": { "properties": { "finalizedAt": { "enum": [null] } } }
+    }
+  ]
+}
