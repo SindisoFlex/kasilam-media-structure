@@ -1,3 +1,5 @@
+import { normalizeText, normalizeWithAudit } from "./lib/normalization-engine.js";
+
 const SHORT_FOLLOW_UP_PATTERNS = [
   /^price\??$/i,
   /^pricing\??$/i,
@@ -51,6 +53,7 @@ const SERVICE_SIGNAL_MAP = {
   web_development: [
     "website design",
     "website",
+    "web",
     "web design",
     "web development",
     "web app",
@@ -83,12 +86,11 @@ const SERVICE_SIGNAL_MAP = {
 };
 
 export function normalizeServiceText(text) {
-  return String(text || "")
-    .toLowerCase()
-    .replace(/linky\s*me/g, "link me")
-    .replace(/where\s*page/g, "where page")
-    .replace(/\s+/g, " ")
-    .trim();
+  return normalizeText(text, { context: "service" });
+}
+
+export function normalizeServiceTextWithAudit(text) {
+  return normalizeWithAudit(text, { context: "service" });
 }
 
 export function isShortFollowUp(text) {
@@ -166,7 +168,8 @@ function declinesPendingSwitch(normalizedText) {
 }
 
 export function resolveServiceTransition(session, userText) {
-  const normalizedText = normalizeServiceText(userText);
+  const normalizedAudit = normalizeServiceTextWithAudit(userText);
+  const normalizedText = normalizedAudit.normalizedText;
   const previousServiceId = session?.activeServiceId || null;
   const wasLocked = Boolean(session?.lockedService);
   const pendingServiceSwitch = session?.pendingServiceSwitch || null;
@@ -174,6 +177,12 @@ export function resolveServiceTransition(session, userText) {
   const shortFollowUp = isShortFollowUp(normalizedText);
   const explicitTopicChange = isExplicitTopicChange(normalizedText);
   const events = [];
+
+  const attachAudit = (payload) => ({
+    ...payload,
+    normalizationAudit: normalizedAudit.audit,
+    normalizationConfidence: normalizedAudit.confidence,
+  });
 
   // DEV: Log service transition decision points
   const IS_DEV = process.env.NODE_ENV !== "production";
@@ -199,14 +208,14 @@ export function resolveServiceTransition(session, userText) {
       });
       events.push({ type: "service_locked", service: pendingServiceSwitch.to });
 
-      return {
+      return attachAudit({
         serviceId: pendingServiceSwitch.to,
         confidence: Math.max(pendingServiceSwitch.confidence || 0, 0.8),
         lockedService: true,
         pendingServiceSwitch: null,
         serviceSwitchConfirmed: true,
         events,
-      };
+      });
     }
 
     if (declinesPendingSwitch(normalizedText)) {
@@ -216,14 +225,14 @@ export function resolveServiceTransition(session, userText) {
         to: pendingServiceSwitch.to,
       });
 
-      return {
+      return attachAudit({
         serviceId: previousServiceId,
         confidence: session?.serviceConfidence || 1,
         lockedService: true,
         pendingServiceSwitch: null,
         serviceSwitchCancelled: true,
         events,
-      };
+      });
     }
 
     if (detection.serviceId && detection.serviceId !== previousServiceId) {
@@ -235,22 +244,22 @@ export function resolveServiceTransition(session, userText) {
       };
       events.push({ type: "service_switch_pending", ...nextPending });
 
-      return {
+      return attachAudit({
         serviceId: previousServiceId,
         confidence: session?.serviceConfidence || 1,
         lockedService: true,
         pendingServiceSwitch: nextPending,
         events,
-      };
+      });
     }
 
-    return {
+    return attachAudit({
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
       pendingServiceSwitch,
       events,
-    };
+    });
   }
 
   if (shortFollowUp && wasLocked && previousServiceId) {
@@ -260,23 +269,23 @@ export function resolveServiceTransition(session, userText) {
         locked: true,
       });
     }
-    return {
+    return attachAudit({
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
       pendingServiceSwitch: null,
       events,
-    };
+    });
   }
 
   if (!detection.serviceId) {
-    return {
+    return attachAudit({
       serviceId: previousServiceId,
       confidence: previousServiceId ? session?.serviceConfidence || 1 : 0,
       lockedService: wasLocked,
       pendingServiceSwitch: null,
       events,
-    };
+    });
   }
 
   if (!previousServiceId) {
@@ -290,13 +299,13 @@ export function resolveServiceTransition(session, userText) {
       }
     }
 
-    return {
+    return attachAudit({
       serviceId: detection.serviceId,
       confidence: detection.confidence,
       lockedService: detection.confidence >= 0.8,
       pendingServiceSwitch: null,
       events,
-    };
+    });
   }
 
   if (previousServiceId === detection.serviceId) {
@@ -304,23 +313,23 @@ export function resolveServiceTransition(session, userText) {
       events.push({ type: "service_locked", service: detection.serviceId });
     }
 
-    return {
+    return attachAudit({
       serviceId: detection.serviceId,
       confidence: Math.max(session?.serviceConfidence || 0, detection.confidence),
       lockedService: wasLocked || detection.confidence >= 0.8,
       pendingServiceSwitch: null,
       events,
-    };
+    });
   }
 
   if (wasLocked && !explicitTopicChange) {
-    return {
+    return attachAudit({
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
       pendingServiceSwitch: null,
       events,
-    };
+    });
   }
 
   if (wasLocked && explicitTopicChange && detection.confidence >= 0.6) {
@@ -340,13 +349,13 @@ export function resolveServiceTransition(session, userText) {
       });
     }
 
-    return {
+    return attachAudit({
       serviceId: previousServiceId,
       confidence: session?.serviceConfidence || 1,
       lockedService: true,
       pendingServiceSwitch: nextPending,
       events,
-    };
+    });
   }
     if (IS_DEV) {
       console.log("[Service Transition Outcome] Service switched", {
@@ -364,23 +373,23 @@ export function resolveServiceTransition(session, userText) {
       events.push({ type: "service_locked", service: detection.serviceId });
     }
 
-    return {
+    return attachAudit({
       serviceId: detection.serviceId,
       confidence: detection.confidence,
       lockedService: detection.confidence >= 0.8,
       pendingServiceSwitch: null,
       serviceSwitchConfirmed: previousServiceId !== detection.serviceId,
       events,
-    };
+    });
   }
 
-  return {
+  return attachAudit({
     serviceId: previousServiceId,
     confidence: session?.serviceConfidence || 1,
     lockedService: wasLocked,
     pendingServiceSwitch: null,
     events,
-  };
+  });
 }
 
 // BLOCK D: Reusable guard to protect short follow-ups on locked services

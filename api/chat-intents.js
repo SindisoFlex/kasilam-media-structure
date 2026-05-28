@@ -8,17 +8,14 @@ export const CHAT_INTENTS = {
   GENERAL_INQUIRY: "general_inquiry",
 };
 
+import { normalizeWithAudit as normalizeTextWithAudit, normalizeText } from "./lib/normalization-engine.js";
+
 function normalizeIntentText(userText) {
-  return String(userText || "")
-    .toLowerCase()
-    .replace(/linky\s*me/g, "link me")
-    .replace(/linky/g, "link")
-    .replace(/back\s*price/g, "basic price")
-    .replace(/where\s*page/g, "where is the page")
-    .replace(/page\s*link/g, "page link")
-    .replace(/book\s*me/g, "can i book")
-    .replace(/\s+/g, " ")
-    .trim();
+  return normalizeText(userText, { context: "intent" });
+}
+
+export function normalizeIntentTextWithAudit(userText) {
+  return normalizeTextWithAudit(userText, { context: "intent" });
 }
 
 function includesAny(text, keywords) {
@@ -42,7 +39,8 @@ function isShortClarifier(text) {
 }
 
 export function detectIntent(userText, session = null) {
-  const normalized = normalizeIntentText(userText);
+  const normalizedAudit = normalizeIntentTextWithAudit(userText);
+  const normalized = normalizedAudit.normalizedText;
   const lockedService = Boolean(session?.lockedService);
   const activeServiceId = session?.activeServiceId || null;
 
@@ -135,5 +133,7 @@ export function detectIntent(userText, session = null) {
     preserveActiveService: lockedService && Boolean(activeServiceId),
     serviceContextChanged: false,
     normalizedText: normalized,
+    normalizationAudit: normalizedAudit.audit,
+    normalizationConfidence: normalizedAudit.confidence,
   };
 }
