@@ -1,0 +1,25 @@
+{
+  "$id": "registry.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Canonical Service Registry",
+  "type": "object",
+  "properties": {
+    "services": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "service.schema.json"
+      }
+    },
+    "packages": {
+      "type": "array",
+      "items": {
+        "$ref": "package.schema.json"
+      }
+    },
+    "mappings": {
+      "$ref": "mapping.schema.json"
+    }
+  },
+  "required": ["services", "packages", "mappings"],
+  "additionalProperties": false
+}

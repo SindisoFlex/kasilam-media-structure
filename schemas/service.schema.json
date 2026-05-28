@@ -1,0 +1,38 @@
+{
+  "$id": "service.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Service Definition",
+  "type": "object",
+  "properties": {
+    "serviceId": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "visual-production",
+        "digital-solutions",
+        "audio-production"
+      ]
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bookingService": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$"
+    },
+    "route": {
+      "type": "string",
+      "minLength": 1
+    },
+    "pricingType": {
+      "type": "string",
+      "enum": ["exact", "tailored", "hybrid"]
+    }
+  },
+  "required": ["serviceId", "category", "displayName", "bookingService", "route", "pricingType"],
+  "additionalProperties": false
+}

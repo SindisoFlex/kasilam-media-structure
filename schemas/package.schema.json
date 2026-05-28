@@ -1,0 +1,54 @@
+{
+  "$id": "package.schema.json",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Package Definition",
+  "type": "object",
+  "properties": {
+    "productCode": {
+      "type": "string",
+      "pattern": "^[A-Z0-9-]+$"
+    },
+    "serviceId": {
+      "anyOf": [
+        { "type": "string", "pattern": "^[a-z0-9_]+$" },
+        { "type": "null" }
+      ]
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1
+    },
+    "packageTier": {
+      "type": ["string", "null"],
+      "enum": ["basic", "standard", "premium", null]
+    },
+    "coverageType": {
+      "type": ["string", "null"]
+    },
+    "features": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 0
+    },
+    "frontendLabels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "entityType": {
+      "type": "string",
+      "enum": ["inquiry"]
+    },
+    "workflowType": {
+      "type": "string"
+    },
+    "billable": {
+      "type": "boolean"
+    },
+    "requiresManualScoping": {
+      "type": "boolean"
+    }
+  },
+  "required": ["productCode", "displayName", "frontendLabels"],
+  "additionalProperties": false
+}
