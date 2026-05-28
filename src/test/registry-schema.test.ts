@@ -22,10 +22,12 @@ describe("Phase 1 registry schema", () => {
 
     const serviceSchema = loadJson(path.join(schemaDirectory, "service.schema.json"));
     const packageSchema = loadJson(path.join(schemaDirectory, "package.schema.json"));
+    const inquirySchema = loadJson(path.join(schemaDirectory, "inquiry.schema.json"));
     const mappingSchema = loadJson(path.join(schemaDirectory, "mapping.schema.json"));
 
     ajv.addSchema(serviceSchema, serviceSchema.$id);
     ajv.addSchema(packageSchema, packageSchema.$id);
+    ajv.addSchema(inquirySchema, inquirySchema.$id);
     ajv.addSchema(mappingSchema, mappingSchema.$id);
     const validate = ajv.compile(schema);
 
