@@ -6,6 +6,9 @@ export interface BookingInfo {
   price: number;
   hours?: number;
   format?: string;
+  sessionId?: string | null;
+  serviceCode?: string | null;
+  packageCode?: string | null;
 }
 
 /**

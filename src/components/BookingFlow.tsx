@@ -14,27 +14,12 @@ import jsPDF from "jspdf";
 import { useBooking, type SnapshotDraft } from "@/contexts/BookingContext";
 import logo from "@/images/kmp.svg";
 import axios from "axios";
+import { toast } from "@/hooks/use-toast";
+import { ADDONS } from "../../shared/registry/index.js";
 
-const serviceAddOns = {
-  audio: [
-    { id: "extra-hour", name: "Extra Recording Hour", price: 350 },
-    { id: "mixing", name: "Mixing", price: 600 },
-    { id: "mastering", name: "Mastering", price: 400 },
-    { id: "podcast-edit", name: "Podcast Editing", price: 500 },
-  ],
-  visual: [
-    { id: "extra-camera", name: "Extra Camera", price: 1000 },
-    { id: "drone", name: "Drone Footage", price: 1500 },
-    { id: "photography", name: "Photography Coverage", price: 800 },
-    { id: "extended-edit", name: "Extended Editing", price: 1200 },
-  ],
-  digital: [
-    { id: "add-platform", name: "Additional Social Platform", price: 1000 },
-    { id: "extra-posts", name: "Extra Content Posts", price: 500 },
-    { id: "ads-mgmt", name: "Paid Advertising Management", price: 1500 },
-    { id: "analytics", name: "Analytics Reporting", price: 800 },
-  ],
-};
+// Add-ons sourced from canonical registry (shared/registry/addons.js).
+// Values identical to prior hardcoded list — registry is the single source of truth.
+const serviceAddOns = ADDONS;
 
 const timeSlots = [
   "06:00", "07:00", "08:00", "09:00", "10:00", "11:00", "12:00",
