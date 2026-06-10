@@ -14,6 +14,8 @@ import jsPDF from "jspdf";
 import { useBooking, type SnapshotDraft } from "@/contexts/BookingContext";
 import logo from "@/images/kmp.svg";
 import axios from "axios";
+import { toast } from "@/hooks/use-toast";
+import { ADDONS } from "../../shared/registry/index.js";
 
 const serviceAddOns = {
   audio: [
