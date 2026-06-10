@@ -5490,5 +5490,1026 @@
       }
     ],
     "updatedAt": 1779951934672
+  },
+  "test-session-funeral-price-1779966025613-p5cth0": {
+    "version": 1,
+    "sessionId": "test-session-funeral-price-1779966025613-p5cth0",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779966025752,
+    "sourceSessionId": "test-session-funeral-price-1779966025613-p5cth0",
+    "mappingMetadata": {
+      "input": "how much does it cost?",
+      "normalizedInput": "how much does it cost?",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:25.751Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "how much does it cost?",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "how much does it cost?"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "how",
+          "much",
+          "does",
+          "it",
+          "cost?"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-funeral-lock-1779966025760-7qg1ld": {
+    "version": 1,
+    "sessionId": "test-session-funeral-lock-1779966025760-7qg1ld",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": "link me",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779966025905,
+    "sourceSessionId": "test-session-funeral-lock-1779966025760-7qg1ld",
+    "mappingMetadata": {
+      "input": "can i book",
+      "normalizedInput": "can i book",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:25.905Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "can i book",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "can i book"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "can",
+          "i",
+          "book"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-web-price-1779966025910-28zs3c": {
+    "version": 1,
+    "sessionId": "test-session-web-price-1779966025910-28zs3c",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779966025977,
+    "sourceSessionId": "test-session-web-price-1779966025910-28zs3c",
+    "mappingMetadata": {
+      "input": "how much",
+      "normalizedInput": "how much",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:25.977Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "how much",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "how much"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "how",
+          "much"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-gemini-failure-1779966025982-d4n6fv": {
+    "version": 1,
+    "sessionId": "test-session-gemini-failure-1779966025982-d4n6fv",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779966026064,
+    "sourceSessionId": "test-session-gemini-failure-1779966025982-d4n6fv",
+    "mappingMetadata": {
+      "input": "how much",
+      "normalizedInput": "how much",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.064Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "how much",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "how much"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "how",
+          "much"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-reload-1779966026072-gebwrw": {
+    "version": 1,
+    "sessionId": "test-session-reload-1779966026072-gebwrw",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 80,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": "2026-06-14",
+      "location": "Motherwell",
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": true,
+      "location": true,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779966026200,
+    "sourceSessionId": "test-session-reload-1779966026072-gebwrw",
+    "mappingMetadata": {
+      "input": "price?",
+      "normalizedInput": "price?",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.199Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "price?",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "price?"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "price?"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-topic-switch-1779966026204-1p6udd": {
+    "version": 1,
+    "sessionId": "test-session-topic-switch-1779966026204-1p6udd",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "handoff_ready",
+    "bookingReadinessScore": 85,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": "John Smith",
+      "customerPhone": "+27821234567",
+      "customerEmail": "john@example.com"
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": true,
+      "customerPhone": true,
+      "customerEmail": true
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      },
+      {
+        "type": "service_switch_pending",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confidence": 0.85,
+        "requestedAt": 1779966026251
+      },
+      {
+        "type": "service_switched",
+        "from": "funeral_photography",
+        "to": "web_development",
+        "confirmed": true
+      },
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779966026281,
+    "sourceSessionId": "test-session-topic-switch-1779966026204-1p6udd",
+    "mappingMetadata": {
+      "input": "yes",
+      "normalizedInput": "yes",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.280Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "yes",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "yes"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "yes"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-web-no-visual-scope-1779966026285-k4hl5c": {
+    "version": 1,
+    "sessionId": "test-session-web-no-visual-scope-1779966026285-k4hl5c",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 50,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": "both",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779966026329,
+    "sourceSessionId": "test-session-web-no-visual-scope-1779966026285-k4hl5c",
+    "mappingMetadata": {
+      "input": "both",
+      "normalizedInput": "both",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.329Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "both",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "both"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "both"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-visual-package-first-1779966026333-605tvv": {
+    "version": 1,
+    "sessionId": "test-session-visual-package-first-1779966026333-605tvv",
+    "activeServiceId": "funeral_photography",
+    "activeCategoryId": "visual-production",
+    "serviceConfidence": 0.95,
+    "lockedService": true,
+    "lastIntent": "funeral",
+    "conversationStage": "qualification",
+    "bookingReadinessScore": 65,
+    "bookingMemory": {
+      "service": "funeral",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": "basic",
+      "coverageType": null,
+      "customerName": "Basic",
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": true,
+      "coverageType": false,
+      "customerName": true,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "funeral_photography"
+      }
+    ],
+    "updatedAt": 1779966026382,
+    "sourceSessionId": "test-session-visual-package-first-1779966026333-605tvv",
+    "mappingMetadata": {
+      "input": "basic",
+      "normalizedInput": "basic",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.382Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "basic",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "basic"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "basic"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
+  },
+  "test-session-annotation-enabled-1779966026386-vs3tqd": {
+    "version": 1,
+    "sessionId": "test-session-annotation-enabled-1779966026386-vs3tqd",
+    "activeServiceId": "web_development",
+    "activeCategoryId": "digital-solutions",
+    "serviceConfidence": 0.85,
+    "lockedService": true,
+    "lastIntent": "web_design",
+    "conversationStage": "discovery",
+    "bookingReadinessScore": 30,
+    "bookingMemory": {
+      "service": "digital",
+      "date": null,
+      "location": null,
+      "scope": null,
+      "packageTier": null,
+      "coverageType": null,
+      "customerName": null,
+      "customerPhone": null,
+      "customerEmail": null
+    },
+    "bookingValidation": {
+      "service": true,
+      "date": false,
+      "location": false,
+      "scope": false,
+      "packageTier": false,
+      "coverageType": false,
+      "customerName": false,
+      "customerPhone": false,
+      "customerEmail": false
+    },
+    "bookingPhase": "collecting",
+    "confirmationSnapshot": null,
+    "ctaIssued": false,
+    "bookingPersisted": false,
+    "validationFailureStreak": 0,
+    "lastInvalidField": null,
+    "pendingServiceSwitch": null,
+    "bookingRecordRef": null,
+    "bookingRecordId": null,
+    "conversationHistory": [],
+    "nextMissingBookingField": null,
+    "lastAssistantQuestion": null,
+    "events": [
+      {
+        "type": "service_locked",
+        "service": "web_development"
+      }
+    ],
+    "updatedAt": 1779966026410,
+    "sourceSessionId": "test-session-annotation-enabled-1779966026386-vs3tqd",
+    "mappingMetadata": {
+      "input": "i need a website for my business",
+      "normalizedInput": "i need a website for my business",
+      "canonicalServiceId": null,
+      "canonicalProductCode": null,
+      "mappingEntityType": "unresolved",
+      "mappingMethod": "fallback",
+      "mappingStageUsed": "fallback",
+      "confidenceScore": 0.45,
+      "confidenceLabel": "fallback",
+      "ambiguityDetected": false,
+      "ambiguityCandidates": [],
+      "ambiguityReason": null,
+      "collisionDetected": false,
+      "collisionType": null,
+      "collisionCandidates": [],
+      "fallbackUsed": true,
+      "timestamp": "2026-05-28T11:00:26.409Z",
+      "mappingTrace": [
+        {
+          "stage": "fallback",
+          "status": "skipped_engine_disabled",
+          "note": "mapping engine feature flag disabled"
+        }
+      ],
+      "featureFlags": {
+        "ENABLE_MAPPING_ENGINE": false,
+        "ENABLE_FUZZY_MAPPING": false,
+        "ENABLE_AI_MAPPING_PLACEHOLDER": false,
+        "ENABLE_TELEMETRY_ENGINE": true,
+        "ENABLE_DRIFT_TRACKING": true,
+        "ENABLE_RUNTIME_HEALTH_METRICS": true
+      },
+      "normalizationAudit": {
+        "enabled": false,
+        "context": "mapping_runtime",
+        "originalText": "i need a website for my business",
+        "stages": [
+          {
+            "step": "fallback-lowercase",
+            "result": "i need a website for my business"
+          }
+        ],
+        "replacements": [],
+        "tokenOrder": [
+          "i",
+          "need",
+          "a",
+          "website",
+          "for",
+          "my",
+          "business"
+        ],
+        "collisionDetected": false,
+        "ambiguous": false,
+        "ambiguousTokens": []
+      }
+    },
+    "mappingConfidence": 0.45,
+    "mappingMethod": "fallback",
+    "mappingAmbiguity": false,
+    "mappingCollision": false,
+    "annotationEnvelope": null
   }
 }

@@ -37,6 +37,14 @@ import {
   saveFinalizedBooking,
   hasBookingAlreadyPersisted,
 } from "./chat-booking-persistence.js";
+import {
+  createTelemetryContext,
+  emitTelemetryEvent,
+  getDriftSummary,
+  getRuntimeHealthMetrics,
+  telemetryFlags,
+} from "./lib/telemetry-engine.js";
+import { applyRuntimeAnnotations } from "./lib/annotation-middleware.js";
 
 // Use a current, supported Gemini model on the v1beta endpoint.
 // "gemini-pro" on v1 has been deprecated and returns empty candidates.
@@ -2049,6 +2057,8 @@ function buildSessionUpdate(session, state, reply, messages = []) {
 
   const nextSession = {
     ...(session || {}),
+    sessionId: session?.sessionId || null,
+    sourceSessionId: session?.sourceSessionId || session?.sessionId || null,
     activeServiceId,
     activeCategoryId: state?.activeCategory || session?.activeCategoryId || null,
     serviceConfidence: transition.confidence || (activeServiceId ? 1 : 0),
@@ -2095,8 +2105,63 @@ function buildSessionUpdate(session, state, reply, messages = []) {
           : transition?.pendingServiceSwitch !== undefined
             ? transition.pendingServiceSwitch
             : session?.pendingServiceSwitch || null,
+    mappingMetadata:
+      state?.mappingMetadata || transition?.mappingMetadata || session?.mappingMetadata || null,
+    mappingConfidence:
+      state?.mappingConfidence ??
+      transition?.mappingConfidence ??
+      session?.mappingConfidence ??
+      0,
+    mappingMethod:
+      state?.mappingMethod ||
+      transition?.mappingMethod ||
+      session?.mappingMethod ||
+      null,
+    mappingAmbiguity:
+      state?.mappingAmbiguity ??
+      transition?.mappingAmbiguity ??
+      session?.mappingAmbiguity ??
+      false,
+    mappingCollision:
+      state?.mappingCollision ??
+      transition?.mappingCollision ??
+      session?.mappingCollision ??
+      false,
+    annotationEnvelope:
+      state?.annotationEnvelope ||
+      transition?.annotationEnvelope ||
+      session?.annotationEnvelope ||
+      null,
     events: [...priorEvents, ...transitionEvents],
   };
+
+  emitTelemetryEvent(
+    "session_update_applied",
+    {
+      mappingMethod: nextSession.mappingMethod || transition?.mappingMethod || "unresolved",
+      confidenceScore: nextSession.mappingConfidence || 0,
+      confidenceLabel: nextSession.mappingMetadata?.confidenceLabel || "unresolved",
+      ambiguityDetected: Boolean(nextSession.mappingAmbiguity),
+      collisionDetected: Boolean(nextSession.mappingCollision),
+      fallbackUsed: Boolean(nextSession.mappingMetadata?.fallbackUsed),
+      canonicalId:
+        nextSession.mappingMetadata?.canonicalServiceId ||
+        nextSession.mappingMetadata?.canonicalProductCode ||
+        nextSession.activeServiceId ||
+        null,
+      canonicalServiceId: nextSession.mappingMetadata?.canonicalServiceId || nextSession.activeServiceId || null,
+      canonicalProductCode: nextSession.mappingMetadata?.canonicalProductCode || null,
+      normalizedInput: normalizedLatest || "",
+      featureFlags: telemetryFlags(),
+      metadata: {
+        conversationStage: nextSession.conversationStage,
+        bookingPhase: nextSession.bookingPhase,
+        drift: getDriftSummary(),
+        health: getRuntimeHealthMetrics(),
+      },
+    },
+    createTelemetryContext(nextSession, { origin: "ai-chat" })
+  );
 
   return nextSession;
 }
@@ -2710,10 +2775,30 @@ export default async function handler(req, res) {
             ? buildBookingCta(savedSession)
             : null;
         const nextPayload = cta ? { ...payloadOut, cta } : payloadOut;
+        const annotated = applyRuntimeAnnotations(nextPayload, {
+          sessionId,
+          sourceSessionId: savedSession?.sourceSessionId || sessionId,
+          correlationId: savedSession?.sessionId || sessionId,
+          messageCount: Array.isArray(messages) ? messages.length : 0,
+          activeServiceId: savedSession?.activeServiceId || nextState?.activeServiceId || null,
+          conversationStage: savedSession?.conversationStage || nextState?.conversationStage || null,
+          bookingPhase: savedSession?.bookingPhase || nextState?.bookingPhase || null,
+          mappingMethod: savedSession?.mappingMethod || nextState?.mappingMethod || null,
+          mappingConfidence: savedSession?.mappingConfidence || nextState?.mappingConfidence || 0,
+          mappingAmbiguity: savedSession?.mappingAmbiguity || nextState?.mappingAmbiguity || false,
+          mappingCollision: savedSession?.mappingCollision || nextState?.mappingCollision || false,
+          mappingMetadata: savedSession?.mappingMetadata || nextState?.mappingMetadata || null,
+          normalizationAudit:
+            savedSession?.normalizationAudit || nextState?.normalizationAudit || null,
+          normalizedInput: nextState?.normalizedText || "",
+        });
+        if (annotated.annotationEnvelope) {
+          savedSession.annotationEnvelope = annotated.annotationEnvelope;
+        }
 
         if (IS_DEV) {
           return res.status(200).json({
-            ...nextPayload,
+            ...annotated.payload,
             _debug: {
               sessionId,
               activeServiceId: savedSession.activeServiceId,
@@ -2727,7 +2812,7 @@ export default async function handler(req, res) {
           });
         }
 
-        return res.status(200).json(nextPayload);
+        return res.status(200).json(annotated.payload);
       }
 
       if (IS_DEV) {
@@ -2738,7 +2823,23 @@ export default async function handler(req, res) {
         });
       }
 
-      return res.status(200).json(payloadOut);
+      const annotatedWithoutSession = applyRuntimeAnnotations(payloadOut, {
+        sessionId: null,
+        sourceSessionId: null,
+        correlationId: null,
+        messageCount: Array.isArray(messages) ? messages.length : 0,
+        activeServiceId: nextState?.activeServiceId || null,
+        conversationStage: nextState?.conversationStage || null,
+        bookingPhase: nextState?.bookingPhase || null,
+        mappingMethod: nextState?.mappingMethod || null,
+        mappingConfidence: nextState?.mappingConfidence || 0,
+        mappingAmbiguity: nextState?.mappingAmbiguity || false,
+        mappingCollision: nextState?.mappingCollision || false,
+        mappingMetadata: nextState?.mappingMetadata || null,
+        normalizationAudit: nextState?.normalizationAudit || null,
+        normalizedInput: nextState?.normalizedText || "",
+      });
+      return res.status(200).json(annotatedWithoutSession.payload);
     };
 
     if (!messages.length) {

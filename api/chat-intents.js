@@ -9,6 +9,8 @@ export const CHAT_INTENTS = {
 };
 
 import { normalizeWithAudit as normalizeTextWithAudit, normalizeText } from "./lib/normalization-engine.js";
+import { resolveCanonicalMapping } from "./lib/mapping-engine.js";
+import { createTelemetryContext, emitTelemetryEvent, telemetryFlags } from "./lib/telemetry-engine.js";
 
 function normalizeIntentText(userText) {
   return normalizeText(userText, { context: "intent" });
@@ -41,6 +43,12 @@ function isShortClarifier(text) {
 export function detectIntent(userText, session = null) {
   const normalizedAudit = normalizeIntentTextWithAudit(userText);
   const normalized = normalizedAudit.normalizedText;
+  const mapping = resolveCanonicalMapping(userText, {
+    fallbackServiceId: session?.activeServiceId || null,
+    session,
+    sessionId: session?.sessionId,
+    sourceSessionId: session?.sourceSessionId,
+  });
   const lockedService = Boolean(session?.lockedService);
   const activeServiceId = session?.activeServiceId || null;
 
@@ -126,7 +134,7 @@ export function detectIntent(userText, session = null) {
     intent = CHAT_INTENTS.CLARIFICATION;
   }
 
-  return {
+  const result = {
     intent,
     activeServiceId,
     lockedService,
@@ -135,5 +143,33 @@ export function detectIntent(userText, session = null) {
     normalizedText: normalized,
     normalizationAudit: normalizedAudit.audit,
     normalizationConfidence: normalizedAudit.confidence,
+    canonicalServiceId: mapping.canonicalServiceId,
+    canonicalProductCode: mapping.canonicalProductCode,
+    mappingMetadata: mapping,
+    mappingConfidence: mapping.confidenceScore,
+    mappingAmbiguity: mapping.ambiguityDetected,
+    mappingCollision: mapping.collisionDetected,
   };
+  const telemetryContext = createTelemetryContext(session, { origin: "chat-intents" });
+  emitTelemetryEvent(
+    "intent_detected",
+    {
+      mappingMethod: mapping.mappingMethod,
+      confidenceScore: mapping.confidenceScore,
+      confidenceLabel: mapping.confidenceLabel,
+      ambiguityDetected: mapping.ambiguityDetected,
+      collisionDetected: mapping.collisionDetected,
+      fallbackUsed: mapping.fallbackUsed,
+      canonicalId: mapping.canonicalServiceId || mapping.canonicalProductCode || null,
+      canonicalServiceId: mapping.canonicalServiceId,
+      canonicalProductCode: mapping.canonicalProductCode,
+      normalizedInput: normalized,
+      featureFlags: telemetryFlags(),
+      metadata: {
+        intent,
+      },
+    },
+    telemetryContext
+  );
+  return result;
 }

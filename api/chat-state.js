@@ -1,4 +1,6 @@
 import { normalizeText, normalizeWithAudit } from "./lib/normalization-engine.js";
+import { resolveCanonicalMapping } from "./lib/mapping-engine.js";
+import { createTelemetryContext, emitTelemetryEvent, telemetryFlags } from "./lib/telemetry-engine.js";
 
 const SHORT_FOLLOW_UP_PATTERNS = [
   /^price\??$/i,
@@ -135,7 +137,27 @@ function scoreServiceMatch(normalizedText, serviceId) {
 export function detectServiceConfidence(text) {
   const normalizedText = normalizeServiceText(text);
   if (!normalizedText) {
-    return { serviceId: null, confidence: 0 };
+    return {
+      serviceId: null,
+      confidence: 0,
+      mappingMetadata: resolveCanonicalMapping(text, {
+        sessionId: null,
+        sourceSessionId: null,
+      }),
+    };
+  }
+
+  const mapped = resolveCanonicalMapping(text, {
+    sessionId: null,
+    sourceSessionId: null,
+  });
+  if (mapped?.canonicalServiceId) {
+    const mappedConfidence = Math.max(mapped.confidenceScore || 0, 0);
+    return {
+      serviceId: mapped.canonicalServiceId,
+      confidence: mappedConfidence,
+      mappingMetadata: mapped,
+    };
   }
 
   let bestServiceId = null;
@@ -152,6 +174,7 @@ export function detectServiceConfidence(text) {
   return {
     serviceId: bestServiceId,
     confidence: bestConfidence,
+    mappingMetadata: mapped,
   };
 }
 
@@ -178,11 +201,52 @@ export function resolveServiceTransition(session, userText) {
   const explicitTopicChange = isExplicitTopicChange(normalizedText);
   const events = [];
 
-  const attachAudit = (payload) => ({
-    ...payload,
+  const attachAudit = (payload) => {
+    const result = {
+      ...payload,
     normalizationAudit: normalizedAudit.audit,
     normalizationConfidence: normalizedAudit.confidence,
-  });
+    mappingMetadata: detection.mappingMetadata || null,
+    mappingConfidence:
+      detection.mappingMetadata?.confidenceScore ?? detection.confidence ?? 0,
+    mappingMethod:
+      detection.mappingMetadata?.mappingMethod || "legacy_detection",
+    mappingAmbiguity: Boolean(detection.mappingMetadata?.ambiguityDetected),
+    mappingCollision: Boolean(detection.mappingMetadata?.collisionDetected),
+    };
+
+    const telemetryContext = createTelemetryContext(session, { origin: "chat-state" });
+    emitTelemetryEvent(
+      "service_transition_evaluated",
+      {
+        mappingMethod: result.mappingMethod,
+        confidenceScore: result.mappingConfidence,
+        confidenceLabel:
+          detection.mappingMetadata?.confidenceLabel || "fallback",
+        ambiguityDetected: result.mappingAmbiguity,
+        collisionDetected: result.mappingCollision,
+        fallbackUsed: Boolean(detection.mappingMetadata?.fallbackUsed),
+        canonicalId:
+          detection.mappingMetadata?.canonicalServiceId ||
+          detection.mappingMetadata?.canonicalProductCode ||
+          result.serviceId ||
+          null,
+        canonicalServiceId: detection.mappingMetadata?.canonicalServiceId || result.serviceId || null,
+        canonicalProductCode: detection.mappingMetadata?.canonicalProductCode || null,
+        normalizedInput: normalizedText,
+        featureFlags: telemetryFlags(),
+        metadata: {
+          previousServiceId,
+          nextServiceId: result.serviceId || null,
+          lockedService: result.lockedService,
+          pendingServiceSwitch: result.pendingServiceSwitch || null,
+        },
+      },
+      telemetryContext
+    );
+
+    return result;
+  };
 
   // DEV: Log service transition decision points
   const IS_DEV = process.env.NODE_ENV !== "production";

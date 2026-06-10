@@ -8,6 +8,12 @@ import { buildBookingCta } from "../chat-handoff.js";
 import { detectIntent } from "../chat-intents.js";
 
 const originalGeminiKey = process.env.GEMINI_API_KEY;
+const originalAnnotationFlag = process.env.ENABLE_ANNOTATION_MIDDLEWARE;
+const originalRuntimeAnnotationFlag = process.env.ENABLE_RUNTIME_ANNOTATIONS;
+const originalReportRendererFlag = process.env.ENABLE_REPORT_RENDERER;
+const originalTelemetryFlag = process.env.ENABLE_TELEMETRY_ENGINE;
+const originalDriftFlag = process.env.ENABLE_DRIFT_TRACKING;
+const originalHealthFlag = process.env.ENABLE_RUNTIME_HEALTH_METRICS;
 
 function createMockReq(body) {
   return {
@@ -52,6 +58,12 @@ function makeSessionId(label) {
 describe("KMP assistant", () => {
   beforeEach(() => {
     process.env.GEMINI_API_KEY = "test-key";
+    process.env.ENABLE_ANNOTATION_MIDDLEWARE = "true";
+    process.env.ENABLE_RUNTIME_ANNOTATIONS = "true";
+    process.env.ENABLE_REPORT_RENDERER = "true";
+    process.env.ENABLE_TELEMETRY_ENGINE = "true";
+    process.env.ENABLE_DRIFT_TRACKING = "true";
+    process.env.ENABLE_RUNTIME_HEALTH_METRICS = "true";
     vi.restoreAllMocks();
   });
 
@@ -265,6 +277,21 @@ describe("KMP assistant", () => {
     expect(coverageResponse.reply.toLowerCase()).toContain("video only");
   });
 
+  it("returns annotation envelope and report when middleware is enabled", async () => {
+    const sessionId = makeSessionId("annotation-enabled");
+    global.fetch = vi.fn().mockRejectedValue(new Error("network down"));
+
+    const response = await invokeHandler({
+      sessionId,
+      messages: [{ role: "user", content: "I need a website for my business" }],
+    });
+
+    expect(response.annotationEnvelope).toBeTruthy();
+    expect(response.annotationEnvelope.request.sessionId).toBe(sessionId);
+    expect(response.annotationReport).toBeTruthy();
+    expect(response.annotationReport.rendered).toContain("[[COPY_START:Session]]");
+  });
+
   it("returns WhatsApp handoff for completed booking flow", async () => {
     const session = {
       activeServiceId: "funeral_photography",
@@ -309,4 +336,10 @@ describe("chat intent classifier", () => {
 
 afterEach(() => {
   process.env.GEMINI_API_KEY = originalGeminiKey;
+  process.env.ENABLE_ANNOTATION_MIDDLEWARE = originalAnnotationFlag;
+  process.env.ENABLE_RUNTIME_ANNOTATIONS = originalRuntimeAnnotationFlag;
+  process.env.ENABLE_REPORT_RENDERER = originalReportRendererFlag;
+  process.env.ENABLE_TELEMETRY_ENGINE = originalTelemetryFlag;
+  process.env.ENABLE_DRIFT_TRACKING = originalDriftFlag;
+  process.env.ENABLE_RUNTIME_HEALTH_METRICS = originalHealthFlag;
 });

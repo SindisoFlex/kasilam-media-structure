@@ -1,3 +1,4 @@
+import { createTelemetryContext, emitFeatureFlagUsage, emitTelemetryEvent, telemetryFlags } from "./telemetry-engine.js";
 const NORMALIZATION_FLAG = "ENABLE_NORMALIZATION_ENGINE";
 
 const SYNONYM_PATTERNS = [
@@ -131,7 +132,7 @@ export function normalizeWithAudit(rawText, options = {}) {
     const tokens = normalizedText ? normalizedText.split(" ") : [];
     audit.stages.push({ step: "fallback-lowercase", result: normalizedText });
     audit.tokenOrder = tokens;
-    return {
+    const result = {
       normalizedText,
       tokens,
       audit,
@@ -139,6 +140,37 @@ export function normalizeWithAudit(rawText, options = {}) {
       collisionDetected: false,
       ambiguous: false,
     };
+    const telemetryContext = createTelemetryContext(options.session, {
+      sessionId: options.sessionId,
+      sourceSessionId: options.sourceSessionId,
+      origin: "normalization-engine",
+    });
+    const flags = telemetryFlags();
+    emitFeatureFlagUsage(telemetryContext, {
+      ENABLE_NORMALIZATION_ENGINE: false,
+      ...flags,
+    });
+    emitTelemetryEvent(
+      "normalization_transform",
+      {
+        mappingMethod: "fallback",
+        confidenceScore: result.confidence,
+        confidenceLabel: "exact",
+        normalizedInput: result.normalizedText,
+        fallbackUsed: true,
+        featureFlags: {
+          ENABLE_NORMALIZATION_ENGINE: false,
+          ...flags,
+        },
+        metadata: {
+          context,
+          collisionDetected: false,
+          ambiguous: false,
+        },
+      },
+      telemetryContext
+    );
+    return result;
   }
 
   const unicodeNormalized = normalizeUnicode(originalText);
@@ -176,7 +208,7 @@ export function normalizeWithAudit(rawText, options = {}) {
 
   const confidence = computeConfidence({ collisionDetected, ambiguous: ambiguity.ambiguous, ambiguousTokens: ambiguity.ambiguousTokens });
 
-  return {
+  const result = {
     normalizedText,
     tokens,
     audit,
@@ -184,6 +216,39 @@ export function normalizeWithAudit(rawText, options = {}) {
     collisionDetected,
     ambiguous: ambiguity.ambiguous,
   };
+  const telemetryContext = createTelemetryContext(options.session, {
+    sessionId: options.sessionId,
+    sourceSessionId: options.sourceSessionId,
+    origin: "normalization-engine",
+  });
+  const flags = telemetryFlags();
+  emitFeatureFlagUsage(telemetryContext, {
+    ENABLE_NORMALIZATION_ENGINE: true,
+    ...flags,
+  });
+  emitTelemetryEvent(
+    "normalization_transform",
+    {
+      mappingMethod: "normalized",
+      confidenceScore: result.confidence,
+      confidenceLabel: "normalized",
+      normalizedInput: result.normalizedText,
+      ambiguityDetected: result.ambiguous,
+      collisionDetected: result.collisionDetected,
+      fallbackUsed: false,
+      featureFlags: {
+        ENABLE_NORMALIZATION_ENGINE: true,
+        ...flags,
+      },
+      metadata: {
+        context,
+        replacements: audit.replacements,
+        stageCount: audit.stages.length,
+      },
+    },
+    telemetryContext
+  );
+  return result;
 }
 
 export function isNormalizationActive() {
